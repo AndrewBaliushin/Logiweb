@@ -89,6 +89,7 @@
 - DB – MySQL 5.6
 - Maven 3.*
 - JPA 2.0
+
 #####2 часть (включая предыдущие)
 - AS – Glassfish 4.0/WildFly 8.x 
 - JAX-WS/RS
