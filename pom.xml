@@ -1,66 +1,88 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>ru.t-systems.javaschool</groupId>
-	<artifactId>logiweb</artifactId>
-	<packaging>war</packaging>
-	<version>1.0-SNAPSHOT</version>
-	<name>Baliushin JavaSchool Logiweb project</name>
-	<url>https://github.com/AndrewBaliushin/JavaSchool</url>
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+ <groupId>com.tsystems.javaschool</groupId>
+ <artifactId>logiweb</artifactId>
+ <packaging>war</packaging>
+ <version>1.0-SNAPSHOT</version>
+ <name>Baliushin JavaSchool Logiweb project</name>
+ <url>https://github.com/AndrewBaliushin/JavaSchool</url>
 
-	<dependencies>
+ <properties>
 
-		<!-- JUnit -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
+  <spring.version>4.1.6.RELEASE</spring.version>
+  <java.version>1.7</java.version>
+  <junit.version>4.12</junit.version>
+  <sonar.version>5.1</sonar.version>
 
-		<!-- Checkstyle -->
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-checkstyle-plugin</artifactId>
-			<version>2.15</version>
-		</dependency>
+ </properties>
 
-		<!-- Sonar -->
-		<dependency>
-			<groupId>org.codehaus.sonar</groupId>
-			<artifactId>sonar-maven-plugin</artifactId>
-			<version>5.1</version>
-		</dependency>
+ <dependencies>
 
-	</dependencies>
+  <!-- JUnit -->
+  <dependency>
+   <groupId>junit</groupId>
+   <artifactId>junit</artifactId>
+   <version>${junit.version}</version>
+   <scope>test</scope>
+  </dependency>
 
-	<build>
-		<finalName>logiweb</finalName>
+  <!-- Spring dependencies -->
+  <dependency>
+   <groupId>org.springframework</groupId>
+   <artifactId>spring-core</artifactId>
+   <version>${spring.version}</version>
+  </dependency>
 
-		<pluginManagement>		
-			<plugins>
-			    <!-- Compiler plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.3</version>
-				</plugin>
-				
-			</plugins>			
-		</pluginManagement>
+  <dependency>
+   <groupId>org.springframework</groupId>
+   <artifactId>spring-web</artifactId>
+   <version>${spring.version}</version>
+  </dependency>
 
-		<plugins>
+  <dependency>
+   <groupId>org.springframework</groupId>
+   <artifactId>spring-webmvc</artifactId>
+   <version>${spring.version}</version>
+  </dependency>
 
-			<!-- Compiler version -->
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
+  <!-- Sonar -->
+  <dependency>
+   <groupId>org.codehaus.sonar</groupId>
+   <artifactId>sonar-maven-plugin</artifactId>
+   <version>${sonar.version}</version>
+  </dependency>
 
-		</plugins>
-	</build>
+ </dependencies>
+
+ <build>
+  <finalName>logiweb</finalName>
+
+  <pluginManagement>
+   <plugins>
+
+    <!-- Compiler plugin -->
+    <plugin>
+     <groupId>org.apache.maven.plugins</groupId>
+     <artifactId>maven-compiler-plugin</artifactId>
+     <version>3.3</version>
+    </plugin>
+
+   </plugins>
+  </pluginManagement>
+
+  <plugins>
+
+   <!-- Java version -->
+   <plugin>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+     <source>${java.version}</source>
+     <target>${java.version}</target>
+    </configuration>
+   </plugin>
+
+  </plugins>
+ </build>
 
 </project>
