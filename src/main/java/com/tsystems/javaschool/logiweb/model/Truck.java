@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
  * @author Andrey Baliushin
  */
 @Entity
-@Table(name = "trucks",
+@Table(name = "trucks", 
        uniqueConstraints = 
        @UniqueConstraint(columnNames = "truck_license_plate_UQ"))
 public class Truck {
@@ -57,7 +57,7 @@ public class Truck {
 
     public Truck() {
     }
-    
+
     public int getId() {
 	return id;
     }

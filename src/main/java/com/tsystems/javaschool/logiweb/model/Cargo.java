@@ -1,6 +1,5 @@
 package com.tsystems.javaschool.logiweb.model;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
