@@ -43,6 +43,10 @@ public class DeliveryOrder {
     public int getId() {
         return id;
     }
+    
+    public void setId(int id) {
+	this.id = id;
+    }
 
     public Truck getAssignedTruck() {
         return assignedTruck;
