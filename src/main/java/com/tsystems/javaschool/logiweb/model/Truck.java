@@ -49,7 +49,6 @@ public class Truck {
     @Column(name = "truck_deleted")
     private boolean deletedRecord;
 
-    // TODO make sure mappedBy refers proper bean
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "assignedTruck")
     private Set<DeliveryOrder> deliveryOrders;
 
