@@ -17,7 +17,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "driver_statuses")
-public class DriverStatus implements java.io.Serializable {
+public class DriverStatus {
 
     @Id
     @GeneratedValue
