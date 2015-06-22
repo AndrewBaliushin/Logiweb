@@ -15,6 +15,8 @@
   <junit.version>4.12</junit.version>
   <sonar.version>5.1</sonar.version>
   <jstl.version>1.2</jstl.version>
+  <hibernate.version>4.3.8.Final</hibernate.version>
+  <mysql.connector.version>5.1.6</mysql.connector.version>
 
  </properties>
 
@@ -28,7 +30,7 @@
    <scope>test</scope>
   </dependency>
 
-  <!-- Spring dependencies -->
+  <!-- Spring -->
   <dependency>
    <groupId>org.springframework</groupId>
    <artifactId>spring-core</artifactId>
@@ -45,6 +47,26 @@
    <groupId>org.springframework</groupId>
    <artifactId>spring-webmvc</artifactId>
    <version>${spring.version}</version>
+  </dependency>
+
+  <!-- Hibernate -->
+  <dependency>
+   <groupId>org.hibernate</groupId>
+   <artifactId>hibernate-core</artifactId>
+   <version>${hibernate.version}</version>
+  </dependency>
+
+  <dependency>
+   <groupId>org.hibernate</groupId>
+   <artifactId>hibernate-entitymanager</artifactId>
+   <version>${hibernate.version}</version>
+  </dependency>
+  
+  <!-- MySQL -->
+  <dependency>
+   <groupId>mysql</groupId>
+   <artifactId>mysql-connector-java</artifactId>
+   <version>${mysql.connector.version}</version>
   </dependency>
 
   <!-- JSTL -->
