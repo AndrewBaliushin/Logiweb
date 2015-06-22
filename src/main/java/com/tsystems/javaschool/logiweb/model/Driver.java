@@ -50,6 +50,9 @@ public class Driver {
     @Column(name = "driver_deleted")
     private boolean deletedRecord;
 
+    public Driver() {
+    }
+    
     public int getId() {
         return id;
     }

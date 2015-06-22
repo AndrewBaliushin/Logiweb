@@ -36,6 +36,9 @@ public class City {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "destinationCity")
     private Set<DeliveryOrderWaypoint> allWaypointsForThisCity;
 
+    public City() {
+    }
+    
     public int getId() {
         return id;
     }

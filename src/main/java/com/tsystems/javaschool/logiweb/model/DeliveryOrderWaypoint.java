@@ -39,6 +39,9 @@ public class DeliveryOrderWaypoint {
     @JoinColumn(name = "cargo_from_order_FK")
     private DeliveryOrder cargoFromOrder;
 
+    public DeliveryOrderWaypoint() {
+    }
+    
     public int getId() {
         return id;
     }

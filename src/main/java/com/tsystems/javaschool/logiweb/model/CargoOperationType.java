@@ -32,6 +32,9 @@ public class CargoOperationType {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "operationWithCargo")
     private Set<DeliveryOrderWaypoint> allWaypointsForThisOperationType;
 
+    public CargoOperationType() {
+    }
+    
     public int getId() {
         return id;
     }

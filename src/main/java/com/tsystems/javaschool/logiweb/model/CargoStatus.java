@@ -30,6 +30,9 @@ public class CargoStatus {
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "status")
     private Set<Cargo> cargoesWithThisStatus;
+    
+    public CargoStatus() {
+    }
 
     public int getId() {
         return id;

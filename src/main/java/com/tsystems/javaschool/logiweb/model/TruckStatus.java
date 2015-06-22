@@ -30,6 +30,9 @@ public class TruckStatus {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "status")
     private Set<Truck> trucksWithThisStatus;
 
+    public TruckStatus() {
+    }
+    
     public int getId() {
         return id;
     }

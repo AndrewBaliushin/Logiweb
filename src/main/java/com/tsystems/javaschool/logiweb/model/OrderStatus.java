@@ -30,6 +30,9 @@ public class OrderStatus {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "status")
     private Set<DeliveryOrder> ordersWithThisStatus;
 
+    public OrderStatus() {
+    }
+    
     public int getId() {
         return id;
     }

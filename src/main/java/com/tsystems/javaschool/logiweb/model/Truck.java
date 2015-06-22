@@ -56,6 +56,9 @@ public class Truck {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "currentTruck")
     private Set<Driver> drivers;
 
+    public Truck() {
+    }
+    
     public int getId() {
 	return id;
     }

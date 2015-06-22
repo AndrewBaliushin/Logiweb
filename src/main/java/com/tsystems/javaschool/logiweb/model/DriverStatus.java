@@ -30,6 +30,9 @@ public class DriverStatus implements java.io.Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "status")
     private Set<Driver> driversWithThisStatus;
 
+    public DriverStatus() {
+    }
+    
     public int getId() {
         return id;
     }

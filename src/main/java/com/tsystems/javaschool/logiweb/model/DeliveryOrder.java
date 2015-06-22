@@ -37,6 +37,9 @@ public class DeliveryOrder {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "cargoFromOrder")
     private Set<DeliveryOrderWaypoint> deliveryWaypoints;
 
+    public DeliveryOrder() {
+    }
+    
     public int getId() {
         return id;
     }
