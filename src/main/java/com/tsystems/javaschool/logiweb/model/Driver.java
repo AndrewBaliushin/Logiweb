@@ -1,5 +1,7 @@
 package com.tsystems.javaschool.logiweb.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -47,6 +51,9 @@ public class Driver {
     @JoinColumn(name = "driver_current_truck_FK")
     private Truck currentTruck;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "driverForThisRecord")
+    private Set<DriverShiftJournal> shitsJournalRecords;
+    
     @Column(name = "driver_deleted")
     private boolean deletedRecord;
 
@@ -107,6 +114,14 @@ public class Driver {
 
     public void setCurrentTruck(Truck currentTruck) {
         this.currentTruck = currentTruck;
+    }
+
+    public Set<DriverShiftJournal> getShitsJournalRecords() {
+        return shitsJournalRecords;
+    }
+
+    public void setShitsJournalRecords(Set<DriverShiftJournal> shitsJournalRecords) {
+        this.shitsJournalRecords = shitsJournalRecords;
     }
 
     public boolean isDeletedRecord() {

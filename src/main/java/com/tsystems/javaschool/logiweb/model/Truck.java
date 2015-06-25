@@ -55,7 +55,7 @@ public class Truck {
     @Column(name = "truck_deleted")
     private boolean deletedRecord;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "currentTruck")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "currentTruck")
     private Set<Driver> drivers;
 
     public Truck() {
