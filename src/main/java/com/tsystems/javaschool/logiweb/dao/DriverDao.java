@@ -4,12 +4,11 @@ import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
-import com.tsystems.javaschool.logiweb.model.DriverStatus;
 
 /**
  * Interface for basic operations for Driver entity.
  * 
- * @author Andrew Baliushin
+ * @author Andrey Baliushin
  */
 public interface DriverDao extends GenericDao<Driver> { 
     
@@ -22,5 +21,6 @@ public interface DriverDao extends GenericDao<Driver> {
      * @param inCity city of interest
      * @return free drivers
      */
-    Set<Driver> getAvailiable(float maxWorkingHours, City inCity, DriverStatus status);
+    Set<Driver> getAvailiableToDrive(float maxWorkingHours, City inCity);
+    
 }

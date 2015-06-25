@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import com.tsystems.javaschool.logiweb.dao.GenericDao;
+import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 
 public abstract class GenericDaoJpa<T> implements GenericDao<T> {
     
@@ -40,7 +41,8 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final T create(T newInstance) {
+    public final T create(T newInstance) throws DaoException {
+	//TODO add SQL Exception check
 	entityManager.persist(newInstance);
 	return newInstance;
     }
@@ -49,7 +51,8 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final T read(Integer id) {
+    public final T read(Integer id) throws DaoException {
+	//TODO add SQL Exception check
 	T entity = getEntityManager().find(getEntityClass(), id);
 	return entity;
     }
@@ -58,7 +61,8 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final void update(T changedObject) {
+    public final void update(T changedObject) throws DaoException {
+	//TODO add SQL Exception check
 	getEntityManager().merge(changedObject);
     }
 
@@ -66,7 +70,8 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final void delete(T objectToDelete) {
+    public final void delete(T objectToDelete) throws DaoException {
+	//TODO add SQL Exception check
 	getEntityManager().remove(objectToDelete);
     }
 
@@ -75,7 +80,8 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public final Set<T> findAll() {
+    public final Set<T> findAll()  throws DaoException {
+	//TODO add SQL Exception check
 	List<T> allEntities = getEntityManager().createQuery(
 	        "Select t from " + getEntityClass().getSimpleName() + " t")
 	        .getResultList();

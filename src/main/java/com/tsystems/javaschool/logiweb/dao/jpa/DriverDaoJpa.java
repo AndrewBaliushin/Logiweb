@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
-import com.tsystems.javaschool.logiweb.model.DriverStatus;
+import com.tsystems.javaschool.logiweb.model.status.DriverStatus;
 
 public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
 
@@ -16,8 +16,7 @@ public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
     }
 
     @Override
-    public Set<Driver> getAvailiable(float maxWorkingHours, City inCity,
-	    DriverStatus status) {
+    public Set<Driver> getAvailiableToDrive(float maxWorkingHours, City inCity) {
 	// TODO Auto-generated method stub
 	return null;
     }
