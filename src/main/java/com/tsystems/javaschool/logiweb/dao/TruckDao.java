@@ -8,12 +8,7 @@ import com.tsystems.javaschool.logiweb.model.TruckStatus;
 
 public interface TruckDao extends GenericDao<Truck> {
 
-    Truck getByLicensePlate(String lPlate);
 
-    Set<Truck> getByStatus(TruckStatus status);
-
-    Set<Truck> getByCargoCapacity(Float capacity);
-
-    Set<Truck> getByCurrentLocationCity(City city);
-
+    Set<Truck> getAvailiable(TruckStatus status, float minCargoCapacity);
+ 
 }

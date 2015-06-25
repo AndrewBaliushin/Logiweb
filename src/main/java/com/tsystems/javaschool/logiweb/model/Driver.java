@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.tsystems.javaschool.logiweb.model.status.DriverStatus;
+
 /**
  * Entity representation of a Delivery Truck Driver.
  * 
@@ -34,9 +36,8 @@ public class Driver {
     @Column(name = "driver_surname")
     private String surname;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "driver_status_FK")
-    private DriverStatus status;
+    @Column(name = "driver_status")
+    private int status;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_current_location_city_FK")
@@ -85,11 +86,11 @@ public class Driver {
     }
 
     public DriverStatus getStatus() {
-        return status;
+        return DriverStatus.getById(status);
     }
 
     public void setStatus(DriverStatus status) {
-        this.status = status;
+        this.status = status.getIdInDb();
     }
 
     public City getCurrentCity() {

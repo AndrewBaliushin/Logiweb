@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.tsystems.javaschool.logiweb.model.status.CargoStatus;
+
 /**
  * Entity representation of Cargo.
  * 
@@ -32,9 +34,8 @@ public class Cargo {
     @Column(name = "cargo_weight")
     private Float weight;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cargo_status_FK")
-    private CargoStatus status;
+    @Column(name = "cargo_status")
+    private int status;
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_origin_city_FK")
@@ -76,11 +77,11 @@ public class Cargo {
     }
 
     public CargoStatus getStatus() {
-        return status;
+        return CargoStatus.getById(status);
     }
 
     public void setStatus(CargoStatus status) {
-        this.status = status;
+        this.status = status.getIdInDb();
     }
 
     public DeliveryOrder getOrderForThisCargo() {

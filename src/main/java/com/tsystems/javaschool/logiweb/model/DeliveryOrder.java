@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.tsystems.javaschool.logiweb.model.status.CargoStatus;
+import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
+
 /**
  * Entity representation of a Delivery Order for some Cargo.
  * 
@@ -27,9 +30,16 @@ public class DeliveryOrder {
     @OneToOne(mappedBy = "assignedDeliveryOrder")
     private Truck assignedTruck;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_status_FK")
-    private OrderStatus status;
+    @Column(name = "order_status")
+    private int status;
+    
+    public OrderStatus getStatus() {
+        return OrderStatus.getById(status);
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status.getIdInDb();
+    }
 
     public DeliveryOrder() {
     }
@@ -49,14 +59,6 @@ public class DeliveryOrder {
     public void setAssignedTruck(Truck assignedTruck) {
 	assignedTruck.setAssignedDeliveryOrder(this);
         this.assignedTruck = assignedTruck;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
     }
     
 }

@@ -14,6 +14,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
+
 /**
  * Entity representation of a Delivery Truck.
  * 
@@ -39,9 +41,8 @@ public class Truck {
     @Column(name = "truck_cargo_capacity")
     private Float cargoCapacity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "truck_status_FK")
-    private TruckStatus status;
+    @Column(name = "truck_status")
+    private int status;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "truck_current_location_city_FK")
@@ -93,11 +94,11 @@ public class Truck {
     }
 
     public TruckStatus getStatus() {
-	return status;
+	return TruckStatus.getById(status);
     }
 
     public void setStatus(TruckStatus status) {
-	this.status = status;
+	this.status = status.getIdInDb();
     }
 
     public DeliveryOrder getAssignedDeliveryOrder() {
