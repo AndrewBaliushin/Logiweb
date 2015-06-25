@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -23,10 +24,9 @@ public class DeliveryOrder {
     @Column(name = "order_id", unique = true, nullable = false)
     private int id;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_assigned_truck_FK")
+    @OneToOne(mappedBy = "assignedDeliveryOrder")
     private Truck assignedTruck;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_status_FK")
     private OrderStatus status;
@@ -47,6 +47,7 @@ public class DeliveryOrder {
     }
 
     public void setAssignedTruck(Truck assignedTruck) {
+	assignedTruck.setAssignedDeliveryOrder(this);
         this.assignedTruck = assignedTruck;
     }
 

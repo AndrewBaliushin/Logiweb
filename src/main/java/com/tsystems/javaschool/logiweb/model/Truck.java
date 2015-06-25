@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -46,11 +47,12 @@ public class Truck {
     @JoinColumn(name = "truck_current_location_city_FK")
     private City currentCity;
 
+    @OneToOne
+    @JoinColumn(name = "truck_delivery_order_FK_UQ")
+    private DeliveryOrder assignedDeliveryOrder;
+    
     @Column(name = "truck_deleted")
     private boolean deletedRecord;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "assignedTruck")
-    private Set<DeliveryOrder> deliveryOrders;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "currentTruck")
     private Set<Driver> drivers;
@@ -98,6 +100,14 @@ public class Truck {
 	this.status = status;
     }
 
+    public DeliveryOrder getAssignedDeliveryOrder() {
+        return assignedDeliveryOrder;
+    }
+
+    public void setAssignedDeliveryOrder(DeliveryOrder assignedDeliveryOrder) {
+        this.assignedDeliveryOrder = assignedDeliveryOrder;
+    }
+
     public City getCurrentCity() {
 	return currentCity;
     }
@@ -112,14 +122,6 @@ public class Truck {
 
     public void setDeletedRecord(boolean deleted) {
 	this.deletedRecord = deleted;
-    }
-
-    public Set<DeliveryOrder> getDeliveryOrders() {
-	return deliveryOrders;
-    }
-
-    public void setDeliveryOrders(Set<DeliveryOrder> deliveryOrders) {
-	this.deliveryOrders = deliveryOrders;
     }
 
     public Set<Driver> getDrivers() {

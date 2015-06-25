@@ -16,6 +16,7 @@ import javax.persistence.TemporalType;
 /**
  * The persistent class for the Driver Shifts (working hours).
  * 
+ * @author Andrey Baliushin
  */
 @Entity
 @Table(name = "drivers_shift_journal")
