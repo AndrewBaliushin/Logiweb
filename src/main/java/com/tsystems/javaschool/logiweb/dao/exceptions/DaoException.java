@@ -4,7 +4,7 @@ package com.tsystems.javaschool.logiweb.dao.exceptions;
  * Exception for Dao. 
  * Hides SQL exceptions.
  * 
- * @author Andrew Baliushin
+ * @author Andrey Baliushin
  */
 public class DaoException extends Exception {
     
