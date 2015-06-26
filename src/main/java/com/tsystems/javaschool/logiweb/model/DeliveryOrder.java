@@ -2,6 +2,8 @@ package com.tsystems.javaschool.logiweb.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,18 +29,19 @@ public class DeliveryOrder {
     @Column(name = "order_id", unique = true, nullable = false)
     private int id;
     
+    @Column(name = "order_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     @OneToOne(mappedBy = "assignedDeliveryOrder")
     private Truck assignedTruck;
 
-    @Column(name = "order_status")
-    private int status;
-    
     public OrderStatus getStatus() {
-        return OrderStatus.getById(status);
+        return status;
     }
 
     public void setStatus(OrderStatus status) {
-        this.status = status.getIdInDb();
+        this.status = status;
     }
 
     public DeliveryOrder() {

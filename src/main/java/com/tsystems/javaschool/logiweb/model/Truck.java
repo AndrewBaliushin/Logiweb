@@ -4,6 +4,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -35,24 +37,25 @@ public class Truck {
     @Column(name = "truck_license_plate_UQ", unique = true)
     private String licencePlate;
 
-    @Column(name = "truck_crew_size")
+    @Column(name = "truck_crew_size", nullable = false)
     private int crewSize;
 
-    @Column(name = "truck_cargo_capacity")
+    @Column(name = "truck_cargo_capacity", nullable = false)
     private Float cargoCapacity;
 
-    @Column(name = "truck_status")
-    private int status;
+    @Column(name = "truck_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TruckStatus status;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "truck_current_location_city_FK")
+    @JoinColumn(name = "truck_current_location_city_FK", nullable = false)
     private City currentCity;
 
     @OneToOne
     @JoinColumn(name = "truck_delivery_order_FK_UQ")
     private DeliveryOrder assignedDeliveryOrder;
     
-    @Column(name = "truck_deleted")
+    @Column(name = "truck_deleted", nullable = false)
     private boolean deletedRecord;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "currentTruck")
@@ -94,11 +97,11 @@ public class Truck {
     }
 
     public TruckStatus getStatus() {
-	return TruckStatus.getById(status);
+	return status;
     }
 
     public void setStatus(TruckStatus status) {
-	this.status = status.getIdInDb();
+	this.status = status;
     }
 
     public DeliveryOrder getAssignedDeliveryOrder() {

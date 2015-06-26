@@ -28,7 +28,7 @@ public class DriverShiftJournal {
     private int id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "driver_shift_beggined")
+    @Column(name = "driver_shift_beggined", nullable = false)
     private Date shiftBeggined;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -36,7 +36,7 @@ public class DriverShiftJournal {
     private Date shiftEnded;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "shift_record_for_driver_FK")
+    @JoinColumn(name = "shift_record_for_driver_FK", nullable = false)
     private Driver driverForThisRecord;
 
     public DriverShiftJournal() {

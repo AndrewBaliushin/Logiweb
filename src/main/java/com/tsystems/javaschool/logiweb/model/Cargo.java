@@ -2,6 +2,8 @@ package com.tsystems.javaschool.logiweb.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,25 +27,26 @@ public class Cargo {
     @Column(name = "cargo_id", unique = true, nullable = false)
     private int id;
 
-    @Column(name = "cargo_title")
+    @Column(name = "cargo_title", nullable = false)
     private String title;
     
-    @Column(name = "cargo_weight")
+    @Column(name = "cargo_weight", nullable = false)
     private Float weight;
     
-    @Column(name = "cargo_status")
-    private int status;
+    @Column(name = "cargo_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CargoStatus status;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cargo_origin_city_FK")
+    @JoinColumn(name = "cargo_origin_city_FK", nullable = false)
     private City originCity;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cargo_destination_city_FK")
+    @JoinColumn(name = "cargo_destination_city_FK", nullable = false)
     private City destinationCity;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cargo_from_order_FK")
+    @JoinColumn(name = "cargo_from_order_FK", nullable = false)
     private DeliveryOrder orderForThisCargo;
     
     public Cargo() {
@@ -74,11 +77,11 @@ public class Cargo {
     }
 
     public CargoStatus getStatus() {
-        return CargoStatus.getById(status);
+        return status;
     }
 
     public void setStatus(CargoStatus status) {
-        this.status = status.getIdInDb();
+        this.status = status;
     }
 
     public DeliveryOrder getOrderForThisCargo() {

@@ -4,6 +4,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -34,17 +36,18 @@ public class Driver {
     @Column(name = "driver_employee_id_UQ", unique = true, nullable = false)
     private int employeeId;
 
-    @Column(name = "driver_name")
+    @Column(name = "driver_name", nullable = false)
     private String name;
 
-    @Column(name = "driver_surname")
+    @Column(name = "driver_surname", nullable = false)
     private String surname;
 
-    @Column(name = "driver_status")
-    private int status;
+    @Column(name = "driver_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DriverStatus status;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "driver_current_location_city_FK")
+    @JoinColumn(name = "driver_current_location_city_FK", nullable = false)
     private City currentCity;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -54,7 +57,7 @@ public class Driver {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driverForThisRecord")
     private Set<DriverShiftJournal> shitsJournalRecords;
     
-    @Column(name = "driver_deleted")
+    @Column(name = "driver_deleted", nullable = false)
     private boolean deletedRecord;
 
     public Driver() {
@@ -93,11 +96,11 @@ public class Driver {
     }
 
     public DriverStatus getStatus() {
-        return DriverStatus.getById(status);
+        return status;
     }
 
     public void setStatus(DriverStatus status) {
-        this.status = status.getIdInDb();
+        this.status = status;
     }
 
     public City getCurrentCity() {
