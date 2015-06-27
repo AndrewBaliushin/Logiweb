@@ -51,7 +51,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final T read(Integer id) throws DaoException {
+    public final T find(Integer id) throws DaoException {
 	//TODO add SQL Exception check
 	T entity = getEntityManager().find(getEntityClass(), id);
 	return entity;
@@ -86,12 +86,8 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
 	        "Select t from " + getEntityClass().getSimpleName() + " t")
 	        .getResultList();
 	
-	if (allEntities.isEmpty()) {
-	    return null;
-	} else {
-	    Set<T> allEntitiesAsSet = new HashSet<T>(allEntities);
-	    return allEntitiesAsSet;
-	}
+	Set<T> allEntitiesAsSet = new HashSet<T>(allEntities);
+	return allEntitiesAsSet;
     }
 
 }

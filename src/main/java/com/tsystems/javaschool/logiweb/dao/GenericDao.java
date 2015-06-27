@@ -34,7 +34,7 @@ public interface GenericDao<T> {
      * @exception DaoException thrown if SQL exception occurred, see 
      *            <code>DaoExceptionCode</code> and message
      */
-    T read(Integer id) throws DaoException;
+    T find(Integer id) throws DaoException;
 
     /**
      * Update persistent object.

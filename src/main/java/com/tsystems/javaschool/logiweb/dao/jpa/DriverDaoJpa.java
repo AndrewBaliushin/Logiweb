@@ -16,7 +16,7 @@ public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
     }
 
     @Override
-    public Set<Driver> getAvailiableToDrive(float maxWorkingHours, City inCity) {
+    public Set<Driver> findAvailiableToDrive(float maxWorkingHours, City inCity) {
 	// TODO Auto-generated method stub
 	return null;
     }

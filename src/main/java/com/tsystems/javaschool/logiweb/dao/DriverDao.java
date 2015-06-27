@@ -19,8 +19,8 @@ public interface DriverDao extends GenericDao<Driver> {
      * @param maxWorkingHours limit of working hours in this month
      * @param status status of driver
      * @param inCity city of interest
-     * @return free drivers
+     * @return free drivers or empty set
      */
-    Set<Driver> getAvailiableToDrive(float maxWorkingHours, City inCity);
+    Set<Driver> findAvailiableToDrive(float maxWorkingHours, City inCity);
     
 }
