@@ -84,7 +84,7 @@ public class Truck {
 	return crewSize;
     }
 
-    public void setCrewSize(Byte crewSize) {
+    public void setCrewSize(int crewSize) {
 	this.crewSize = crewSize;
     }
 
@@ -134,6 +134,20 @@ public class Truck {
 
     public void setDrivers(Set<Driver> drivers) {
 	this.drivers = drivers;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("id in db: " + id + "\n");
+        sb.append("\n");
+        sb.append("licensePlate: " + licencePlate + "\n");
+        sb.append("crew size: " + crewSize + "\n");
+        sb.append("capacity: " + cargoCapacity + "\n");
+        sb.append("status: " + status + "\n");
+        sb.append("current city: " + currentCity.getName() + "\n");
+        sb.append("delivery order" + assignedDeliveryOrder.getId() + "\n");
+        return "hi";
     }
 
 }
