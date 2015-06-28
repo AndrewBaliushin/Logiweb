@@ -25,8 +25,8 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
   </property>
  </bean>
 
- <context:component-scan base-package="com.tsystems.javaschool.logiweb" />
- <mvc:resources mapping="/resources/**" location="/resources/" />
+ <context:component-scan base-package="com.tsystems.javaschool.logiweb.controllers" />
+ <mvc:resources location="/css/" mapping="/css/**"/>
  <mvc:annotation-driven />
  
  
