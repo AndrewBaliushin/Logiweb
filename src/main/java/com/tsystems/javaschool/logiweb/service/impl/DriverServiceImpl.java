@@ -3,11 +3,17 @@ package com.tsystems.javaschool.logiweb.service.impl;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import org.hibernate.property.Getter;
 
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
+import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Driver;
+import com.tsystems.javaschool.logiweb.model.status.DriverStatus;
+import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.service.DriversService;
 
 public class DriverServiceImpl extends GenericServiceImpl implements DriversService {
@@ -29,32 +35,91 @@ public class DriverServiceImpl extends GenericServiceImpl implements DriversServ
 
     @Override
     public Driver findDriverById(int id) throws DaoException {
-	// TODO Auto-generated method stub
-	return null;
+	getEntityManager().getTransaction().begin();
+	Driver driver = driverDao.find(id);
+	getEntityManager().getTransaction().commit();
+	return driver;
     }
 
     @Override
     public void editDriver(Driver editedDriver) throws DaoException {
-	// TODO Auto-generated method stub
-
+	updateOrAddDriver(editedDriver, true);
     }
-
+    
     @Override
     public void addDriver(Driver newDriver) throws DaoException {
-	// TODO Auto-generated method stub
+        updateOrAddDriver(newDriver, false);
+    }
 
+    /**
+     * Create or update Driver entity.
+     * 
+     * @param driver
+     * @param update if true -- update. if false -- create new
+     * @throws DaoException if employee id is occupied or //TODO add reasons
+     */
+    private void updateOrAddDriver(Driver driver, boolean update) throws DaoException{
+	if (isEmployeeIdAvailiable(driver)) {
+	    getEntityManager().getTransaction().begin();
+	    if (update) {
+		driverDao.update(driver);
+	    } else {
+		driverDao.create(driver);
+	    }
+	    getEntityManager().getTransaction().commit();
+	} else {
+	    throw new DaoException(DaoExceptionCode.UPDATE_FAILED,
+		    "Employee id " + driver.getEmployeeId()
+		            + " is occupied");
+	}
+    }
+    
+    /**
+     * Checks that employee id for this Driver entity is free or already belongs to this Driver.
+     * 
+     * @param driverToCheck
+     * @return true if employee id is unoccupied or already belongs to this driver.
+     * @throws DaoException if multiple result is found.
+     */
+    private boolean isEmployeeIdAvailiable(Driver driverToCheck) throws DaoException {
+	int idInDb = driverToCheck.getId();
+	int employeeId = driverToCheck.getEmployeeId();
+	
+	try {
+	getEntityManager().getTransaction().begin();
+	Driver driver = driverDao.getByEmployeeId(employeeId);
+	getEntityManager().getTransaction().commit();
+	
+	return (driver.getId() == idInDb);
+	} catch (DaoException e) {
+	    if (e.getExceptionCode() == DaoExceptionCode.NO_RESULT) {
+		return true;	//employeeId is free
+	    }
+	    else {
+		throw e;
+	    }
+	}
     }
 
     @Override
     public void removeDriver(Driver driverToRemove) throws DaoException {
-	// TODO Auto-generated method stub
-
+	getEntityManager().getTransaction().begin();
+	getEntityManager().refresh(driverToRemove);
+	
+	if (driverToRemove.getCurrentTruck() != null) {
+	    getEntityManager().getTransaction().rollback();
+	    throw new DaoException(DaoExceptionCode.REMOVE_FAILED,
+		    "Driver is assigned to Truck. Removal is forbiden.");
+	}
+	
+	driverDao.delete(driverToRemove);
+	getEntityManager().getTransaction().commit();
     }
 
     @Override
     public Set<Driver> findAvailiableDriversForOrder(DeliveryOrder order)
 	    throws DaoException {
-	// TODO Auto-generated method stub
+	// TODO add method
 	return null;
     }
 

@@ -6,19 +6,10 @@ package com.tsystems.javaschool.logiweb.dao.exceptions;
  * @author Andrey Baliushin
  */
 public enum DaoExceptionCode {
-    
-    FAILED_TO_INSERT(1),
-    UPDATE_FAILED(2),
-    SQL_ERROR(3);
-    
-    private int exceptionCode;
-    
-    private DaoExceptionCode(int eCode) {
-	this.exceptionCode = eCode;
-    }
-    
-    public int getExceptionCode() {
-	return exceptionCode;
-    }
-
+    FAILED_TO_INSERT,
+    UPDATE_FAILED,
+    REMOVE_FAILED,
+    SQL_ERROR,
+    NO_RESULT,
+    RESULT_IS_NOT_UNIQ;
 }
