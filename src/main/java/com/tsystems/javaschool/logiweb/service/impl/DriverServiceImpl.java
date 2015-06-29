@@ -87,7 +87,7 @@ public class DriverServiceImpl extends GenericServiceImpl implements DriversServ
 	
 	try {
 	getEntityManager().getTransaction().begin();
-	Driver driver = driverDao.getByEmployeeId(employeeId);
+	Driver driver = driverDao.findByEmployeeId(employeeId);
 	getEntityManager().getTransaction().commit();
 	
 	return (driver.getId() == idInDb);

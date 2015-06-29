@@ -1,6 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-
 <%@ include file="ManagerHeader.jsp"%>
 <table>
 	
@@ -11,7 +10,7 @@
 		<tr>
 			<th>License plate</th>
 			<th>Crew size</th>
-			<th>Cargo capacity (ton)</th>
+			<th>Cargo capacity <small>x1000kg<small></th>
 			<th>Status</th>
 			<th>Current City</th>
 			<th>Delivery order</th>
