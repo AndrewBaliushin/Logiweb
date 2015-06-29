@@ -30,6 +30,6 @@ public interface DriverDao extends GenericDao<Driver> {
      * @param id 
      * @return Driver or null
      */
-    Driver getByEmployeeId(int id) throws DaoException;
+    Driver findByEmployeeId(int id) throws DaoException;
     
 }

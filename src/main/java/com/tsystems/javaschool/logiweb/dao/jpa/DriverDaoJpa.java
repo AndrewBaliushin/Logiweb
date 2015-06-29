@@ -32,7 +32,7 @@ public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
      * {@inheritDoc}
      */
     @Override
-    public Driver getByEmployeeId(int id) throws DaoException {
+    public Driver findByEmployeeId(int id) throws DaoException {
 	EntityManager em = getEntityManager();
 
 	Query query = em
