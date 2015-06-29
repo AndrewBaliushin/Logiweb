@@ -103,16 +103,27 @@ public class DriverServiceImpl extends GenericServiceImpl implements DriversServ
 
     @Override
     public void removeDriver(Driver driverToRemove) throws DaoException {
-	getEntityManager().getTransaction().begin();
-	getEntityManager().refresh(driverToRemove);
+	if (driverToRemove.getId() == 0) { // was not assigned
+	    throw new DaoException(DaoExceptionCode.REMOVE_FAILED,
+		    "Can't remove driver with unassigned id.");
+	}
 	
-	if (driverToRemove.getCurrentTruck() != null) {
+	getEntityManager().getTransaction().begin();
+	Driver managedDriverToRemove = driverDao.find(driverToRemove.getId());
+	
+	if(managedDriverToRemove == null) {
+	    getEntityManager().getTransaction().rollback();
+	    throw new DaoException(DaoExceptionCode.REMOVE_FAILED,
+		    "Driver with id=" + driverToRemove.getId() + " not found.");
+	}
+	
+	if (managedDriverToRemove.getCurrentTruck() != null) {
 	    getEntityManager().getTransaction().rollback();
 	    throw new DaoException(DaoExceptionCode.REMOVE_FAILED,
 		    "Driver is assigned to Truck. Removal is forbiden.");
 	}
 	
-	driverDao.delete(driverToRemove);
+	driverDao.delete(managedDriverToRemove);
 	getEntityManager().getTransaction().commit();
     }
 
