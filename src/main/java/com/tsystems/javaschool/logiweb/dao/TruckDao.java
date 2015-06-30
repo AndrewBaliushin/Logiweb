@@ -8,12 +8,12 @@ import com.tsystems.javaschool.logiweb.model.Truck;
 public interface TruckDao extends GenericDao<Truck> {
 
     /**
-     * Find unoccupied by orders and not broken trucks by their cargo capacity.
+     * Find unoccupied by orders trucks with 'OK' status by their cargo capacity.
      * 
      * @param minCargoCapacity
      * @return trucks or empty set
      */
-    Set<Truck> findAvailiableTrucksByCapacity(float minCargoCapacity)
-	    throws DaoException;
+    Set<Truck> findByMinCapacityWhereStatusOkAndNotAssignedToOrder(
+	    float minCargoCapacity);
 
 }

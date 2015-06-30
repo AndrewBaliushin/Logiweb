@@ -29,7 +29,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
     }
 
     /**
-     * Get  EntityManger object that were used for creation of this DAO object.
+     * Get  EntityManger object that was used for creation of this DAO object.
      * 
      * @return EntityManager object
      */
@@ -41,7 +41,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final T create(T newInstance) throws DaoException {
+    public final T create(T newInstance) {
 	//TODO add SQL Exception check
 	entityManager.persist(newInstance);
 	return newInstance;
@@ -51,7 +51,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final T find(Integer id) throws DaoException {
+    public final T find(int id) {
 	//TODO add SQL Exception check
 	T entity = getEntityManager().find(getEntityClass(), id);
 	return entity;
@@ -61,7 +61,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final void update(T changedObject) throws DaoException {
+    public final void update(T changedObject) {
 	//TODO add SQL Exception check
 	getEntityManager().merge(changedObject);
     }
@@ -70,7 +70,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final void delete(T objectToDelete) throws DaoException {
+    public final void delete(T objectToDelete) {
 	//TODO add SQL Exception check
 	getEntityManager().remove(objectToDelete);
     }
@@ -80,7 +80,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public final Set<T> findAll()  throws DaoException {
+    public final Set<T> findAll() {
 	//TODO add SQL Exception check
 	List<T> allEntities = getEntityManager().createQuery(
 	        "Select t from " + getEntityClass().getSimpleName() + " t")

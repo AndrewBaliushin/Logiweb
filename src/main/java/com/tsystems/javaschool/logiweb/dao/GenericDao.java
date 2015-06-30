@@ -20,48 +20,38 @@ public interface GenericDao<T> {
      * @param newInstance
      *            persistent object
      * @return same persistence object
-     * @exception DaoException thrown if SQL exception occurred, see 
-     *            <code>DaoExceptionCode</code> and message
      */
-    T create(T newInstance) throws DaoException;
+    T create(T newInstance);
 
     /**
-     * Get persistent object by its primary key.
+     * Find persistent object by its primary key.
      * 
      * @param id
      *            primary key of object
      * @return persistent object or null if not found
-     * @exception DaoException thrown if SQL exception occurred, see 
-     *            <code>DaoExceptionCode</code> and message
      */
-    T find(Integer id) throws DaoException;
+    T find(int id);
 
     /**
      * Update persistent object.
      * 
      * @param changedObject
      *            persistent object
-     * @exception DaoException thrown if SQL exception occurred, see 
-     *            <code>DaoExceptionCode</code> and message
      */
-    void update(T changedObject) throws DaoException;
+    void update(T changedObject);
 
     /**
      * Remove persistent object from database.
      * 
      * @param objectToDelete
-     *            persistent object
-     * @exception DaoException thrown if SQL exception occurred, see 
-     *            <code>DaoExceptionCode</code> and message           
+     *            persistent object   
      */
-    void delete(T objectToDelete) throws DaoException;
+    void delete(T objectToDelete);
     
     /**
      * Find all objects of that persistent class.
      * 
      * @return set of objects or null
-     * @exception DaoException thrown if SQL exception occurred, see 
-     *            <code>DaoExceptionCode</code> and message 
      */
-    Set<T> findAll() throws DaoException;
+    Set<T> findAll();
 }

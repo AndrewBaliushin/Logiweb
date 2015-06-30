@@ -6,10 +6,11 @@ package com.tsystems.javaschool.logiweb.dao.exceptions;
  * @author Andrey Baliushin
  */
 public enum DaoExceptionCode {
+    SEARCH_FAILED,
     FAILED_TO_INSERT,
     UPDATE_FAILED,
     REMOVE_FAILED,
     SQL_ERROR,
     NO_RESULT,
-    RESULT_IS_NOT_UNIQ;
+    RESULT_IS_NOT_UNIQUE;
 }

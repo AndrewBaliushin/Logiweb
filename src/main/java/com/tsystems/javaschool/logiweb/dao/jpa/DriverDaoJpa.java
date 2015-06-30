@@ -1,5 +1,6 @@
 package com.tsystems.javaschool.logiweb.dao.jpa;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -23,7 +24,7 @@ public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
      * {@inheritDoc}
      */
     @Override
-    public Set<Driver> findAvailiableToDrive(float maxWorkingHours, City inCity) {
+    public Set<Driver> findByMaxWorkingHoursAndCityWhereNotAssignedToTruck(float maxWorkingHours, City inCity) {
 	// TODO Auto-generated method stub
 	return null;
     }
@@ -32,7 +33,7 @@ public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
      * {@inheritDoc}
      */
     @Override
-    public Driver findByEmployeeId(int id) throws DaoException {
+    public Driver findByEmployeeId(int id) {
 	EntityManager em = getEntityManager();
 
 	Query query = em
@@ -40,18 +41,19 @@ public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
 	                + getEntityClass().getSimpleName()
 	                + " t WHERE employeeId = :id", getEntityClass());
 	query.setParameter("id", id);
-
-	try {
-	    Driver driver = (Driver) query.getSingleResult();
-	    return driver;
-	} catch (NoResultException e) {
-	    throw new DaoException(DaoExceptionCode.NO_RESULT,
-		    "Driver with Employee Id (" + id + ") is not found.");
-	    
-	} catch (NonUniqueResultException e) {
-	    throw new DaoException(DaoExceptionCode.RESULT_IS_NOT_UNIQ,
-		    "Driver with Employee Id (" + id + ") is not uniq.");
-	}
+	
+	/*
+	 * getResultList used instead of getSingleResult intentionally.
+	 * Article on this:
+	 * http://sysout.be/2011/03/09/why-you-should-never-use-getsingleresult-in-jpa/
+	 */
+	List<Driver> result = query.getResultList();
+	
+	Driver driver = null;
+	if(result.size() > 0) {
+	    driver = result.get(0);    
+	} 
+	return driver;
     }
 
 }
