@@ -12,6 +12,12 @@ import com.tsystems.javaschool.logiweb.dao.GenericDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
 
+/**
+ * Abstract class with set of basic CRUD operations used as superclass
+ * by all DaoJpa objects.
+ * 
+ * @author Andrey Baliushin
+ */
 public abstract class GenericDaoJpa<T> implements GenericDao<T> {
 
     private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);

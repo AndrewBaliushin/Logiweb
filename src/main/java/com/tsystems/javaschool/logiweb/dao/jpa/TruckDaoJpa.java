@@ -15,6 +15,11 @@ import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 
+/**
+ * CRUD operations for Truck entity (JPA implementation).
+ * 
+ * @author Andrey Baliushin
+ */
 public class TruckDaoJpa extends GenericDaoJpa<Truck> implements TruckDao {
 
     private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);

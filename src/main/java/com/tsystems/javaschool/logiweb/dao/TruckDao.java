@@ -5,6 +5,11 @@ import java.util.Set;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.model.Truck;
 
+/**
+ * CRUD operations for Truck entity.
+ * 
+ * @author Andrey Baliushin
+ */
 public interface TruckDao extends GenericDao<Truck> {
 
     /**

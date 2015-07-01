@@ -15,6 +15,11 @@ import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 
+/**
+ * CRUD operations for Driver entity (JPA implementation).
+ * 
+ * @author Andrey Baliushin
+ */
 public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
 
     private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);

@@ -16,6 +16,11 @@ import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.model.Truck;
 
+/**
+ * Factory for creation JPA DAO objects.
+ * 
+ * @author Andrey Baliushin
+ */
 public class DaoFactoryJpa implements DaoFactory {
     
     private EntityManager entityManager;
