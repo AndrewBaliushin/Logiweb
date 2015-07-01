@@ -2,21 +2,19 @@ package com.tsystems.javaschool.logiweb.service;
 
 import java.util.Set;
 
-import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Driver;
+import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 
 public interface DriversService {
     
-    Set<Driver> findAllDrivers() throws DaoException;
+    Set<Driver> findAllDrivers() throws LogiwebServiceException;
 
-    Driver findDriverById(int id) throws DaoException;
+    Driver findDriverById(int id) throws LogiwebServiceException;
 
-    void editDriver(Driver editedDriver) throws DaoException;
+    void editDriver(Driver editedDriver) throws LogiwebServiceException;
 
-    void addDriver(Driver newDriver) throws DaoException;
+    void addDriver(Driver newDriver) throws LogiwebServiceException;
     
-    void removeDriver(Driver driverToRemove) throws DaoException;
+    void removeDriver(Driver driverToRemove) throws LogiwebServiceException;
     
-    Set<Driver> findAvailiableDriversForOrder(DeliveryOrder order) throws DaoException;
 }

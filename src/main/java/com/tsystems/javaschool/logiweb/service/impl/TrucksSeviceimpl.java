@@ -10,13 +10,19 @@ import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 
-public class TrucksSeviceimpl extends GenericServiceImpl implements TrucksService {
+public class TrucksSeviceimpl implements TrucksService {
+    
+    private EntityManager em;
     
     private TruckDao truckDao;
     
     public TrucksSeviceimpl(TruckDao truckDao, EntityManager em) {
-	super(em);
+	this.em = em;
 	this.truckDao = truckDao;
+    }
+    
+    private EntityManager getEntityManager() {
+        return em;
     }
 
     @Override

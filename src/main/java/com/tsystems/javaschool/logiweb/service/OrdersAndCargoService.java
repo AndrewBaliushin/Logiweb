@@ -15,5 +15,7 @@ public interface OrdersAndCargoService {
     void addCargoToOrder(Cargo newCargo, DeliveryOrder order) throws DaoException;
     
     void setStatusOrderReadyToGo(DeliveryOrder order) throws DaoException;
+    
+    void findAvailiableDriversForOrder(DeliveryOrder order) throws DaoException;
 
 }
