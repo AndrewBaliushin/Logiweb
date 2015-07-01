@@ -5,7 +5,7 @@
 		Drivers <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 	</legend>
 
-	<a href="${pageContext.request.contextPath}${showDriversUrl}" role="button" class="btn btn-success btn-large"><span
+	<a href="/driverList" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
 	<a href="#" role="button" class="btn btn-success btn-large"><span
@@ -18,7 +18,7 @@
 		Trucks <span class="glyphicon glyphicon-bed" aria-hidden="true"></span>
 	</legend>
 
-	<a href="${pageContext.request.contextPath}${showTrucksUrl}" role="button" class="btn btn-success btn-large"><span
+	<a href="#" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
 	<a href="#" role="button" class="btn btn-success btn-large"><span

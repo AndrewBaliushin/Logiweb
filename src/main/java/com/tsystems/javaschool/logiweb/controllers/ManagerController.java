@@ -5,90 +5,68 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tsystems.javaschool.logiweb.dao.DaoFactory;
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
-import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.dao.jpa.DriverDaoJpa;
-import com.tsystems.javaschool.logiweb.dao.jpa.TruckDaoJpa;
+import com.tsystems.javaschool.logiweb.dao.jpa.DaoFactoryJpa;
 import com.tsystems.javaschool.logiweb.model.Driver;
-import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.DriversService;
-import com.tsystems.javaschool.logiweb.service.TrucksService;
+import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.impl.DriverServiceImpl;
-import com.tsystems.javaschool.logiweb.service.impl.TrucksSeviceimpl;
+import com.tsystems.javaschool.logiweb.utils.LogiwebJpaHelper;
 
 @Controller
 @RequestMapping("/manager")
 public class ManagerController {
+    
+    Logger logger = Logger.getLogger(ManagerController.class);
 
     //TODO Autowire this block
-    //TODO remove emf creation to singleton
-    private static EntityManagerFactory emf = Persistence
-	    .createEntityManagerFactory("logiweb");
+    private EntityManagerFactory emf = LogiwebJpaHelper
+            .getEntityManagerFactory();
 
-    private static EntityManager entityManager = emf.createEntityManager();
+    private EntityManager entityManager = emf.createEntityManager();
     
-    DriverDao driverDao = new DriverDaoJpa(Driver.class, entityManager);
-    TruckDao truckDao = new TruckDaoJpa(Truck.class, entityManager);
+    private DaoFactory daoFactory = new DaoFactoryJpa(entityManager);
     
-    DriversService driverService = new DriverServiceImpl(driverDao, entityManager);
-    TrucksService trucksService = new TrucksSeviceimpl(truckDao, entityManager);
+    DriverDao driverDao = daoFactory.getDriverDao();
+    TruckDao truckDao = daoFactory.getTruckDao();
+    
+    DriversService driverService = new DriverServiceImpl(daoFactory, entityManager);
     //end of block
-
-    public static final String DRIVER_LIST_URL = "driverList";
-    public static final String TRUCK_LIST_URL = "truckList";
     
     @RequestMapping(value = {"", "/"})
     public ModelAndView frontPage() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/ManagerFrontPage");
         mav.addObject("title", "Manager View");
-        mav.addObject("showDriversUrl", "/manager/" + DRIVER_LIST_URL);
-        mav.addObject("showTrucksUrl", "/manager/" + TRUCK_LIST_URL);
         return mav;
     }
     
-    @RequestMapping(DRIVER_LIST_URL)
-    public ModelAndView showDrivers() {
+    @RequestMapping("/driverList")
+    public ModelAndView showDrivers() {        
 	ModelAndView mav = new ModelAndView();
 	mav.setViewName("manager/ShowDriverList");
 	mav.addObject("title", "Drivers List");
 	
 	Set<Driver> drivers;
-	try {
-	    drivers = driverService.findAllDrivers();
-        } catch (DaoException e) {
-            e.printStackTrace(); //TODO change to logging
-	    drivers = new HashSet<Driver>(0);
+        try {
+            drivers = driverService.findAllDrivers();
+        } catch (LogiwebServiceException e) {
+            drivers = new HashSet<Driver>(0);
+            // TODO Figure out what to do
+            e.printStackTrace();
         }
 	
 	mav.addObject("drivers", drivers);
 	
 	return mav;
     }
-    
-    @RequestMapping(TRUCK_LIST_URL)
-    public ModelAndView showTrucks() {
-	ModelAndView mav = new ModelAndView();
-	mav.setViewName("manager/ShowTrucksList");
-	mav.addObject("title", "Trucks List");
-	
-	Set<Truck> trucks;
-	try {
-	    trucks = trucksService.findAllTrucks();
-        } catch (DaoException e) {
-            e.printStackTrace();
-            trucks = new HashSet<Truck>(0);
-        }
-	
-	mav.addObject("trucks", trucks);
-	
-	return mav;
-    }
+   
 }
