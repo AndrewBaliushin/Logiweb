@@ -14,7 +14,11 @@ public class DaoException extends Exception {
 	super(message);
 	exceptionCode = code;
     }
-
+    
+    public DaoException(DaoExceptionCode code) {
+        exceptionCode = code;
+    }
+    
     public DaoExceptionCode getExceptionCode() {
         return exceptionCode;
     }

@@ -11,25 +11,27 @@ import com.tsystems.javaschool.logiweb.model.Driver;
  * 
  * @author Andrey Baliushin
  */
-public interface DriverDao extends GenericDao<Driver> { 
-    
+public interface DriverDao extends GenericDao<Driver> {
+
     /**
-     * Find Drivers in specific city with specific status.
-     * Filter by amount of working hours that Drivers had in this month.
+     * Find Drivers in specific city. Filter by maximum amount of
+     * working hours in this month.
      * 
-     * @param maxWorkingHours limit of working hours in this month
-     * @param status status of driver
-     * @param inCity city of interest
+     * @param maxWorkingHours
+     *            limit of working hours in this month
+     * @param inCity
+     *            city of interest
      * @return free drivers or empty set
      */
-    Set<Driver> findByMaxWorkingHoursAndCityWhereNotAssignedToTruck(float maxWorkingHours, City inCity);
-    
+    Set<Driver> findByMaxWorkingHoursAndCityWhereNotAssignedToTruck(
+            float maxWorkingHours, City inCity) throws DaoException;
+
     /**
-     * Find driver by employee id. 
+     * Find driver by employee id.
      * 
-     * @param id 
+     * @param id
      * @return Driver or null
      */
-    Driver findByEmployeeId(int id);
-    
+    Driver findByEmployeeId(int id) throws DaoException;
+
 }

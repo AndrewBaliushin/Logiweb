@@ -21,7 +21,7 @@ public interface GenericDao<T> {
      *            persistent object
      * @return same persistence object
      */
-    T create(T newInstance);
+    T create(T newInstance)  throws DaoException;
 
     /**
      * Find persistent object by its primary key.
@@ -30,7 +30,7 @@ public interface GenericDao<T> {
      *            primary key of object
      * @return persistent object or null if not found
      */
-    T find(int id);
+    T find(int id)  throws DaoException;
 
     /**
      * Update persistent object.
@@ -38,7 +38,7 @@ public interface GenericDao<T> {
      * @param changedObject
      *            persistent object
      */
-    void update(T changedObject);
+    void update(T changedObject)  throws DaoException;
 
     /**
      * Remove persistent object from database.
@@ -46,12 +46,12 @@ public interface GenericDao<T> {
      * @param objectToDelete
      *            persistent object   
      */
-    void delete(T objectToDelete);
+    void delete(T objectToDelete)  throws DaoException;
     
     /**
      * Find all objects of that persistent class.
      * 
      * @return set of objects or null
      */
-    Set<T> findAll();
+    Set<T> findAll()  throws DaoException;
 }

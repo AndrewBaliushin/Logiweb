@@ -14,6 +14,6 @@ public interface TruckDao extends GenericDao<Truck> {
      * @return trucks or empty set
      */
     Set<Truck> findByMinCapacityWhereStatusOkAndNotAssignedToOrder(
-	    float minCargoCapacity);
+	    float minCargoCapacity)  throws DaoException;
 
 }

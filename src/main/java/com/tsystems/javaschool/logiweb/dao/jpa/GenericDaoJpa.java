@@ -6,30 +6,35 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 
+import org.apache.log4j.Logger;
+
 import com.tsystems.javaschool.logiweb.dao.GenericDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
+import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
 
 public abstract class GenericDaoJpa<T> implements GenericDao<T> {
-    
-    private Class<T> entityClass;    
+
+    private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);
+
+    private Class<T> entityClass;
     private EntityManager entityManager;
-    
+
     public GenericDaoJpa(Class<T> entityClass, EntityManager entityManager) {
-	this.entityClass = entityClass;
-	this.entityManager = entityManager;
-    }    
-    
+        this.entityClass = entityClass;
+        this.entityManager = entityManager;
+    }
+
     /**
      * Get entity class that were used for creation of this DAO object.
      * 
      * @return class of used entity
      */
     protected final Class<T> getEntityClass() {
-	return entityClass;
+        return entityClass;
     }
 
     /**
-     * Get  EntityManger object that was used for creation of this DAO object.
+     * Get EntityManger object that was used for creation of this DAO object.
      * 
      * @return EntityManager object
      */
@@ -41,53 +46,90 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final T create(T newInstance) {
-	//TODO add SQL Exception check
-	entityManager.persist(newInstance);
-	return newInstance;
+    public final T create(T newInstance) throws DaoException {
+        if (newInstance == null) {
+            return null; // TODO make sure it's right way
+        }
+        
+        try {
+            entityManager.persist(newInstance);
+            return newInstance;
+        } catch (Exception e) {
+            LOG.warn("Failed to create entity " + getEntityClass()
+                    + ". Exception msg: " + e.getMessage());
+            throw new DaoException(DaoExceptionCode.FAILED_TO_INSERT);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final T find(int id) {
-	//TODO add SQL Exception check
-	T entity = getEntityManager().find(getEntityClass(), id);
-	return entity;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void update(T changedObject) {
-	//TODO add SQL Exception check
-	getEntityManager().merge(changedObject);
+    public final T find(int id) throws DaoException {
+        try {
+            return getEntityManager().find(getEntityClass(), id);
+        } catch (Exception e) {
+            LOG.warn("Failed to find entity " + getEntityClass()
+                    + " by ID = " + id + ". Exception msg: " + e.getMessage());
+            throw new DaoException(DaoExceptionCode.SEARCH_FAILED);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final void delete(T objectToDelete) {
-	//TODO add SQL Exception check
-	getEntityManager().remove(objectToDelete);
+    public final void update(T changedObject) throws DaoException {
+        if (changedObject == null) {
+            return; // TODO make sure it's right way
+        }
+
+        try {
+            getEntityManager().merge(changedObject);
+        } catch (Exception e) {
+            LOG.warn("Failed to update entity " + getEntityClass()
+                    + ". Exception msg: " + e.getMessage());
+            throw new DaoException(DaoExceptionCode.UPDATE_FAILED);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public final Set<T> findAll() {
-	//TODO add SQL Exception check
-	List<T> allEntities = getEntityManager().createQuery(
-	        "Select t from " + getEntityClass().getSimpleName() + " t")
-	        .getResultList();
-	
-	Set<T> allEntitiesAsSet = new HashSet<T>(allEntities);
-	return allEntitiesAsSet;
+    public final void delete(T objectToDelete) throws DaoException {
+        if (objectToDelete == null) {
+            return; // TODO make sure it's right way
+
+        }
+
+        try {
+            getEntityManager().remove(objectToDelete);
+        } catch (Exception e) {
+            LOG.warn("Failed to delete entity " + getEntityClass()
+                    + ". Exception msg: " + e.getMessage());
+            throw new DaoException(DaoExceptionCode.REMOVE_FAILED);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Set<T> findAll() throws DaoException {
+        try {
+            // unchecked conversion to conform to List<T>
+            @SuppressWarnings("unchecked")
+            List<T> allEntities = getEntityManager().createQuery(
+                    "Select t from " + getEntityClass().getSimpleName() + " t")
+                    .getResultList();
+
+            return new HashSet<T>(allEntities);
+        } catch (Exception e) {
+            LOG.warn("Failed to FindAll entities for: " + getEntityClass()
+                    + ". Exception msg: " + e.getMessage());
+            throw new DaoException(DaoExceptionCode.SEARCH_FAILED);
+        }
     }
 
 }
