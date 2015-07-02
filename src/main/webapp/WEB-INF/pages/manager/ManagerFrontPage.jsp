@@ -5,7 +5,7 @@
 		Drivers <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 	</legend>
 
-	<a href="/driverList" role="button" class="btn btn-success btn-large"><span
+	<a href="manager/driverList" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
 	<a href="#" role="button" class="btn btn-success btn-large"><span
