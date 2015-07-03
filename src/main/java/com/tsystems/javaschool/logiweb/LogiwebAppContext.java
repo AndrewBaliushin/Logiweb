@@ -28,7 +28,7 @@ import com.tsystems.javaschool.logiweb.service.impl.DriverServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.TrucksSeviceimpl;
 
 /**
- * Class provides to app context.
+ * Class provides acces to app context.
  * 
  * @author Andrey Baliushin
  */
