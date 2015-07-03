@@ -1,6 +1,12 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<%@ include file="ManagerHeader.jsp"%>
+<jsp:include page="../GlobalHeader.jsp">
+    <jsp:param name="title" value="Trucks List" />
+</jsp:include>
+
+<jsp:include page="../GlobalHeaderMenu.jsp">
+    <jsp:param name="homeLink" value="/manager" />
+</jsp:include>
 
 <table>
 	
@@ -43,4 +49,5 @@
 
 	</tbody>
 </table>
-<%@ include file="../GlobalFooter.jsp"%>
+
+<jsp:include page="../GlobalFooter.jsp"/>
