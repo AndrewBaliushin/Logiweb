@@ -63,7 +63,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
         } catch (Exception e) {
             LOG.warn("Failed to create entity " + getEntityClass()
                     + ". Exception msg: " + e.getMessage());
-            throw new DaoException(DaoExceptionCode.FAILED_TO_INSERT);
+            throw new DaoException(e);
         }
     }
 
@@ -77,7 +77,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
         } catch (Exception e) {
             LOG.warn("Failed to find entity " + getEntityClass()
                     + " by ID = " + id + ". Exception msg: " + e.getMessage());
-            throw new DaoException(DaoExceptionCode.SEARCH_FAILED);
+            throw new DaoException(e);
         }
     }
 
@@ -95,7 +95,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
         } catch (Exception e) {
             LOG.warn("Failed to update entity " + getEntityClass()
                     + ". Exception msg: " + e.getMessage());
-            throw new DaoException(DaoExceptionCode.UPDATE_FAILED);
+            throw new DaoException(e);
         }
     }
 
@@ -114,7 +114,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
         } catch (Exception e) {
             LOG.warn("Failed to delete entity " + getEntityClass()
                     + ". Exception msg: " + e.getMessage());
-            throw new DaoException(DaoExceptionCode.REMOVE_FAILED);
+            throw new DaoException(e);
         }
     }
 
@@ -134,7 +134,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
         } catch (Exception e) {
             LOG.warn("Failed to FindAll entities for: " + getEntityClass()
                     + ". Exception msg: " + e.getMessage());
-            throw new DaoException(DaoExceptionCode.SEARCH_FAILED);
+            throw new DaoException(e);
         }
     }
 

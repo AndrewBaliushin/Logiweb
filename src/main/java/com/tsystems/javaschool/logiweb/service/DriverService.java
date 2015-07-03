@@ -2,10 +2,11 @@ package com.tsystems.javaschool.logiweb.service;
 
 import java.util.Set;
 
+import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 
-public interface DriversService {
+public interface DriverService {
     
     Set<Driver> findAllDrivers() throws LogiwebServiceException;
 
@@ -17,4 +18,7 @@ public interface DriversService {
     
     void removeDriver(Driver driverToRemove) throws LogiwebServiceException;
     
+    Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(City city, float maxWorkingHours) throws LogiwebServiceException;
+    
+    float calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException;
 }

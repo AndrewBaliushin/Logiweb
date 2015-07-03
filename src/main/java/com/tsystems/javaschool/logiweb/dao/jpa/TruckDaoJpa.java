@@ -54,9 +54,8 @@ public class TruckDaoJpa extends GenericDaoJpa<Truck> implements TruckDao {
 
             return resultSet;
         } catch (Exception e) {
-            LOG.warn("Failed to find entity " + getEntityClass() + " by minCargoCapacity = "
-                    + minCargoCapacity + ". Exception msg: " + e.getMessage());
-            throw new DaoException(DaoExceptionCode.SEARCH_FAILED);
+            LOG.warn(e);
+            throw new DaoException(e);
         }
     }
 
