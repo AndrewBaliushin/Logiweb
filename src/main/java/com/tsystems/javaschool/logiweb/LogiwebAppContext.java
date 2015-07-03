@@ -28,63 +28,58 @@ import com.tsystems.javaschool.logiweb.service.impl.DriverServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.TrucksSeviceimpl;
 
 /**
- * Class provides to app context. 
+ * Class provides to app context.
  * 
  * @author Andrey Baliushin
  */
 public final class LogiwebAppContext {
-    
+
     public static final LogiwebAppContext INSTANCE = new LogiwebAppContext();
-    
+
     private static final String PERSISTENCE_UNIT = "logiweb";
-    
+
     private EntityManagerFactory emf;
     private EntityManager em;
 
     private CargoDao cargoDao;
-
     private CityDao cityDao;
-
     private DeliveryOrderDao deliveryOrderDao;
-
     private DriverDao driverDao;
-
     private DriverShiftJournaDao driverShiftJournalDao;
-
     private TruckDao truckDao;
 
     private TrucksService truckService;
+    private DriverService driverService;
 
-    private DriverService driverService;    
-    
-    private LogiwebAppContext() { }
-    
+    private LogiwebAppContext() {
+    }
+
     private synchronized void createEmfInstance() {
-        if(emf == null) {
+        if (emf == null) {
             emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
         }
     }
-    
+
     /**
-     * Get singleton instance of EntityManagerFactory for 'logiweb' persistence-unit.
+     * Get singleton instance of EntityManagerFactory for 'logiweb'
+     * persistence-unit.
      * 
      * @return unique instance of EntityManagerFactory
      */
     public EntityManagerFactory getEntityManagerFactory() {
-        if(emf == null) {
+        if (emf == null) {
             createEmfInstance();
         }
         return emf;
-    }    
-    
+    }
+
     public EntityManager getEntityManager() {
-        if(em == null || !em.isOpen()) {
+        if (em == null || !em.isOpen()) {
             em = getEntityManagerFactory().createEntityManager();
         }
         return em;
     }
-    
-    
+
     public CargoDao getCargoDao() {
         if (cargoDao == null) {
             cargoDao = new CargoDaoJpa(Cargo.class, getEntityManager());
@@ -92,7 +87,6 @@ public final class LogiwebAppContext {
         return cargoDao;
     }
 
-    
     public CityDao getCityDao() {
         if (cityDao == null) {
             cityDao = new CityDaoJpa(City.class, getEntityManager());
@@ -100,15 +94,14 @@ public final class LogiwebAppContext {
         return cityDao;
     }
 
-    
     public DeliveryOrderDao getDeliveryOrderDao() {
         if (deliveryOrderDao == null) {
-            deliveryOrderDao = new DeliveryOrderDaoJpa(DeliveryOrder.class, getEntityManager());
+            deliveryOrderDao = new DeliveryOrderDaoJpa(DeliveryOrder.class,
+                    getEntityManager());
         }
         return deliveryOrderDao;
     }
 
-    
     public DriverDao getDriverDao() {
         if (driverDao == null) {
             driverDao = new DriverDaoJpa(Driver.class, getEntityManager());
@@ -116,34 +109,35 @@ public final class LogiwebAppContext {
         return driverDao;
     }
 
-    
     public DriverShiftJournaDao geDriverShiftJournaDao() {
         if (driverShiftJournalDao == null) {
-            driverShiftJournalDao = new DriverShiftJournalDaoJpa(DriverShiftJournal.class, getEntityManager());
+            driverShiftJournalDao = new DriverShiftJournalDaoJpa(
+                    DriverShiftJournal.class, getEntityManager());
         }
         return driverShiftJournalDao;
     }
 
-    
     public TruckDao getTruckDao() {
         if (truckDao == null) {
             truckDao = new TruckDaoJpa(Truck.class, getEntityManager());
         }
         return truckDao;
     }
-    
+
     public TrucksService getTruckService() {
         if (truckService == null) {
-            truckService = new TrucksSeviceimpl(getTruckDao(), getEntityManager());
+            truckService = new TrucksSeviceimpl(getTruckDao(),
+                    getEntityManager());
         }
         return truckService;
     }
-    
+
     public DriverService getDriverService() {
-        if(driverService == null) {
-            driverService = new DriverServiceImpl(getDriverDao(), getEntityManager());
+        if (driverService == null) {
+            driverService = new DriverServiceImpl(getDriverDao(),
+                    getEntityManager());
         }
         return driverService;
     }
-    
+
 }
