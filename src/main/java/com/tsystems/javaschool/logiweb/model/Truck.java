@@ -34,7 +34,7 @@ public class Truck {
     @Column(name = "truck_id", unique = true, nullable = false)
     private int id;
 
-    @Column(name = "truck_license_plate_UQ", unique = true)
+    @Column(name = "truck_license_plate_UQ", unique = true, nullable = false)
     private String licencePlate;
 
     @Column(name = "truck_crew_size", nullable = false)

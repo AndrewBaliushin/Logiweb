@@ -1,0 +1,109 @@
+package com.tsystems.javaschool.logiweb.controllers;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.tsystems.javaschool.logiweb.LogiwebAppContext;
+import com.tsystems.javaschool.logiweb.model.User;
+import com.tsystems.javaschool.logiweb.model.status.UserRole;
+import com.tsystems.javaschool.logiweb.service.UserService;
+import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
+import com.tsystems.javaschool.logiweb.service.exceptions.UserNotFoundServiceException;
+
+@Controller
+public class AuthController {
+
+    private static final Logger LOG = Logger.getLogger(AuthController.class);
+    
+    LogiwebAppContext ctx = LogiwebAppContext.INSTANCE;
+    
+    UserService userService = ctx.getUserService();
+    
+    private static final String SESSION_ATTRIBUTE_NAME = "userRole";
+    
+    @RequestMapping(value = "/login")
+    public ModelAndView processLoginForm(HttpServletRequest request,
+            HttpServletResponse response) {
+        
+        if (isLoggedIn(request)) {
+            redirectToFrontPage(request, response);
+        }
+        
+        String mail = request.getParameter("mail");
+        String pass = request.getParameter("pass");
+        
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("auth/Login");
+        
+        mav.addObject("mail", mail); //insert mail back on login page
+        
+        if(mail == null) {      //user didn't submit the form
+            return mav; 
+        }
+        
+        try {
+            if(mail != null) {
+                User user = userService.getUserByMd5PassAndMail(mail, pass);
+                addUserRoleAsLoggedInMarketToSession(user, request.getSession());
+                redirectToFrontPage(request, response);
+            }
+        } catch (UserNotFoundServiceException e) {
+            mav.addObject("error", "User with this pass and mail is not found.");
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Problems in user Service", e);
+            mav.addObject("error", "Error on server");
+        }
+        
+        return mav;
+    }
+    
+    @RequestMapping(value = "/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().setAttribute(SESSION_ATTRIBUTE_NAME, null);
+        try {
+            response.sendRedirect(request.getContextPath());
+        } catch (IOException e) {
+            LOG.warn("IO exception", e);
+        }
+    }
+    
+    /**
+     * Check if user is marked in session as logged in.
+     * 
+     * @param request
+     * @return
+     */
+    public static boolean isLoggedIn(HttpServletRequest request) {
+        return request.getSession().getAttribute(SESSION_ATTRIBUTE_NAME) != null;
+    }
+    
+    /**
+     * Add user role to user session. User considered to be logged in if this
+     * attribute is not null.
+     * 
+     * @param role
+     * @param session
+     */
+    private void addUserRoleAsLoggedInMarketToSession(User user, HttpSession session) {
+        session.setAttribute(SESSION_ATTRIBUTE_NAME, user.getRole());
+        LOG.info(user.getMail() + " is logged in.");
+    }
+    
+    private void redirectToFrontPage(HttpServletRequest request,
+    HttpServletResponse response) {
+        try {
+            response.sendRedirect(request.getContextPath());
+        } catch (IOException e) {
+            LOG.warn("IO exception", e);
+        }
+    }
+
+}

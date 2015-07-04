@@ -32,7 +32,7 @@ import com.tsystems.javaschool.logiweb.utils.DateUtils;
 
 public class DriverServiceImpl implements DriverService {
     
-    private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);
+    private static final Logger LOG = Logger.getLogger(DriverServiceImpl.class);
     
     private EntityManager em;
     

@@ -10,22 +10,27 @@ import com.tsystems.javaschool.logiweb.dao.DeliveryOrderDao;
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
+import com.tsystems.javaschool.logiweb.dao.UserDao;
 import com.tsystems.javaschool.logiweb.dao.jpa.CargoDaoJpa;
 import com.tsystems.javaschool.logiweb.dao.jpa.CityDaoJpa;
 import com.tsystems.javaschool.logiweb.dao.jpa.DeliveryOrderDaoJpa;
 import com.tsystems.javaschool.logiweb.dao.jpa.DriverDaoJpa;
 import com.tsystems.javaschool.logiweb.dao.jpa.DriverShiftJournalDaoJpa;
 import com.tsystems.javaschool.logiweb.dao.jpa.TruckDaoJpa;
+import com.tsystems.javaschool.logiweb.dao.jpa.UserDaoJpa;
 import com.tsystems.javaschool.logiweb.model.Cargo;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.model.Truck;
+import com.tsystems.javaschool.logiweb.model.User;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
+import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.impl.DriverServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.TrucksSeviceimpl;
+import com.tsystems.javaschool.logiweb.service.impl.UserServiceImpl;
 
 /**
  * Class provides acces to app context.
@@ -47,9 +52,11 @@ public final class LogiwebAppContext {
     private DriverDao driverDao;
     private DriverShiftJournaDao driverShiftJournalDao;
     private TruckDao truckDao;
+    private UserDao userDao;
 
     private TrucksService truckService;
     private DriverService driverService;
+    private UserService userService;
 
     private LogiwebAppContext() {
     }
@@ -138,6 +145,20 @@ public final class LogiwebAppContext {
                     geDriverShiftJournaDao(), getEntityManager());
         }
         return driverService;
+    }
+
+    public UserDao getUserDao() {
+        if (userDao == null) {
+            userDao = new UserDaoJpa(User.class, getEntityManager());
+        }
+        return userDao;
+    }
+
+    public UserService getUserService() {
+        if (userService == null) {
+            userService = new UserServiceImpl(getEntityManager(), getUserDao());
+        }
+        return userService;
     }
 
 }

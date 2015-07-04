@@ -15,7 +15,12 @@
 			<ul class="nav navbar-nav">
 				<li><a href="<c:url value="${param.homeLink}"/>">Home${homeLink}</a></li>
 			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="<c:url value="/logout"/>">Logout</a></li>
+			</ul>
 		</div>
+		
 
 	</div>
 </nav>

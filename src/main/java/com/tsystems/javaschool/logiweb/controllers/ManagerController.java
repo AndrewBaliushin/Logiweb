@@ -1,16 +1,11 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,12 +24,12 @@ import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceExceptio
 @RequestMapping("/manager")
 public class ManagerController {
     
+    private final static Logger LOG = Logger.getLogger(ManagerController.class);
+
     private LogiwebAppContext ctx = LogiwebAppContext.INSTANCE;
-    
+
     private DriverService driverService = ctx.getDriverService();
     private TrucksService truckService = ctx.getTruckService();
-    
-    Logger logger = Logger.getLogger(ManagerController.class);
     
     @RequestMapping(value = {"", "/"})
     public ModelAndView frontPage() {
@@ -53,7 +48,7 @@ public class ManagerController {
             drivers = driverService.findAllDrivers();
         } catch (LogiwebServiceException e) {
             drivers = new HashSet<Driver>(0);
-            logger.warn(e);
+            LOG.warn(e);
         }
 	
 	mav.addObject("drivers", drivers);

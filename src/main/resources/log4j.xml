@@ -33,7 +33,7 @@
         </filter>
 	</appender>
 	
-<!--            Logger for hibernate -->
+<!--            Logger for SQL -->
 <!-- 	<category name="org.hibernate" additivity="false"> -->
 <!-- 		<priority value="WARN" /> -->
 <!-- 		<appender-ref ref="CONSOLE-WARN" /> -->
