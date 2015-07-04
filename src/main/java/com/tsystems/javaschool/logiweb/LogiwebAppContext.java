@@ -41,8 +41,15 @@ public final class LogiwebAppContext {
 
     public static final LogiwebAppContext INSTANCE = new LogiwebAppContext();
 
-    private static final String PERSISTENCE_UNIT = "logiweb";
+    /**
+     * Holds name of session attribute where UserRole will be stored.
+     * Also used to check if user is logged.
+     * (if equals to null then user is not logged in)
+     */
+    public static final String SESSION_ATTR_TO_STORE_ROLE = "userRole";
 
+    private static final String PERSISTENCE_UNIT = "logiweb";
+    
     private EntityManagerFactory emf;
     private EntityManager em;
 

@@ -26,9 +26,10 @@ public class AuthController {
     LogiwebAppContext ctx = LogiwebAppContext.INSTANCE;
     
     UserService userService = ctx.getUserService();
-    
-    private static final String SESSION_ATTRIBUTE_NAME = "userRole";
-    
+
+    private static final String SESSION_ATTR_NAME_FOR_USER_ROLE 
+                = LogiwebAppContext.SESSION_ATTR_TO_STORE_ROLE;
+
     @RequestMapping(value = "/login")
     public ModelAndView processLoginForm(HttpServletRequest request,
             HttpServletResponse response) {
@@ -67,7 +68,7 @@ public class AuthController {
     
     @RequestMapping(value = "/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        request.getSession().setAttribute(SESSION_ATTRIBUTE_NAME, null);
+        request.getSession().setAttribute(SESSION_ATTR_NAME_FOR_USER_ROLE, null);
         try {
             response.sendRedirect(request.getContextPath());
         } catch (IOException e) {
@@ -82,7 +83,7 @@ public class AuthController {
      * @return
      */
     public static boolean isLoggedIn(HttpServletRequest request) {
-        return request.getSession().getAttribute(SESSION_ATTRIBUTE_NAME) != null;
+        return request.getSession().getAttribute(SESSION_ATTR_NAME_FOR_USER_ROLE) != null;
     }
     
     /**
@@ -93,7 +94,7 @@ public class AuthController {
      * @param session
      */
     private void addUserRoleAsLoggedInMarketToSession(User user, HttpSession session) {
-        session.setAttribute(SESSION_ATTRIBUTE_NAME, user.getRole());
+        session.setAttribute(SESSION_ATTR_NAME_FOR_USER_ROLE, user.getRole());
         LOG.info(user.getMail() + " is logged in.");
     }
     
