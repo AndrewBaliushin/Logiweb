@@ -15,6 +15,12 @@ import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.UserNotFoundServiceException;
 
+/**
+ * Data manipulation related to Users of this app.
+ * 
+ * @author Andrey Baliushin
+ *
+ */
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOG = Logger.getLogger(UserServiceImpl.class);

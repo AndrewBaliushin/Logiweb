@@ -18,6 +18,11 @@ import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceExceptio
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 import com.tsystems.javaschool.logiweb.utils.LicensePlateValidator;
 
+/**
+ * Data manipulation and business logic related to Trucks.
+ * 
+ * @author Andrey Baliushin
+ */
 public class TrucksSeviceimpl implements TrucksService {
     
     private static final Logger LOG = Logger.getLogger(TrucksSeviceimpl.class);

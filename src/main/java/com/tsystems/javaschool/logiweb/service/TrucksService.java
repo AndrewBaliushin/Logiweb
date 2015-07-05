@@ -10,6 +10,12 @@ import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
+/**
+ * Data manipulation and business logic related to Trucks.
+ * 
+ * @author Andrey Baliushin
+ *
+ */
 public interface TrucksService {
 
     /**

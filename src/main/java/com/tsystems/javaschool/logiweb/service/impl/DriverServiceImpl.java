@@ -30,6 +30,11 @@ import com.tsystems.javaschool.logiweb.service.exceptions.DriverEmployeeIdOccupi
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.utils.DateUtils;
 
+/**
+ * Data manipulation and business logic related to Drivers.
+ * 
+ * @author Andrey Baliushin
+ */
 public class DriverServiceImpl implements DriverService {
     
     private static final Logger LOG = Logger.getLogger(DriverServiceImpl.class);

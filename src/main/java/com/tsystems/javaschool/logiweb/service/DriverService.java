@@ -6,6 +6,11 @@ import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 
+/**
+ * Data manipulation and business logic related to Drivers.
+ * 
+ * @author Andrey Baliushin
+ */
 public interface DriverService {
     
     Set<Driver> findAllDrivers() throws LogiwebServiceException;
