@@ -25,9 +25,11 @@ import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.model.User;
+import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.UserService;
+import com.tsystems.javaschool.logiweb.service.impl.CityServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.DriverServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.TrucksSeviceimpl;
 import com.tsystems.javaschool.logiweb.service.impl.UserServiceImpl;
@@ -64,7 +66,7 @@ public final class LogiwebAppContext {
     private TrucksService truckService;
     private DriverService driverService;
     private UserService userService;
-
+    private CityService cityService;
     private LogiwebAppContext() {
     }
 
@@ -106,6 +108,13 @@ public final class LogiwebAppContext {
             cityDao = new CityDaoJpa(City.class, getEntityManager());
         }
         return cityDao;
+    }
+
+    public CityService getCityService() {
+        if (cityService == null) {
+            cityService = new CityServiceImpl(getEntityManager(), getCityDao());
+        }
+        return cityService;
     }
 
     public DeliveryOrderDao getDeliveryOrderDao() {

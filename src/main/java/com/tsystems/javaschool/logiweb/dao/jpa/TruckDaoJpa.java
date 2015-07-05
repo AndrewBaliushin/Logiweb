@@ -59,4 +59,32 @@ public class TruckDaoJpa extends GenericDaoJpa<Truck> implements TruckDao {
         }
     }
 
+    @Override
+    public Truck findByLicensePlate(String licensePlate) throws DaoException {
+        try {
+            EntityManager em = getEntityManager();
+            Class<Truck> truckEntityClass = getEntityClass();
+            String classSimpleName = truckEntityClass.getSimpleName();
+
+            Query query = em
+                    .createQuery(
+                            "SELECT t FROM "
+                                    + classSimpleName
+                                    + " t WHERE licencePlate = :plate",
+                            truckEntityClass);
+            query.setParameter("plate", licensePlate);
+
+            List<Truck> resultList = query.getResultList();
+            if(resultList.isEmpty()) {
+                return null;
+            } else {
+                return resultList.get(0);
+            }
+        } catch (Exception e) {
+            LOG.warn(e);
+            throw new DaoException(e);
+        }
+    }
+
+
 }

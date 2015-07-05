@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.JDBCException;
+import org.hibernate.exception.ConstraintViolationException;
 
 import com.tsystems.javaschool.logiweb.dao.GenericDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
+import com.tsystems.javaschool.logiweb.dao.exceptions.ConstrainOrIntegrityViolationException;
 
 /**
  * Abstract class with set of basic CRUD operations used as superclass
@@ -52,14 +56,12 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
      * {@inheritDoc}
      */
     @Override
-    public final T create(T newInstance) throws DaoException {
-        if (newInstance == null) {
-            return null; // TODO make sure it's right way
-        }
-        
+    public final T create(T newInstance) throws ConstrainOrIntegrityViolationException, DaoException {
         try {
             entityManager.persist(newInstance);
             return newInstance;
+        } catch (PersistenceException e) {
+            throw new ConstrainOrIntegrityViolationException(e.getCause().getMessage());
         } catch (Exception e) {
             LOG.warn("Failed to create entity " + getEntityClass()
                     + ". Exception msg: " + e.getMessage());

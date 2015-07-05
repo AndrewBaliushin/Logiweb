@@ -17,7 +17,7 @@ import com.tsystems.javaschool.logiweb.service.exceptions.UserNotFoundServiceExc
 
 public class UserServiceImpl implements UserService {
 
-    private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);
+    private static final Logger LOG = Logger.getLogger(UserServiceImpl.class);
 
     private EntityManager em;
     

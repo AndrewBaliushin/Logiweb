@@ -17,6 +17,7 @@ import com.tsystems.javaschool.logiweb.model.status.UserRole;
 import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.UserNotFoundServiceException;
+import com.tsystems.javaschool.logiweb.utils.AuthUtils;
 
 @Controller
 public class AuthController {
@@ -27,14 +28,11 @@ public class AuthController {
     
     UserService userService = ctx.getUserService();
 
-    private static final String SESSION_ATTR_NAME_FOR_USER_ROLE 
-                = LogiwebAppContext.SESSION_ATTR_TO_STORE_ROLE;
-
     @RequestMapping(value = "/login")
     public ModelAndView processLoginForm(HttpServletRequest request,
             HttpServletResponse response) {
         
-        if (isLoggedIn(request)) {
+        if (AuthUtils.isLoggedIn(request)) {
             redirectToFrontPage(request, response);
         }
         
@@ -53,7 +51,8 @@ public class AuthController {
         try {
             if(mail != null) {
                 User user = userService.getUserByMd5PassAndMail(mail, pass);
-                addUserRoleAsLoggedInMarketToSession(user, request.getSession());
+                AuthUtils.startAuthSessionForRole(request.getSession(), user.getRole());
+                LOG.info("User id:" + user.getId() + " mail:" + user.getMail() + " is logged in.");
                 redirectToFrontPage(request, response);
             }
         } catch (UserNotFoundServiceException e) {
@@ -68,34 +67,12 @@ public class AuthController {
     
     @RequestMapping(value = "/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        request.getSession().setAttribute(SESSION_ATTR_NAME_FOR_USER_ROLE, null);
+        AuthUtils.destroyAuthSession(request.getSession());
         try {
             response.sendRedirect(request.getContextPath());
         } catch (IOException e) {
             LOG.warn("IO exception", e);
         }
-    }
-    
-    /**
-     * Check if user is marked in session as logged in.
-     * 
-     * @param request
-     * @return
-     */
-    public static boolean isLoggedIn(HttpServletRequest request) {
-        return request.getSession().getAttribute(SESSION_ATTR_NAME_FOR_USER_ROLE) != null;
-    }
-    
-    /**
-     * Add user role to user session. User considered to be logged in if this
-     * attribute is not null.
-     * 
-     * @param role
-     * @param session
-     */
-    private void addUserRoleAsLoggedInMarketToSession(User user, HttpSession session) {
-        session.setAttribute(SESSION_ATTR_NAME_FOR_USER_ROLE, user.getRole());
-        LOG.info(user.getMail() + " is logged in.");
     }
     
     private void redirectToFrontPage(HttpServletRequest request,

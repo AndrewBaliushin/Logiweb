@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.tsystems.javaschool.logiweb.LogiwebAppContext;
 import com.tsystems.javaschool.logiweb.service.UserService;
+import com.tsystems.javaschool.logiweb.utils.AuthUtils;
 
 public class LoginFilter implements Filter {
 
@@ -27,7 +28,7 @@ public class LoginFilter implements Filter {
         
       String path = requestHttp.getRequestURI();
       //TODO figure out is this right way to do it?
-      boolean loggedIn = AuthController.isLoggedIn(((HttpServletRequest) request));
+      boolean loggedIn = AuthUtils.isLoggedIn(((HttpServletRequest) request));
       String pathLoginPage = requestHttp.getContextPath() + LOGIN_PAGE;
       
         if (loggedIn || path.matches(RESOURCES_REGEXP)

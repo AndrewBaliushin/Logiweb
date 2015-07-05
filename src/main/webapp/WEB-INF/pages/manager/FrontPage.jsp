@@ -29,7 +29,7 @@
 	<a href="manager/showTrucks" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
-	<a href="#" role="button" class="btn btn-success btn-large"><span
+	<a href="manager/addTruck" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
 </div>
 

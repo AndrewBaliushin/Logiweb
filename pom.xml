@@ -18,6 +18,7 @@
   <hibernate.version>4.3.8.Final</hibernate.version>
   <mysql.connector.version>5.1.6</mysql.connector.version>
   <slf4j.version>1.7.12</slf4j.version>
+  <gson.version>2.3.1</gson.version>
 
  </properties>
 
@@ -97,6 +98,14 @@
    <version>${sonar.version}</version>
   </dependency>
 
+	<!-- GSON -->
+  <dependency>
+	<groupId>com.google.code.gson</groupId>
+	<artifactId>gson</artifactId>
+	<version>${gson.version}</version>
+  </dependency>
+ 
+  
  </dependencies>
 
  <build>
