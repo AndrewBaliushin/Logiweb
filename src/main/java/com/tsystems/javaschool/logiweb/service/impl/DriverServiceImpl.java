@@ -24,10 +24,12 @@ import com.tsystems.javaschool.logiweb.dao.jpa.GenericDaoJpa;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
+import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.exceptions.DriverDeletionException;
 import com.tsystems.javaschool.logiweb.service.exceptions.DriverEmployeeIdOccupiedException;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
+import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 import com.tsystems.javaschool.logiweb.utils.DateUtils;
 
 /**
@@ -61,9 +63,9 @@ public class DriverServiceImpl implements DriverService {
             Set<Driver> drivers = driverDao.findAll();
             getEntityManager().getTransaction().commit();
             return drivers;
-        } catch (DaoException e) {         //TODO figure out right way
-            LOG.warn("Something wrong...");
-            throw new LogiwebServiceException(); //TODO change to specific
+        } catch (DaoException e) {
+            LOG.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
         } finally {
             if (getEntityManager().getTransaction().isActive()) {
                 getEntityManager().getTransaction().rollback();
@@ -78,9 +80,9 @@ public class DriverServiceImpl implements DriverService {
             Driver driver = driverDao.find(id);
             getEntityManager().getTransaction().commit();
             return driver;
-        } catch (DaoException e) { // TODO figure out right way
-            LOG.warn("Something wrong...");
-            throw new LogiwebServiceException(); // TODO change to specific
+        } catch (DaoException e) {
+            LOG.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
         } finally {
             if (getEntityManager().getTransaction().isActive()) {
                 getEntityManager().getTransaction().rollback();
@@ -94,8 +96,63 @@ public class DriverServiceImpl implements DriverService {
     }
     
     @Override
-    public void addDriver(Driver newDriver) throws LogiwebServiceException {
-        updateOrAddDriver(newDriver, false);
+    public Driver addDriver(Driver newDriver) throws ServiceValidationException,
+            LogiwebServiceException {
+        try {
+            validateForEmptyFields(newDriver); 
+        } catch (ServiceValidationException e) {
+            throw e;
+        }
+        
+        try {
+            getEntityManager().getTransaction().begin();
+            Driver driverWithSameEmployeeId = driverDao.findByEmployeeId(newDriver.getEmployeeId());
+            
+            if (driverWithSameEmployeeId != null) {
+                throw new ServiceValidationException("Employee ID  #"
+                        + newDriver.getEmployeeId() + " is already in use.");
+            }
+            
+            driverDao.create(newDriver);
+            getEntityManager().refresh(newDriver);
+            getEntityManager().getTransaction().commit();
+
+            LOG.info("Driver created. " + newDriver.getName() + " "
+                    + newDriver.getSurname()
+                    + " ID#" + newDriver.getId());
+
+            return newDriver;
+        } catch (ServiceValidationException e) {
+            throw e;        
+        } catch (DaoException e) {         
+            LOG.warn("Something unexpected happend.", e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
+
+    }
+    
+    /**
+     * Check if driver has empty fields that should not be empty.
+     * @param d Driver
+     * @return Doesn't return anything -- throws exception if failed.
+     * @throws ServiceValidationException with message that describes why validation failed.
+     */
+    private void validateForEmptyFields(Driver d) throws ServiceValidationException {
+        if(d.getEmployeeId() <= 0) {
+            throw new ServiceValidationException("Employee ID can't be 0 or negative.");
+        } else if (d.getName() == null || d.getName().isEmpty()) {
+            throw new ServiceValidationException("Drivers name can't be empty.");
+        } else if (d.getSurname() == null || d.getSurname().isEmpty()) {
+            throw new ServiceValidationException("Drivers surname can't be empty.");
+        } else if (d.getCurrentCity() == null || d.getCurrentCity().getId() == 0) {
+            throw new ServiceValidationException("City is not set.");
+        } else if (d.getStatus() == null) {
+            throw new ServiceValidationException("Status is not set.");
+        } 
     }
 
     /**
@@ -147,29 +204,35 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public void removeDriver(Driver driverToRemove) throws LogiwebServiceException {
+    public void removeDriver(Driver driverToRemove) throws ServiceValidationException, LogiwebServiceException {
         try {
             getEntityManager().getTransaction().begin();
             Driver managedDriverToRemove = driverDao.find(driverToRemove
                     .getId());
 
             if (managedDriverToRemove == null) {
-                getEntityManager().getTransaction().rollback();
-                throw new DriverDeletionException("Driver with id="
+                throw new ServiceValidationException("Driver with id="
                         + driverToRemove.getId() + " not found.");
             }
 
             if (managedDriverToRemove.getCurrentTruck() != null) {
-                getEntityManager().getTransaction().rollback();
-                throw new DriverDeletionException(
+                throw new ServiceValidationException(
                         "Driver is assigned to Truck. Removal is forbiden.");
             }
 
             driverDao.delete(managedDriverToRemove);
             getEntityManager().getTransaction().commit();
-        } catch (DaoException e) {
-            LOG.warn("Something wrong..."); // TODO ????????
-            throw new LogiwebServiceException();
+            LOG.info("Driver removed. Employee ID#" + managedDriverToRemove.getEmployeeId()
+                    + " " + managedDriverToRemove.getName() + " " + managedDriverToRemove.getSurname());
+        } catch (ServiceValidationException e) {
+            throw e;        
+        } catch (DaoException e) {         
+            LOG.warn("Something unexpected happend.", e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
         }
     }
 

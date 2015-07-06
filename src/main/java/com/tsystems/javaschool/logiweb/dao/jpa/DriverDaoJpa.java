@@ -58,7 +58,7 @@ public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
             }
             return driver;
         } catch (Exception e) {
-            LOG.warn(e);
+            LOG.warn("Unexpected exception on DB layer.", e);
             throw new DaoException(e);
         }
     }

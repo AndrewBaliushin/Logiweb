@@ -23,6 +23,7 @@
 					<th>Status</th>
 					<th>Current City</th>
 					<th>Delivery order</th>
+					<th>Drivers</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -30,13 +31,21 @@
 				<c:forEach items="${trucks}" var="truck">
 					<tr id="truck-id-${truck.id}-row">
 					
-						<td><c:out value="${truck.licencePlate}" /></td>
-						<td><c:out value="${truck.crewSize}" /></td>
-						<td><c:out value="${truck.cargoCapacity}" /></td>
-						<td><c:out value="${truck.status}" /></td>
-						<td><c:out value="${truck.currentCity.name}" /></td>
+						<td>${truck.licencePlate}</td>
+						<td>${truck.crewSize}</td>
+						<td>${truck.cargoCapacity}</td>
+						<td>${truck.status}</td>
+						<td>${truck.currentCity.name}</td>
 						<td><c:if test="${empty truck.assignedDeliveryOrder.id}">Not assigned</c:if>
-							<c:out value="${truck.assignedDeliveryOrder.id}" /></td>
+							${truck.assignedDeliveryOrder.id}
+						</td>
+							
+						<td><c:if test="${empty truck.drivers}">Not assigned</c:if>
+                            <c:forEach items="${truck.drivers}" var="driver">
+                                <div>${driver.surname}</div>
+                            </c:forEach>
+                        </td>	
+                            
 						<td class="text-center">
 						  <span class="glyphicon glyphicon-pencil red-on-hover" aria-hidden="true"></span>
 		                </td>

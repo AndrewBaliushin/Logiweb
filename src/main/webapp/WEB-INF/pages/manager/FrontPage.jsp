@@ -8,19 +8,21 @@
     <jsp:param name="homeLink" value="/manager" />
 </jsp:include>
 
+<!-- Driver -->
 <div class="well">
 	<legend class="the-legend">
 		Drivers <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 	</legend>
 
-	<a href="manager/driverList" role="button" class="btn btn-success btn-large"><span
+	<a href="manager/showDrivers" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
-	<a href="#" role="button" class="btn btn-success btn-large"><span
+	<a href="manager/addDriver" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
 
 </div>
 
+<!-- Truck -->
 <div class="well">
 	<legend class="the-legend">
 		Trucks <span class="glyphicon glyphicon-bed" aria-hidden="true"></span>

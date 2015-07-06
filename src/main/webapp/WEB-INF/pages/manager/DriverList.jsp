@@ -1,7 +1,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <jsp:include page="../GlobalHeader.jsp">
-    <jsp:param name="title" value="Trucks List" />
+    <jsp:param name="title" value="Driver List" />
+    <jsp:param value="manager/manager.css" name="css"/>
+    <jsp:param value="manager/RemoveDriver.js" name="js"/>
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
@@ -38,10 +40,10 @@
 				<td><c:if test="${empty driver.currentTruck.licencePlate}">Not assigned</c:if>
 					<c:out value="${driver.currentTruck.licencePlate}" /></td>
 				<td class="text-center">
-					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+					<span class="glyphicon glyphicon-pencil red-on-hover" aria-hidden="true"></span>
 				</td>
 				<td class="text-center">
-					<span class="glyphicon glyphicon-remove icon-magenta" aria-hidden="true"></span>
+					<span onclick="removeTruck(this, ${driver.id})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
 				</td>
 
 			</tr>

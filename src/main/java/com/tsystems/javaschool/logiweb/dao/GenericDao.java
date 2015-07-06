@@ -2,7 +2,6 @@ package com.tsystems.javaschool.logiweb.dao;
 
 import java.util.Set;
 
-import com.tsystems.javaschool.logiweb.dao.exceptions.ConstrainOrIntegrityViolationException;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 
 /**
@@ -22,7 +21,7 @@ public interface GenericDao<T> {
      *            persistent object
      * @return same persistence object
      */
-    T create(T newInstance)  throws ConstrainOrIntegrityViolationException, DaoException;
+    T create(T newInstance)  throws DaoException;
 
     /**
      * Find persistent object by its primary key.

@@ -5,13 +5,10 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.metamodel.ValidationException;
 
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
-import com.tsystems.javaschool.logiweb.dao.exceptions.ConstrainOrIntegrityViolationException;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
-import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
@@ -50,9 +47,9 @@ public class TrucksSeviceimpl implements TrucksService {
             Set<Truck> trucks = truckDao.findAll();
             getEntityManager().getTransaction().commit();
             return trucks;
-        } catch (DaoException e) {         //TODO figure out right way
+        } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
-            throw new LogiwebServiceException(); //TODO change to specific
+            throw new LogiwebServiceException(e);
         } finally {
             if (getEntityManager().getTransaction().isActive()) {
                 getEntityManager().getTransaction().rollback();
@@ -126,7 +123,7 @@ public class TrucksSeviceimpl implements TrucksService {
     }
 
     /**
-     * Check if truck have empty fields that should not be empty.
+     * Check if truck has empty fields that should not be empty.
      * @param t Truck
      * @return Doesn't return anything -- throws exception if failed.
      * @throws ServiceValidationException with message that describes why validation failed.

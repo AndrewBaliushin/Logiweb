@@ -5,19 +5,17 @@
  *            reference to element, that triggered this function (needed to
  *            remove row after succesful truck deletion)
  * @param id -
- *            of the truck
+ *            of the driver
  * 
  * @author Andrey Baliushin
  */
 function removeTruck(element, id) {
-	bootbox.confirm("Delete truck?", function(result) { // bootboxjs.com
+	bootbox.confirm("Delete driver?", function(result) { // bootboxjs.com
 		if (result) {
 			$.ajax({
-				url : "deleteTruck",
+				url : "deleteDriver",
 				type : "POST",
-				data : {
-					truckId : id
-				},
+				data : { driverId: id },
 				dataType : "json",
 				success : function(result) {
 					$(element).closest("tr").fadeOut(1000, function() {
