@@ -3,15 +3,10 @@
 -- Populate with some mock data. 
 -- -----------------------------------------------------
 
-
-
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-DROP SCHEMA IF EXISTS `logiweb` ;
-CREATE SCHEMA IF NOT EXISTS `logiweb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
-USE `logiweb` ;
 
 -- -----------------------------------------------------
 -- Table `cities`
@@ -156,8 +151,18 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- User creation
+-- Table `users`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `users` ;
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `user_id` INT NOT NULL AUTO_INCREMENT,
+  `user_mail` VARCHAR(60) NOT NULL,
+  `user_role` VARCHAR(45) NOT NULL,
+  `md5_pass` CHAR(32) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE INDEX `user_mail_UNIQUE` (`user_mail` ASC))
+ENGINE = InnoDB;
 
 SET SQL_MODE = '';
 GRANT USAGE ON *.* TO javaschool;
@@ -172,9 +177,19 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
+
 -- -----------------------------------------------------
 -- Mock data
 -- -----------------------------------------------------
+
+
+
+--
+-- Dumping data for table `users`
+-- (passwords for both users are 12345
+INSERT INTO `users` (`user_id`, `user_mail`, `user_role`, `md5_pass`) VALUES
+(1, 'manager@logiweb.com', 'MANAGER', '827ccb0eea8a706c4c34a16891f84e7b'),
+(2, 'driver@logiweb.com', 'DRIVER', '827ccb0eea8a706c4c34a16891f84e7b');
 
 
 --

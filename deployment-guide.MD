@@ -6,6 +6,9 @@ DEPLOYMENT GUIDE
 3. mvn clean install
 4. mvn tomcat:run       (or put /target/logiweb.war into your AppServer webapp directory)
 
+Mock data includes two users: manager@logiweb.com & driver@logiweb.com
+Passwords: 12345
+
 If settings are default: http://localhost:8080/logiweb/ 
 
 Edit ./persistence.xml to change db connection settings.
