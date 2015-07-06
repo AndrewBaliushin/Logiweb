@@ -35,12 +35,13 @@
 		class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
 </div>
 
+<!-- Orders -->
 <div class="well">
 	<legend class="the-legend">
 		Orders <span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>
 	</legend>
 
-	<a href="#" role="button" class="btn btn-success btn-large"><span
+	<a href="manager/showOrders" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
 	<a href="#" role="button" class="btn btn-success btn-large"><span

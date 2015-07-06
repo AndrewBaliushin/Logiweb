@@ -27,10 +27,12 @@ import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.model.User;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
+import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.impl.CityServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.DriverServiceImpl;
+import com.tsystems.javaschool.logiweb.service.impl.OrdersAndCargoServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.TrucksSeviceimpl;
 import com.tsystems.javaschool.logiweb.service.impl.UserServiceImpl;
 
@@ -67,6 +69,8 @@ public final class LogiwebAppContext {
     private DriverService driverService;
     private UserService userService;
     private CityService cityService;
+    private OrdersAndCargoService ordersAndCargoService;
+    
     private LogiwebAppContext() {
     }
 
@@ -123,6 +127,14 @@ public final class LogiwebAppContext {
                     getEntityManager());
         }
         return deliveryOrderDao;
+    }
+    
+    public OrdersAndCargoService getOrdersAndCargoService() {
+        if (ordersAndCargoService == null) {
+            ordersAndCargoService = new OrdersAndCargoServiceImpl(
+                    getDeliveryOrderDao(), getCargoDao(), getEntityManager());
+        }
+        return ordersAndCargoService;
     }
 
     public DriverDao getDriverDao() {

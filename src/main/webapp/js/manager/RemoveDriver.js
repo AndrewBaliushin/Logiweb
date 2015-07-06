@@ -1,5 +1,5 @@
 /**
- * Remove truck.
+ * Remove driver.
  * 
  * @param element --
  *            reference to element, that triggered this function (needed to
@@ -9,7 +9,7 @@
  * 
  * @author Andrey Baliushin
  */
-function removeTruck(element, id) {
+function removeDriver(element, id) {
 	bootbox.confirm("Delete driver?", function(result) { // bootboxjs.com
 		if (result) {
 			$.ajax({

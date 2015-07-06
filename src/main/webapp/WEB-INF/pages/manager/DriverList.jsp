@@ -43,7 +43,7 @@
 					<span class="glyphicon glyphicon-pencil red-on-hover" aria-hidden="true"></span>
 				</td>
 				<td class="text-center">
-					<span onclick="removeTruck(this, ${driver.id})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
+					<span onclick="removeDriver(this, ${driver.id})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
 				</td>
 
 			</tr>

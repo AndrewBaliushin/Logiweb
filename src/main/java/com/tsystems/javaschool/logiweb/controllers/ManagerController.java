@@ -19,12 +19,14 @@ import com.google.gson.Gson;
 import com.tsystems.javaschool.logiweb.LogiwebAppContext;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
 import com.tsystems.javaschool.logiweb.model.City;
+import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.model.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
+import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -40,6 +42,7 @@ public class ManagerController {
     private DriverService driverService = ctx.getDriverService();
     private TrucksService truckService = ctx.getTruckService();
     private CityService cityService = ctx.getCityService();
+    private OrdersAndCargoService orderAndCaroService = ctx.getOrdersAndCargoService();
     
     @RequestMapping(value = {"", "/"})
     public ModelAndView frontPage() {
@@ -79,6 +82,20 @@ public class ManagerController {
             trucks = new HashSet<Truck>(0);
         }
         mav.addObject("trucks", trucks);
+        
+        return mav;
+    }
+    
+    @RequestMapping(value = {"/showOrders"})
+    public ModelAndView showOrders() {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("manager/OrderList");
+        
+        try {
+            mav.addObject("orders", orderAndCaroService.findAllOrders());
+        } catch (LogiwebServiceException e) {
+            mav.addObject("error", "Server error. Check logs.");
+        }
         
         return mav;
     }
