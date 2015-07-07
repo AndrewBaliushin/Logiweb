@@ -2,14 +2,17 @@ package com.tsystems.javaschool.logiweb.controllers;
 
 import java.io.IOException;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.tsystems.javaschool.logiweb.LogiwebAppContext;
-import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.utils.AuthUtils;
 
 public class LoginFilter implements Filter {
