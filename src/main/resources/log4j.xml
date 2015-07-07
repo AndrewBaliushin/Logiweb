@@ -24,7 +24,7 @@
 	</appender>
 	
 	<appender name="LOG-FILE-APPENDER" class="org.apache.log4j.FileAppender">
-		<param name="file" value="/home/andrew/JavaSchool/logiweb/logger.log" />
+		<param name="file" value="/home/andrew/JavaSchool/logiweb/logs/logger.log" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{ISO8601} [%5p] %c %m at %l%n" />
 		</layout>
@@ -53,6 +53,32 @@
 <!--         <appender-ref ref="CONSOLE-DEBUG" /> -->
 <!--         <appender-ref ref="LOG-FILE-APPENDER" />         -->
 <!--     </category> -->
+
+    <appender name="LOGIWEB-LOG-WARN-FILE-APPENDER" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/home/andrew/JavaSchool/logiweb/logs/logiweb-error.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="WARN"/>
+        </filter>
+    </appender>
+    
+    <appender name="LOGIWEB-LOG-INFO-FILE-APPENDER" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/home/andrew/JavaSchool/logiweb/logs/logiweb-info.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="INFO"/>
+            <param name="LevelMax" value="INFO"/>
+        </filter>
+    </appender>
+
+	<category name="com.tsystems.javaschool.logiweb">
+		<appender-ref ref="LOGIWEB-LOG-WARN-FILE-APPENDER" />
+		<appender-ref ref="LOGIWEB-LOG-INFO-FILE-APPENDER" />
+	</category>
 	
 	<root>
 		<priority value="INFO" />
