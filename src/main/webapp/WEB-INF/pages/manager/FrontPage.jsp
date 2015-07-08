@@ -14,10 +14,10 @@
 		Drivers <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 	</legend>
 
-	<a href="manager/showDrivers" role="button" class="btn btn-success btn-large"><span
+	<a href="${pageContext.request.contextPath}/manager/showDrivers" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
-	<a href="manager/addDriver" role="button" class="btn btn-success btn-large"><span
+	<a href="${pageContext.request.contextPath}/manager/addDriver" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
 
 </div>
@@ -28,10 +28,10 @@
 		Trucks <span class="glyphicon glyphicon-bed" aria-hidden="true"></span>
 	</legend>
 
-	<a href="manager/showTrucks" role="button" class="btn btn-success btn-large"><span
+	<a href="${pageContext.request.contextPath}/manager/showTrucks" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
-	<a href="manager/addTruck" role="button" class="btn btn-success btn-large"><span
+	<a href="${pageContext.request.contextPath}/manager/addTruck" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
 </div>
 
@@ -41,11 +41,11 @@
 		Orders <span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>
 	</legend>
 
-	<a href="manager/showOrders" role="button" class="btn btn-success btn-large"><span
+	<a href="${pageContext.request.contextPath}/manager/showOrders" role="button" class="btn btn-success btn-large"><span
 		class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a> 
 		
-	<a href="#" role="button" class="btn btn-success btn-large"><span
-		class="glyphicon glyphicon-plus" aria-hidden="true"></span> New</a>
+	<a href="${pageContext.request.contextPath}/manager/addOrder" role="button" class="btn btn-success btn-large"><span
+		class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
 </div>
 
 <div class="well">

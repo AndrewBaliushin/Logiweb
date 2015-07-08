@@ -1,5 +1,6 @@
 package com.tsystems.javaschool.logiweb.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

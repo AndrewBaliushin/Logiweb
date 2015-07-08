@@ -1,3 +1,15 @@
 .red-on-hover:hover {
 	color:red;
 }
+
+
+.modal.modal-wide .modal-dialog {
+  width: 90%;
+}
+.modal-wide .modal-body {
+  overflow-y: auto;
+}
+
+.margin-bottom{
+	margin-bottom: 25px;
+}

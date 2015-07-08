@@ -28,11 +28,13 @@ import com.tsystems.javaschool.logiweb.model.User;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
+import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.impl.CityServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.DriverServiceImpl;
 import com.tsystems.javaschool.logiweb.service.impl.OrdersAndCargoServiceImpl;
+import com.tsystems.javaschool.logiweb.service.impl.RouteServiceStub;
 import com.tsystems.javaschool.logiweb.service.impl.TrucksSeviceimpl;
 import com.tsystems.javaschool.logiweb.service.impl.UserServiceImpl;
 
@@ -70,7 +72,15 @@ public final class LogiwebAppContext {
     private UserService userService;
     private CityService cityService;
     private OrdersAndCargoService ordersAndCargoService;
+    private RouteService routeService;
     
+    public RouteService getRouteService() {
+        if(routeService == null) {
+            routeService = new RouteServiceStub();
+        }
+        return routeService;
+    }
+
     private LogiwebAppContext() {
     }
 
@@ -132,7 +142,7 @@ public final class LogiwebAppContext {
     public OrdersAndCargoService getOrdersAndCargoService() {
         if (ordersAndCargoService == null) {
             ordersAndCargoService = new OrdersAndCargoServiceImpl(
-                    getDeliveryOrderDao(), getCargoDao(), getEntityManager());
+                    getDeliveryOrderDao(), getCargoDao(), getCityDao(), getEntityManager());
         }
         return ordersAndCargoService;
     }

@@ -1,11 +1,15 @@
 package com.tsystems.javaschool.logiweb.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -31,6 +35,9 @@ public class DeliveryOrder {
 
     @OneToOne(mappedBy = "assignedDeliveryOrder")
     private Truck assignedTruck;
+    
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "orderForThisCargo")
+    private Set<Cargo> assignedCargoes;
 
     public OrderStatus getStatus() {
         return status;
@@ -59,5 +66,15 @@ public class DeliveryOrder {
 	assignedTruck.setAssignedDeliveryOrder(this);
         this.assignedTruck = assignedTruck;
     }
-    
+
+    public Set<Cargo> getAssignedCargoes() {
+        return assignedCargoes;
+    }
+
+    public void setAssignedCargoes(Set<Cargo> assignedCargoes) {
+        for (Cargo cargo : assignedCargoes) {
+            cargo.setOrderForThisCargo(this);
+        }
+        this.assignedCargoes = assignedCargoes;
+    }
 }

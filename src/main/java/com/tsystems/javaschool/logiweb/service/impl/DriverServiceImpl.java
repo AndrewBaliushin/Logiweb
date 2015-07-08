@@ -2,31 +2,23 @@ package com.tsystems.javaschool.logiweb.service.impl;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.tsystems.javaschool.logiweb.dao.DaoFactory;
-import com.tsystems.javaschool.logiweb.dao.DeliveryOrderDao;
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
-import com.tsystems.javaschool.logiweb.dao.jpa.GenericDaoJpa;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
-import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.DriverService;
-import com.tsystems.javaschool.logiweb.service.exceptions.DriverDeletionException;
 import com.tsystems.javaschool.logiweb.service.exceptions.DriverEmployeeIdOccupiedException;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -144,9 +136,9 @@ public class DriverServiceImpl implements DriverService {
     private void validateForEmptyFields(Driver d) throws ServiceValidationException {
         if(d.getEmployeeId() <= 0) {
             throw new ServiceValidationException("Employee ID can't be 0 or negative.");
-        } else if (d.getName() == null || d.getName().isEmpty()) {
+        } else if (StringUtils.isBlank(d.getName())) {
             throw new ServiceValidationException("Drivers name can't be empty.");
-        } else if (d.getSurname() == null || d.getSurname().isEmpty()) {
+        } else if (StringUtils.isBlank(d.getSurname())) {
             throw new ServiceValidationException("Drivers surname can't be empty.");
         } else if (d.getCurrentCity() == null || d.getCurrentCity().getId() == 0) {
             throw new ServiceValidationException("City is not set.");
