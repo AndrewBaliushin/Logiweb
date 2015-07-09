@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import com.tsystems.javaschool.logiweb.dao.UserDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.UserNotFoundDaoException;
-import com.tsystems.javaschool.logiweb.dao.jpa.GenericDaoJpa;
 import com.tsystems.javaschool.logiweb.model.User;
 import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;

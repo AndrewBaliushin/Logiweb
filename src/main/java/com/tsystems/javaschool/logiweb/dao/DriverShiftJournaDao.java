@@ -2,7 +2,6 @@ package com.tsystems.javaschool.logiweb.dao;
 
 import java.util.Set;
 
-import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 

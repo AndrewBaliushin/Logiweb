@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.commons.lang3.Validate;
-
 import com.tsystems.javaschool.logiweb.model.Cargo;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;

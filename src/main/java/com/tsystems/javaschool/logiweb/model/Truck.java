@@ -136,18 +136,4 @@ public class Truck {
 	this.drivers = drivers;
     }
     
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("id in db: " + id + "\n");
-        sb.append("\n");
-        sb.append("licensePlate: " + licencePlate + "\n");
-        sb.append("crew size: " + crewSize + "\n");
-        sb.append("capacity: " + cargoCapacity + "\n");
-        sb.append("status: " + status + "\n");
-        sb.append("current city: " + currentCity.getName() + "\n");
-        sb.append("delivery order" + assignedDeliveryOrder.getId() + "\n");
-        return "hi";
-    }
-
 }

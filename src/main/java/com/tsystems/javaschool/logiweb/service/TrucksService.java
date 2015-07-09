@@ -2,10 +2,6 @@ package com.tsystems.javaschool.logiweb.service;
 
 import java.util.Set;
 
-import org.hibernate.metamodel.ValidationException;
-
-import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -56,5 +52,22 @@ public interface TrucksService {
      */
     void removeTruck(Truck truckToRemove) throws ServiceValidationException, LogiwebServiceException;
     
-    Set<Truck> findAvailiableTrucksForOrder(DeliveryOrder order) throws LogiwebServiceException;
+    /**
+     * Find trucks that have Status 'OK' and not busy by order, and have cargo capacity (in 1000kg)
+     * more or equal to minCargoWeightCapacity.
+     * 
+     * @param minCargoWeightCapacity
+     * @return
+     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault)
+     */
+    Set<Truck> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException;
+    
+    /**
+     * Remove assignment to order and drivers for this truck.
+     * 
+     * @param truck
+     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault)
+     */
+    void removeAssignedOrderAndDriversFromTruck(Truck truck) throws LogiwebServiceException;
+    
 }

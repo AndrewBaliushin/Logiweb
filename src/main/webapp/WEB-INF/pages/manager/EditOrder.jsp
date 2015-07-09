@@ -1,11 +1,14 @@
+<%@page import="com.tsystems.javaschool.logiweb.model.status.OrderStatus"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<% pageContext.setAttribute("orderNotReady", OrderStatus.NOT_READY); %>
+
 <jsp:include page="../GlobalHeader.jsp">
 	<jsp:param name="title" value="Edit order # ${orderId}" />
 	<jsp:param value="manager/manager.css" name="css" />
-	<jsp:param value="manager/PostFormByAjax.js" name="js" />
+	<jsp:param value="manager/PostFormByAjax.js,manager/RemoveTruckAndDriversFromOrder.js" name="js" />
 
 </jsp:include>
 
@@ -54,6 +57,16 @@
                  </c:choose>
              </h4>
 			
+			<h4>Status: ${order.status}</h4>
+
+            <!-- Remove drivers and truck -->
+            <c:if test="${order.status == orderNotReady}">
+				<button type="button" class="btn btn-default btn-xs" onclick="removeTruckAndDriverFromOrder(${order.id})">
+					<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+					Remove truck and drivers
+				</button>
+		    </c:if>
+
 			</div>
 		</div>
 		<!-- /Info -->
@@ -65,24 +78,34 @@
 				<div class="btn-group-vertical" role="group" aria-label="...">
 
 					<!-- Add cargo -->
-					<button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-cargo">
+					<button type="button" class="btn btn-default btn-lg <c:if test="${order.status != orderNotReady}">disabled</c:if>" data-toggle="modal" data-target="#add-cargo">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-oil" aria-hidden="true"></span> Add
 						cargo
 					</button>
 
 					<!-- Assign truck -->
-					<button type="button" class="btn btn-default btn-lg">
+					<button type="button"
+						class="btn btn-default btn-lg <c:if test="${!empty order.assignedTruck || order.status != orderNotReady}">disabled</c:if>"
+						data-toggle="modal" data-target="#assign-truck">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-bed" aria-hidden="true"></span> Assign
 						truck
 					</button>
 
 					<!-- Assign driver to tuck -->
-					<button type="button" class="btn btn-default btn-lg disabled">
+					<button type="button" class="btn btn-default btn-lg <c:if test="${empty order.assignedTruck || order.status != orderNotReady}">disabled</c:if>"
+					data-toggle="modal" data-target="#assign-driver">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-user" aria-hidden="true"></span>
 						Assign drivers to Truck
+					</button>
+					
+					<!-- Assign driver to tuck -->
+					<button type="button" class="btn btn-default btn-lg"
+						data-toggle="modal" data-target="#change-status-modal"><span
+							class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+						Change status
 					</button>
 
 				</div>
@@ -220,5 +243,160 @@
 	</div>
 </div>
 <!-- /Modal -->
+
+<!-- Modal: Assign truck -->
+<div class="modal fade modal-wide" id="assign-truck" tabindex="-1"
+    role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Assign truck to order #
+                    <c:out value="${order.id}"></c:out>
+                </h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal" id="assignTruckForm" method="POST" action="assignTruck">
+                <input type="hidden" name="orderId" value="${order.id}">
+                
+                    <fieldset>
+                    
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="truck">Suggested trucks</label>
+                            <div class="col-md-9">
+                                <select id="truck" name="truckId" class="form-control">
+                                    <c:forEach items="${suggestedTrucks}" var="truck">
+                                        <option value="${truck.id}">
+                                            Plate: ${truck.licencePlate} |
+                                            Max weight: ${truck.cargoCapacity} |
+                                            Currnet city: ${truck.currentCity.name} |
+                                            Crew size: ${truck.crewSize}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                        
+                    </fieldset>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" 
+                    onclick="postFormByAjax('#assignTruckForm')">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Modal Assign truck -->
+
+
+<!-- Modal: Assign driver -->
+<div class="modal fade modal-wide" id="assign-driver" tabindex="-1"
+    role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Assign driver to order #
+                    <c:out value="${order.id}"></c:out>
+                    who has less than <fmt:formatNumber value="${maxWorkingHoursLimit - routeInfo.estimatedTime}" pattern="0.0"/>
+                    working hours in this month
+                </h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal" id="assignDriverForm" method="POST" action="addDriverToTruck">
+                <input type="hidden" name="truckId" value='<c:if test="${!empty order.assignedTruck }">${order.assignedTruck.id}</c:if>'>
+                
+                    <fieldset>
+                    
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="driverId">Suggested drivers</label>
+                            <div class="col-md-9">
+                                <select id="truck" name="driverId" class="form-control">
+                                    <c:forEach items="${suggestedDrivers}" var="driver">
+                                        <option value="${driver.id}">
+                                            ${driver.name} ${driver.surname} |
+                                            Currnet city: ${driver.currentCity.name} |
+                                            This month working hours: ${workingHoursForDrivers[driver]}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                        
+                    </fieldset>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" 
+                    onclick="postFormByAjax('#assignDriverForm')">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Modal Assign driver -->
+ 
+
+<!-- Modal: Set status -->
+<div class="modal fade modal-wide" id="change-status-modal" tabindex="-1"
+    role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Change status of order #
+                    <c:out value="${order.id}"></c:out>
+                </h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal" id="changeStatus" method="POST" action="changeOrderStatus">
+                <input type="hidden" name="orderId" value="${order.id}">
+                
+                    <fieldset>
+                    
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="orderStatus">Status</label>
+                            <div class="col-md-9">
+                                <select id="orderStatus" name="orderStatus" class="form-control">
+                                    <c:forEach items="${statuses}" var="status">
+                                        <option value="${status}">${status}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                        
+                    </fieldset>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" 
+                    onclick="postFormByAjax('#changeStatus')">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Modal Set status truck -->
 
 <jsp:include page="../GlobalFooter.jsp" />

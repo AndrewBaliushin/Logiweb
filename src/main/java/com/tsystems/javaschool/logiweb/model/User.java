@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.model.status.UserRole;
 
 /**

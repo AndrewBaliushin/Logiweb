@@ -25,6 +25,8 @@
 					<th>Status</th>
 					<th>Current City</th>
 					<th>Current Truck</th>
+					<th>Current Order</th>
+					<th>Worked in this month <small>hours</small></th>
 					<th class="text-center">Edit</th>
 					<th class="text-center">Delete</th>
 				</tr>
@@ -41,6 +43,18 @@
 						<td><c:out value="${driver.currentCity.name}" /></td>
 						<td><c:if test="${empty driver.currentTruck.licencePlate}">Not assigned</c:if>
 							<c:out value="${driver.currentTruck.licencePlate}" /></td>
+
+						<td><c:if
+								test="${empty driver.currentTruck.assignedDeliveryOrder}">Not assigned</c:if>
+							<a href="
+							<c:url value="editOrder">
+								<c:param name="orderId" value="${driver.currentTruck.assignedDeliveryOrder.id}" />
+							</c:url>">${driver.currentTruck.assignedDeliveryOrder.id}</a>
+
+						</td>
+
+						<td><c:out value="${workingHoursForDrivers[driver]}" /></td>
+						
 						<td class="text-center"><span
 							class="glyphicon glyphicon-pencil red-on-hover"
 							aria-hidden="true"></span></td>

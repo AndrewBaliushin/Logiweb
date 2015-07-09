@@ -180,7 +180,7 @@ public final class LogiwebAppContext {
     public DriverService getDriverService() {
         if (driverService == null) {
             driverService = new DriverServiceImpl(getDriverDao(),
-                    geDriverShiftJournaDao(), getEntityManager());
+                    getTruckDao(), geDriverShiftJournaDao(), getEntityManager());
         }
         return driverService;
     }

@@ -36,9 +36,15 @@
 						<td>${truck.cargoCapacity}</td>
 						<td>${truck.status}</td>
 						<td>${truck.currentCity.name}</td>
-						<td><c:if test="${empty truck.assignedDeliveryOrder.id}">Not assigned</c:if>
-							${truck.assignedDeliveryOrder.id}
-						</td>
+						
+						<td><c:if
+                                test="${empty truck.assignedDeliveryOrder}">Not assigned</c:if>
+                            <a href="
+                            <c:url value="editOrder">
+                                <c:param name="orderId" value="${truck.assignedDeliveryOrder.id}" />
+                            </c:url>">${truck.assignedDeliveryOrder.id}</a>
+
+                        </td>
 							
 						<td><c:if test="${empty truck.drivers}">Not assigned</c:if>
                             <c:forEach items="${truck.drivers}" var="driver">

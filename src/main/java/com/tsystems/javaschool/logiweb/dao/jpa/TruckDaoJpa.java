@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 

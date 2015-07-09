@@ -5,6 +5,7 @@ import java.util.Set;
 import com.tsystems.javaschool.logiweb.model.Cargo;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Truck;
+import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
@@ -33,7 +34,24 @@ public interface OrdersAndCargoService {
     
     void setStatusOrderReadyToGo(DeliveryOrder order) throws LogiwebServiceException;
     
-    void findAvailiableDriversForOrder(DeliveryOrder order) throws LogiwebServiceException;
+    /**
+     * Assign truck to order.
+     * Truck must by managed entity.
+     * 
+     * @param truck
+     * @param orderId
+     * @throws ServiceValidationException if truck is not Free or broken.
+     * @throws LogiwebServiceException if unexpected happened
+     */
+    void assignTruckToOrder(Truck truck, int orderId) throws ServiceValidationException, LogiwebServiceException;
 
-    Set<Truck> findAvailiableTrucksForOrder(DeliveryOrder order) throws LogiwebServiceException;
+    /**
+     * Sets status for order.
+     * 
+     * @param status
+     * @param order
+     * @throws LogiwebServiceException if unexpected happened
+     */
+    void setStatusForOrder(OrderStatus status, DeliveryOrder order)
+            throws LogiwebServiceException;
 }

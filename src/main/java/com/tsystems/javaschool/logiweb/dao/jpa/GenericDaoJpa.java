@@ -5,15 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.JDBCException;
-import org.hibernate.exception.ConstraintViolationException;
 
 import com.tsystems.javaschool.logiweb.dao.GenericDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.dao.exceptions.DaoExceptionCode;
 
 /**
  * Abstract class with set of basic CRUD operations used as superclass

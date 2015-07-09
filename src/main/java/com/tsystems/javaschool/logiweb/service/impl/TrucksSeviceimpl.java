@@ -1,5 +1,6 @@
 package com.tsystems.javaschool.logiweb.service.impl;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -9,6 +10,7 @@ import org.apache.log4j.Logger;
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
@@ -59,11 +61,23 @@ public class TrucksSeviceimpl implements TrucksService {
 
     /**
      * {@inheritDoc}
+     * @throws LogiwebServiceException 
      */
     @Override
-    public Truck findTruckById(int id) {
-	// TODO Auto-generated method stub
-	return null;
+    public Truck findTruckById(int id) throws LogiwebServiceException {
+        try {
+            getEntityManager().getTransaction().begin();
+            Truck truck = truckDao.find(id);
+            getEntityManager().getTransaction().commit();
+            return truck;
+        } catch (DaoException e) {
+            LOG.warn("Something unexpected happend.", e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
     }
     
     /**
@@ -187,8 +201,57 @@ public class TrucksSeviceimpl implements TrucksService {
      * {@inheritDoc}
      */
     @Override
-    public Set<Truck> findAvailiableTrucksForOrder(DeliveryOrder order) {
-	// TODO Auto-generated method stub
-	return null;
+    public Set<Truck> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException {
+        try {
+            getEntityManager().getTransaction().begin();
+            Set<Truck> freeTrucks = truckDao.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minCargoWeightCapacity);
+            getEntityManager().getTransaction().commit();
+            
+            return freeTrucks;
+        } catch (DaoException e) {
+            LOG.warn("Something unexpected happend.", e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeAssignedOrderAndDriversFromTruck(Truck truck)
+            throws LogiwebServiceException {
+        try {
+            getEntityManager().getTransaction().begin();
+            DeliveryOrder order = truck.getAssignedDeliveryOrder();
+            Set<Driver> drivers = truck.getDrivers();
+            
+            truck.setAssignedDeliveryOrder(null);
+            truck.setDrivers(new HashSet<Driver>());
+            getEntityManager().merge(truck);
+            
+            for (Driver driver : drivers) {
+                driver.setCurrentTruck(null);
+                getEntityManager().merge(driver);
+            }
+            
+            if(order != null) {
+                order.setAssignedTruck(null);
+            }
+            
+            getEntityManager().getTransaction().commit();
+            
+            LOG.info("Truck id#" + truck.getId() + " and its drivers removed from order.");
+        } catch (Exception e) {
+            LOG.warn("Something unexpected happend.", e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
     }
 }

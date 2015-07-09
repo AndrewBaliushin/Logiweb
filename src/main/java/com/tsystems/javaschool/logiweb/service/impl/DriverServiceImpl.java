@@ -2,6 +2,7 @@ package com.tsystems.javaschool.logiweb.service.impl;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -14,10 +15,12 @@ import org.apache.log4j.Logger;
 
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
+import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
+import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.exceptions.DriverEmployeeIdOccupiedException;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
@@ -36,11 +39,13 @@ public class DriverServiceImpl implements DriverService {
     private EntityManager em;
     
     private DriverDao driverDao;
+    private TruckDao truckDao;
     private DriverShiftJournaDao driverShiftJournalDao;
       
-    public DriverServiceImpl(DriverDao driverDao, DriverShiftJournaDao shiftDao, EntityManager em) {
+    public DriverServiceImpl(DriverDao driverDao, TruckDao truckDao,DriverShiftJournaDao shiftDao, EntityManager em) {
 	this.em = em;
 	this.driverDao = driverDao;
+	this.truckDao = truckDao;
 	this.driverShiftJournalDao = shiftDao;
     }
 
@@ -332,6 +337,48 @@ public class DriverServiceImpl implements DriverService {
         for (Entry<Driver, Float> e : workingHoursToFilter.entrySet()) {
             if (e.getValue() >= maxWorkingHours) {
                 workingHoursToFilter.remove(e.getKey());
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void assignDriverToTruck(int driverId, int truckId) throws ServiceValidationException, LogiwebServiceException {
+        try {
+            getEntityManager().getTransaction().begin();
+            Driver driver = driverDao.find(driverId);
+            Truck truck = truckDao.find(truckId);
+            
+            if(driver == null || truck == null) {
+                throw new ServiceValidationException("Driver and truck must exist.");
+            }
+            
+            Set<Driver> truckCrew = truck.getDrivers();
+            if(truckCrew == null) {
+                truckCrew = new HashSet<Driver>();
+            }
+        
+            if(truckCrew.size() < truck.getCrewSize()) {
+                truckCrew.add(driver);
+                driver.setCurrentTruck(truck);
+            } else {
+                throw new ServiceValidationException("All crew positions are occupied. Can't add Driver to crew.");
+            }
+            
+            getEntityManager().getTransaction().commit();
+        } catch (ServiceValidationException e) {
+            throw e;
+        } catch (DaoException e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        } catch (Exception e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
             }
         }
     }

@@ -22,9 +22,6 @@ import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.service.CityService;
-import com.tsystems.javaschool.logiweb.service.DriverService;
-import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
-import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -60,7 +57,7 @@ public class TruckController {
     public ModelAndView addTruck(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
         
-        if(request.getMethod().equalsIgnoreCase("POST")) { //form is submitted
+        if("POST".equals(request.getMethod())) { //form is submitted
             try {
                 Truck newTruck = createTruckEntityFromFormParams(request);
                 truckService.addTruck(newTruck);

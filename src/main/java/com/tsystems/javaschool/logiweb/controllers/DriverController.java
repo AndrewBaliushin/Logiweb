@@ -37,25 +37,25 @@ public class DriverController {
     private LogiwebAppContext ctx = LogiwebAppContext.INSTANCE;
 
     private DriverService driverService = ctx.getDriverService();
-    private TrucksService truckService = ctx.getTruckService();
     private CityService cityService = ctx.getCityService();
-    private OrdersAndCargoService orderAndCaroService = ctx.getOrdersAndCargoService();
-    private RouteService routeService = ctx.getRouteService();
 
     @RequestMapping("manager/showDrivers")
     public ModelAndView showDrivers() {  
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/DriverList");
         
-        Set<Driver> drivers;
         try {
-            drivers = driverService.findAllDrivers();
+            Set<Driver> drivers = driverService.findAllDrivers();
+            mav.addObject("drivers", drivers);
+            
+            Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
+            for (Driver driver : drivers) {
+                workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver));
+            }
+            mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
         } catch (LogiwebServiceException e) {
-            drivers = new HashSet<Driver>(0);
             LOG.warn(e);
         }
-        
-        mav.addObject("drivers", drivers);
         
         return mav;
     }
@@ -64,7 +64,7 @@ public class DriverController {
     public ModelAndView addDriver (HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
         
-        if(request.getMethod().equalsIgnoreCase("POST")) { //form is submitted
+        if("POST".equals(request.getMethod())) { //form is submitted
             try {
                 Driver newDriver = createDriverEntityFromFormParams(request);
                 driverService.addDriver(newDriver);
@@ -182,4 +182,37 @@ public class DriverController {
         return mav;
     }
 
+    /**
+     * Removes driver by its ID received in 'driverID' parameter. 
+     * 
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "manager/addDriverToTruck", method = RequestMethod.POST)
+    @ResponseBody
+    public String addDriverToTruck(HttpServletRequest request, HttpServletResponse response) {
+        Gson gson = new Gson();
+        Map<String, String> jsonMap = new HashMap<String, String>();
+        
+        try {
+            int driverId = Integer.parseInt(request.getParameter("driverId"));
+            int truckId = Integer.parseInt(request.getParameter("truckId"));
+           
+            driverService.assignDriverToTruck(driverId, truckId);
+            
+            jsonMap.put("msg", "Driver added to truck");
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonMap.put("msg", "Can't parse Driver id:" + request.getParameter("driverId") + " to integer.");
+        } catch (ServiceValidationException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonMap.put("msg", e.getMessage());
+        } catch (LogiwebServiceException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            LOG.warn("Unexpected exception.", e);
+            jsonMap.put("msg", "Unexcpected server error. Check logs.");
+        }
+        
+        return gson.toJson(jsonMap);
+    }
 }

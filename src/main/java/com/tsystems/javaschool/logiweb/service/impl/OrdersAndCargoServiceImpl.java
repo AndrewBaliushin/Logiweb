@@ -14,10 +14,10 @@ import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.model.Cargo;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
-import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.model.status.CargoStatus;
 import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -189,7 +189,7 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
             throw new ServiceValidationException("Cargo weight must be greater than zero.");
         } else if (c.getOriginCity() == null) {
             throw new ServiceValidationException("Origin city must be specified.");
-        } else if (c.getOriginCity() == null) {
+        } else if (c.getDestinationCity() == null) {
             throw new ServiceValidationException("Desitnation city must be specified.");
         } else if (c.getOrderForThisCargo() == null) {
             throw new ServiceValidationException("Delivery Order must be specified.");
@@ -202,22 +202,71 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
         // TODO Auto-generated method stub
         
     }
-
-
+    
     @Override
-    public void findAvailiableDriversForOrder(DeliveryOrder order)
-            throws LogiwebServiceException {
-        // TODO Auto-generated method stub
+    public void assignTruckToOrder(Truck truck, int orderId)
+            throws ServiceValidationException, LogiwebServiceException {
+        if(truck == null) {
+            throw new ServiceValidationException("Truck does not exist.");
+        } else if(truck.getStatus() != TruckStatus.OK) {
+            throw new ServiceValidationException("Truck must have OK status.");
+        } else if (truck.getAssignedDeliveryOrder() != null ) {
+            throw new ServiceValidationException("Truck must not have assigned orders.");
+        }
+        
+        try {
+            getEntityManager().getTransaction().begin();
+            DeliveryOrder order = deliveryOrderDao.find(orderId);
+            
+            if(order == null) {
+                throw new ServiceValidationException("Order " + orderId + " does not exist.");
+            } else if (order.getAssignedTruck() != null) {
+                throw new ServiceValidationException("Order " + orderId + " must not be assigned to another truck.");
+            }
+            
+            truck.setAssignedDeliveryOrder(order);
+            order.setAssignedTruck(truck);
+            getEntityManager().merge(truck);
+            
+            LOG.info("Truck id#" + truck.getId() + " assign to order id#" + order.getId());
+            
+            getEntityManager().getTransaction().commit();
+        } catch (DaoException e) {
+            LOG.warn("Something unexpected happened.", e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
         
     }
-
-
-    @Override
-    public Set<Truck> findAvailiableTrucksForOrder(DeliveryOrder order)
-            throws LogiwebServiceException {
-        // TODO Auto-generated method stub
-        return null;
-    }
     
+    @Override
+    public void setStatusForOrder(OrderStatus status, DeliveryOrder order)
+            throws LogiwebServiceException {
+        if(order == null) {
+            throw new ServiceValidationException("Order does not exist.");
+        } else if (status == null) {
+            throw new ServiceValidationException("Status not set");
+        }
+        
+        try {
+            getEntityManager().getTransaction().begin();
+            order.setStatus(status);
+            getEntityManager().merge(order);
+            
+            LOG.info("Order id#" + order.getId() + " changed status to " + status.name());
+            
+            getEntityManager().getTransaction().commit();
+        } catch (Exception e) {
+            LOG.warn("Something unexpected happened.", e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
+    }
     
 }

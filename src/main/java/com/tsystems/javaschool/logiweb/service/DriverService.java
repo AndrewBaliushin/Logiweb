@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
+import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
@@ -42,4 +43,18 @@ public interface DriverService {
     Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(City city, float maxWorkingHours) throws LogiwebServiceException;
     
     float calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException;
+
+    /**
+     * Assign driver to truck.
+     * 
+     * @param driverId
+     * @param truckId
+     * @throws ServiceValidationException
+     *             if truck or diver not exist, or if truck already have
+     *             full crew assigned
+     * @throws LogiwebServiceException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
+    void assignDriverToTruck(int driverId, int truckId) throws LogiwebServiceException;
 }

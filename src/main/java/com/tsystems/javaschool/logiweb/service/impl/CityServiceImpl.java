@@ -7,11 +7,8 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 
 import com.tsystems.javaschool.logiweb.dao.CityDao;
-import com.tsystems.javaschool.logiweb.dao.UserDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.dao.jpa.GenericDaoJpa;
 import com.tsystems.javaschool.logiweb.model.City;
-import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 

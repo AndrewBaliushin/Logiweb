@@ -1,7 +1,9 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,18 +21,23 @@ import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsi
 import com.tsystems.javaschool.logiweb.model.Cargo;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.model.Driver;
+import com.tsystems.javaschool.logiweb.model.Truck;
+import com.tsystems.javaschool.logiweb.model.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
-import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.RouteService.RouteInformation;
+import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
 @Controller
 public class OrderAndCargoController {
+    
+    private final static Float MAX_WORKING_HOURS_LIMIT = 176f;
     
     private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
 
@@ -39,23 +46,28 @@ public class OrderAndCargoController {
     private CityService cityService = ctx.getCityService();
     private OrdersAndCargoService orderAndCaroService = ctx.getOrdersAndCargoService();
     private RouteService routeService = ctx.getRouteService();
+    private TrucksService truckService = ctx.getTruckService();
+    private DriverService driverService = ctx.getDriverService();
 
     @RequestMapping(value = {"manager/editOrder"}, method = RequestMethod.GET)
     public ModelAndView editOrder(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/EditOrder");
         
+        RouteInformation routeInfo = null;
+        DeliveryOrder order = null;
         try {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
-            DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
+            order = orderAndCaroService.findOrderById(orderId);
             if (order == null) throw new IllegalArgumentException("Order #" + orderId + " not exist.");
 
-            RouteInformation routeInfo = routeService
+            routeInfo = routeService
                     .getRouteInformationForOrder(order);
 
             mav.addObject("orderId", orderId);
             mav.addObject("order", order);
             mav.addObject("routeInfo", routeInfo);
+            mav.addObject("maxWorkingHoursLimit", MAX_WORKING_HOURS_LIMIT);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
         } catch (LogiwebServiceException e) {
@@ -69,6 +81,41 @@ public class OrderAndCargoController {
             LOG.warn("Unexpected exception.", e);
         }
         
+        //suggest trucks
+        try {
+            if (order.getAssignedTruck() == null) {
+                Set<Truck> suggestedTrucks = truckService
+                        .findFreeAndUnbrokenByCargoCapacity(routeInfo
+                                .getMaxWeightOnCourse());
+                mav.addObject("suggestedTrucks", suggestedTrucks);
+            }
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Unexpected exception.", e);
+        }
+        
+        //suggest drivers
+        try {
+            if (order.getAssignedTruck() != null) {
+                float workingHoursLimit = MAX_WORKING_HOURS_LIMIT - routeInfo.getEstimatedTime();
+                
+                Set<Driver> suggestedDrivers = driverService
+                        .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
+                                order.getAssignedTruck().getCurrentCity(),
+                                workingHoursLimit);
+                mav.addObject("suggestedDrivers", suggestedDrivers);
+                
+                Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
+                for (Driver driver : suggestedDrivers) {
+                    workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver));
+                }
+                mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
+            }
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Unexpected exception.", e);
+        }
+        
+        mav.addObject("statuses", OrderStatus.values());
+        
         return mav;
     }
     
@@ -80,7 +127,7 @@ public class OrderAndCargoController {
      */
     @RequestMapping(value = "manager/addCargo", method = RequestMethod.POST)
     @ResponseBody
-    public String addCargo(HttpServletRequest request, HttpServletResponse response) {
+    public String addCargoToOrder(HttpServletRequest request, HttpServletResponse response) {
         Gson gson = new Gson();
         Map<String, String> jsonResponseMap = new HashMap<String, String>();
         
@@ -91,6 +138,116 @@ public class OrderAndCargoController {
         } catch (FormParamaterParsingException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonResponseMap.put("msg", e.getMessage());
+        } catch (ServiceValidationException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonResponseMap.put("msg", e.getMessage());
+        } catch (LogiwebServiceException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            LOG.warn("Unexpected exception.", e);
+            jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
+        }
+        
+        return gson.toJson(jsonResponseMap);
+    }
+    
+
+    /**
+     * Assign truck to order.
+     * 
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "manager/assignTruck", method = RequestMethod.POST)
+    @ResponseBody
+    public String assignTruckToOrder(HttpServletRequest request, HttpServletResponse response) {
+        Gson gson = new Gson();
+        Map<String, String> jsonResponseMap = new HashMap<String, String>();
+        
+        int orderId = 0;
+        int truckId = 0;        
+        try {
+            orderId = Integer.parseInt(request.getParameter("orderId"));
+            truckId = Integer.parseInt(request.getParameter("truckId"));
+        } catch (NumberFormatException | NullPointerException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonResponseMap.put("msg", "Order and truck id must be equal or more than 0.");
+        }
+        
+        try {
+            Truck truck = truckService.findTruckById(truckId);
+            orderAndCaroService.assignTruckToOrder(truck, orderId);            
+        } catch (ServiceValidationException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonResponseMap.put("msg", e.getMessage());
+        } catch (LogiwebServiceException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            LOG.warn("Unexpected exception.", e);
+            jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
+        }
+        
+        return gson.toJson(jsonResponseMap);
+    }
+    
+    /**
+     * Remove truck and drivers from this order.
+     * 
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "manager/removeDriversAndTruckFromOrder", method = RequestMethod.POST)
+    @ResponseBody
+    public String removeDriversAndTruckFromOrder(HttpServletRequest request, HttpServletResponse response) {
+        Gson gson = new Gson();
+        Map<String, String> jsonResponseMap = new HashMap<String, String>();
+        
+        int orderId = 0;     
+        try {
+            orderId = Integer.parseInt(request.getParameter("orderId"));
+        } catch (NumberFormatException | NullPointerException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonResponseMap.put("msg", "Order ID must be equal or more than 0.");
+        }
+        
+        try {
+            DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
+            Truck truck = order.getAssignedTruck();
+            if(truck != null) {
+                truckService.removeAssignedOrderAndDriversFromTruck(truck);  
+            }
+        } catch (LogiwebServiceException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            LOG.warn("Unexpected exception.", e);
+            jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
+        }
+        
+        return gson.toJson(jsonResponseMap);
+    }
+    
+    /**
+     * Assign truck to order.
+     * 
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "manager/changeOrderStatus", method = RequestMethod.POST)
+    @ResponseBody
+    public String changeOrderStatus(HttpServletRequest request, HttpServletResponse response) {
+        Gson gson = new Gson();
+        Map<String, String> jsonResponseMap = new HashMap<String, String>();
+        
+        int orderId = 0;  
+        OrderStatus status = null;
+        try {
+            orderId = Integer.parseInt(request.getParameter("orderId"));
+            status = OrderStatus.valueOf(request.getParameter("orderStatus"));
+        } catch (IllegalArgumentException | NullPointerException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonResponseMap.put("msg", "Order id or status is in wrong format.");
+        }
+        
+        try {
+            DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
+            orderAndCaroService.setStatusForOrder(status, order);            
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonResponseMap.put("msg", e.getMessage());
@@ -128,6 +285,7 @@ public class OrderAndCargoController {
         try {
             mav.addObject("orders", orderAndCaroService.findAllOrders());
         } catch (LogiwebServiceException e) {
+            //TODO proper exception
             mav.addObject("error", "Server error. Check logs.");
         }
         

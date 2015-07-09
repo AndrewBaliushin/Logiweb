@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tsystems.javaschool.logiweb.LogiwebAppContext;
 import com.tsystems.javaschool.logiweb.model.User;
-import com.tsystems.javaschool.logiweb.model.status.UserRole;
 import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.UserNotFoundServiceException;

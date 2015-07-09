@@ -63,7 +63,6 @@ public class DeliveryOrder {
     }
 
     public void setAssignedTruck(Truck assignedTruck) {
-	assignedTruck.setAssignedDeliveryOrder(this);
         this.assignedTruck = assignedTruck;
     }
 

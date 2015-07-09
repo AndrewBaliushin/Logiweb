@@ -1,5 +1,6 @@
 package com.tsystems.javaschool.logiweb.dao.jpa;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
-import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.utils.DateUtils;
@@ -31,16 +31,20 @@ public class DriverShiftJournalDaoJpa extends GenericDaoJpa<DriverShiftJournal>
             Set<Driver> drivers) {
         EntityManager em = getEntityManager();
         String journalEntityName = DriverShiftJournal.class.getSimpleName();
+        
+        Date firstDateOfCurrentMonth = DateUtils.getFirstDateOfCurrentMonth();
+        Date firstDateOfNextMonth = DateUtils.getFirstDayOfNextMonth();
     
         String queryString = "SELECT j FROM " + journalEntityName + " j"
                 + " WHERE driverForThisRecord IN :drivers"
                 + " AND ( (shiftEnded BETWEEN :firstDayOfMonth AND :firstDayOfNextMonth)"
                 + " OR (shiftBeggined BETWEEN :firstDayOfMonth AND :firstDayOfNextMonth) )";
-        
-        Query query = em.createQuery(queryString, DriverShiftJournal.class);
+
+        Query query = em.createQuery(queryString, DriverShiftJournal.class)
+                .setHint("org.hibernate.cacheable", false);     //fix for strange behavior of hiber
         query.setParameter("drivers", drivers);
-        query.setParameter("firstDayOfMonth", DateUtils.getFirstDateOfCurrentMonth());
-        query.setParameter("firstDayOfNextMonth", DateUtils.getFirstDayOfNextMonth());
+        query.setParameter("firstDayOfMonth", firstDateOfCurrentMonth);
+        query.setParameter("firstDayOfNextMonth", firstDateOfNextMonth);
     
         /*
          * type List needs unchecked conversion to conform to
