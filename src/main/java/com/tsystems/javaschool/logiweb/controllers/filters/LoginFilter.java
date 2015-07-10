@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.controllers;
+package com.tsystems.javaschool.logiweb.controllers.filters;
 
 import java.io.IOException;
 
@@ -30,27 +30,29 @@ public class LoginFilter implements Filter {
       HttpServletResponse responseHttp = (HttpServletResponse) response;
         
       String path = requestHttp.getRequestURI();
-      //TODO figure out is this right way to do it?
       boolean loggedIn = AuthUtils.isLoggedIn(((HttpServletRequest) request));
       String pathLoginPage = requestHttp.getContextPath() + LOGIN_PAGE;
       
         if (loggedIn || path.matches(RESOURCES_REGEXP)
                 || path.equals(pathLoginPage)) {
-          chain.doFilter(request, response);
-      } else {
-          try {
-              responseHttp.sendRedirect(requestHttp.getContextPath() + LOGIN_PAGE);
-          } catch (IOException e) {
-              LOG.warn("IO exception", e);
-          }
-      }
+            chain.doFilter(request, response);
+        } else {
+            try {
+                responseHttp.sendRedirect(requestHttp.getContextPath()
+                        + LOGIN_PAGE);
+            } catch (IOException e) {
+                LOG.warn("IO exception", e);
+            }
+        }
     }
 
     @Override
-    public void destroy() {        
+    public void destroy() {
+        /* not required */
     }
 
     @Override
-    public void init(FilterConfig arg0) throws ServletException {        
+    public void init(FilterConfig arg0) throws ServletException {
+        /* not required */
     }
   }

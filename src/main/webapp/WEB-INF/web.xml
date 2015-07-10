@@ -7,7 +7,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
  
  <filter>
     <filter-name>secureFilter</filter-name>
-    <filter-class>com.tsystems.javaschool.logiweb.controllers.LoginFilter</filter-class>
+    <filter-class>com.tsystems.javaschool.logiweb.controllers.filters.LoginFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>secureFilter</filter-name>
