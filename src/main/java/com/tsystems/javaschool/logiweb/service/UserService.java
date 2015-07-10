@@ -10,6 +10,14 @@ import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceExceptio
  */
 public interface UserService {
 
+    /**
+     * Get user by his pass and mail.
+     * 
+     * @param email of user
+     * @param md5pass password 
+     * @return user
+     * @throws LogiwebServiceException
+     */
     User getUserByMd5PassAndMail(String mail, String pass) throws LogiwebServiceException;
 
 }

@@ -9,6 +9,11 @@ import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
+/**
+ * Data manipulation and business logic related to Cargoes and Delivery Orders.
+ * 
+ * @author Andrey Baliushin
+ */
 public interface OrdersAndCargoService {
     
     /**
@@ -19,8 +24,21 @@ public interface OrdersAndCargoService {
      */
     Set<DeliveryOrder> findAllOrders() throws LogiwebServiceException;
     
+    /**
+     * Add new order. 
+     * @param newOrder
+     * @return same order
+     * @throws LogiwebServiceException if something unexpected happens
+     */
     DeliveryOrder addNewOrder(DeliveryOrder newOrder) throws LogiwebServiceException;
     
+    /**
+     * Find ofrder by id.
+     * 
+     * @param id
+     * @return order or null if not found 
+     * @throws LogiwebServiceException if something unexpected happens
+     */
     DeliveryOrder findOrderById(int id) throws LogiwebServiceException;
     
     /**
@@ -31,8 +49,6 @@ public interface OrdersAndCargoService {
      * @throws ServiceValidationException -- if new cargo doesn't fit requirements
      */
     void addCargo(Cargo newCargo) throws ServiceValidationException, LogiwebServiceException;
-    
-    void setStatusOrderReadyToGo(DeliveryOrder order) throws LogiwebServiceException;
     
     /**
      * Assign truck to order.

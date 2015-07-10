@@ -58,6 +58,9 @@ public class TruckDaoJpa extends GenericDaoJpa<Truck> implements TruckDao {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Truck findByLicensePlate(String licensePlate) throws DaoException {
         try {

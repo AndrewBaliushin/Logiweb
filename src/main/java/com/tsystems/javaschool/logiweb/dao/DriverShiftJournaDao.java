@@ -18,6 +18,9 @@ public interface DriverShiftJournaDao extends GenericDao<DriverShiftJournal> {
      * Record is selected if shift started or ended in this month. 
      * Shifts that are not ended yet are also selected.
      * 
+     * Method does not trim records. If record is started in previous month and ended 
+     * in this one, then it will be shown 'as is'. 
+     * 
      * @param drivers
      * @return empty set if nothing was found or if emty set of drivers was past as param
      */

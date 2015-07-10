@@ -51,6 +51,9 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<DeliveryOrder> findAllOrders() throws LogiwebServiceException {
         try {
@@ -67,7 +70,10 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
             }
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DeliveryOrder addNewOrder(DeliveryOrder newOrder)
             throws LogiwebServiceException {
@@ -89,7 +95,9 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
         }
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DeliveryOrder findOrderById(int id) throws LogiwebServiceException {
         try {
@@ -196,16 +204,13 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
         }
     }
 
-    @Override
-    public void setStatusOrderReadyToGo(DeliveryOrder order)
-            throws LogiwebServiceException {
-        // TODO Auto-generated method stub
-        
-    }
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void assignTruckToOrder(Truck truck, int orderId)
             throws ServiceValidationException, LogiwebServiceException {
+        //TODO make it receive unmanaged entity
         if(truck == null) {
             throw new ServiceValidationException("Truck does not exist.");
         } else if(truck.getStatus() != TruckStatus.OK) {
@@ -242,6 +247,9 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
         
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setStatusForOrder(OrderStatus status, DeliveryOrder order)
             throws LogiwebServiceException {

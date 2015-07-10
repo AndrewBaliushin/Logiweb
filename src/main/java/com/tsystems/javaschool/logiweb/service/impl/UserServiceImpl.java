@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Inheritance;
 
 import org.apache.log4j.Logger;
 
@@ -33,6 +34,9 @@ public class UserServiceImpl implements UserService {
         this.em = em;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User getUserByMd5PassAndMail(String mail, String pass) throws LogiwebServiceException {
         try {
@@ -68,7 +72,5 @@ public class UserServiceImpl implements UserService {
              throw new LogiwebServiceException("MD5 hashing failed", e);
          }
      }
-
-    
 
 }

@@ -26,6 +26,9 @@ public class DriverShiftJournalDaoJpa extends GenericDaoJpa<DriverShiftJournal>
 	super(entityClass, entityManager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<DriverShiftJournal> findThisMonthJournalsForDrivers(
             Set<Driver> drivers) {
@@ -60,6 +63,9 @@ public class DriverShiftJournalDaoJpa extends GenericDaoJpa<DriverShiftJournal>
         return new HashSet<DriverShiftJournal>(result);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<DriverShiftJournal> findThisMonthJournalsForDrivers(Driver driver) {
         Set<Driver> drivers = new HashSet<Driver>();

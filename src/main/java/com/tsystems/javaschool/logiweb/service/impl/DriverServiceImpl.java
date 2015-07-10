@@ -22,7 +22,6 @@ import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.DriverService;
-import com.tsystems.javaschool.logiweb.service.exceptions.DriverEmployeeIdOccupiedException;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 import com.tsystems.javaschool.logiweb.utils.DateUtils;
@@ -53,6 +52,9 @@ public class DriverServiceImpl implements DriverService {
         return em;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Driver> findAllDrivers() throws LogiwebServiceException {
         try {
@@ -70,6 +72,9 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Driver findDriverById(int id) throws LogiwebServiceException {
         try {
@@ -87,11 +92,17 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void editDriver(Driver editedDriver) throws LogiwebServiceException {
 	updateOrAddDriver(editedDriver, true);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Driver addDriver(Driver newDriver) throws ServiceValidationException,
             LogiwebServiceException {
@@ -103,8 +114,9 @@ public class DriverServiceImpl implements DriverService {
         
         try {
             getEntityManager().getTransaction().begin();
-            Driver driverWithSameEmployeeId = driverDao.findByEmployeeId(newDriver.getEmployeeId());
-            
+            Driver driverWithSameEmployeeId = driverDao
+                    .findByEmployeeId(newDriver.getEmployeeId());
+
             if (driverWithSameEmployeeId != null) {
                 throw new ServiceValidationException("Employee ID  #"
                         + newDriver.getEmployeeId() + " is already in use.");
@@ -160,7 +172,7 @@ public class DriverServiceImpl implements DriverService {
      * @throws DaoException if employee id is occupied or //TODO add reasons
      */
     private void updateOrAddDriver(Driver driver, boolean update)
-            throws LogiwebServiceException {
+            throws ServiceValidationException, LogiwebServiceException {
         try {
             if (isEmployeeIdAvailiable(driver)) {
                 getEntityManager().getTransaction().begin();
@@ -171,7 +183,8 @@ public class DriverServiceImpl implements DriverService {
                 }
                 getEntityManager().getTransaction().commit();
             } else {
-                throw new DriverEmployeeIdOccupiedException();
+                throw new ServiceValidationException("Employee id "
+                        + " occupied");
             }
         } catch (DaoException e) { 
             LOG.warn("Something wrong..."); //TODO ????????
@@ -200,6 +213,9 @@ public class DriverServiceImpl implements DriverService {
         return driver == null || driver.getId() == driverToCheck.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeDriver(Driver driverToRemove) throws ServiceValidationException, LogiwebServiceException {
         try {
@@ -233,6 +249,9 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
             City city, float maxWorkingHours) throws LogiwebServiceException {
@@ -264,7 +283,10 @@ public class DriverServiceImpl implements DriverService {
             }
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public float calculateWorkingHoursForDriver(Driver driver) {
         Set<DriverShiftJournal> journals = driverShiftJournalDao
@@ -272,13 +294,13 @@ public class DriverServiceImpl implements DriverService {
         Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(journals);
         
         //if driver don't have any records yet
-        if(workingHours.get(driver) == null) workingHours.put(driver, 0f);
+        if (workingHours.get(driver) == null) workingHours.put(driver, 0f);
         
         return workingHours.get(driver);
     }
     
     /**
-     * Calculate total working hours for Drivers that are listed in Shift journal.
+     * Calculate total working hours for Drivers that are listed in Shift journals.
      * 
      * @param journal
      * @return Map with Driver as keys and working hours as values.

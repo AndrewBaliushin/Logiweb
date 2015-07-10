@@ -7,7 +7,7 @@ import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 
 /**
  * Service for analysis of Delivery Order. 
- * Helps in creation of optimal delivery routes.
+ * Helps in creation of optimal delivery routes and estimation of delivery time.
  * 
  * @author Andrey Baliushin
  */
@@ -16,7 +16,8 @@ public interface RouteService {
     /**
      * Date holder for route information: best order of Cities to deliver,
      * maximum weight during delivery and estimated time to finish delivery.
-     * @author Andrew Baliushin
+     * 
+     * @author Andrey Baliushin
      */
     class RouteInformation {
         
@@ -49,7 +50,8 @@ public interface RouteService {
         }
         
         /**
-         * Optimal order of cities for best delivery.
+         * City list in order that is optimal and most efficient in respect of
+         * delivery.
          * @return
          */
         public List<City> getBestOrderOfDelivery() {
@@ -57,5 +59,11 @@ public interface RouteService {
         }
     }
 
+    /**
+     * Analyze order and return object with rout data.
+     * 
+     * @param order
+     * @return {@link RouteInformation}
+     */
     RouteInformation getRouteInformationForOrder(DeliveryOrder order);
 }

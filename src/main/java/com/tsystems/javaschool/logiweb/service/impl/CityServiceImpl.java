@@ -12,6 +12,11 @@ import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 
+/**
+ * Data manipulation and business logic related to Cities.
+ * 
+ * @author Andrey Baliushin
+ */
 public class CityServiceImpl implements CityService {
     
     private static final Logger LOG = Logger.getLogger(CityServiceImpl.class);

@@ -27,19 +27,36 @@ public interface TrucksService {
      * 
      * @param id
      * @return truck or null
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
+     * @throws LogiwebServiceException
+     *             if unexpected exception occurred on lower level (not user
+     *             fault)
      */
     Truck findTruckById(int id) throws LogiwebServiceException;
 
-    void editTruck(Truck editedTruck) throws LogiwebServiceException;
+    /**
+     * Edit truck.
+     * 
+     * @param editedTruck
+     * @throws ServiceValidationException
+     *             if truck don't have all required fields or have not unique license
+     *             plate
+     * @throws LogiwebServiceException
+     *             if unexpected exception occurred on lower level (not user
+     *             fault)
+     */
+    void editTruck(Truck editedTruck) throws ServiceValidationException, LogiwebServiceException;
 
     /**
      * Add truck.
      * 
      * @param newTruck
      * @return same truck
-     * @throws ServiceValidationException if truck don't have all required fields or not unique license plate
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
+     * @throws ServiceValidationException
+     *             if truck don't have all required fields or not unique license
+     *             plate
+     * @throws LogiwebServiceException
+     *             if unexpected exception occurred on lower level (not user
+     *             fault)
      */
     Truck addTruck(Truck newTruck) throws ServiceValidationException, LogiwebServiceException;
     
@@ -47,18 +64,23 @@ public interface TrucksService {
      * Remove truck.
      * 
      * @param truckToRemove
-     * @throws ServiceValidationException if truck is attached to order or have attached drivers.
-     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault)
+     * @throws ServiceValidationException
+     *             if truck is attached to order or have attached drivers.
+     * @throws LogiwebServiceException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
      */
     void removeTruck(Truck truckToRemove) throws ServiceValidationException, LogiwebServiceException;
     
     /**
-     * Find trucks that have Status 'OK' and not busy by order, and have cargo capacity (in 1000kg)
-     * more or equal to minCargoWeightCapacity.
+     * Find trucks that have Status 'OK' and not busy by order, and have cargo
+     * capacity (in tons) more or equal to minCargoWeightCapacity.
      * 
      * @param minCargoWeightCapacity
      * @return
-     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault)
+     * @throws LogiwebServiceException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
      */
     Set<Truck> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException;
     

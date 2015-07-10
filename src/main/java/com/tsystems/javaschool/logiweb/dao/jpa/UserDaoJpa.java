@@ -25,6 +25,9 @@ public class UserDaoJpa  extends GenericDaoJpa<User> implements UserDao {
         super(entityClass, entityManager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User getByMd5PassAndMail(String email, String passMd5) throws DaoException, UserNotFoundDaoException {
         try {

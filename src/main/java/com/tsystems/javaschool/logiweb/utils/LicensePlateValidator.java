@@ -1,7 +1,7 @@
 package com.tsystems.javaschool.logiweb.utils;
 
 /**
- * Validates that Strig can be used as license plate.
+ * Set of static utility methods for license plates validation.
  * 
  * @author Andrey Baliushin
  */

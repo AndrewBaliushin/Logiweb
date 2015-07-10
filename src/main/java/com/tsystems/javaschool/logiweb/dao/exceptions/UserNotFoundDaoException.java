@@ -1,5 +1,10 @@
 package com.tsystems.javaschool.logiweb.dao.exceptions;
 
+/**
+ * User entity not found.
+ * 
+ * @author Andrey Baliushin
+ */
 public class UserNotFoundDaoException extends DaoException {
 
     public UserNotFoundDaoException() {
