@@ -164,7 +164,7 @@ public final class LogiwebAppContext {
             synchronized (this) {
                 ordersAndCargoService = new OrdersAndCargoServiceImpl(
                         getDeliveryOrderDao(), getCargoDao(), getCityDao(),
-                        getEntityManager());
+                        getTruckDao(), getEntityManager());
             }
         }
         return ordersAndCargoService;

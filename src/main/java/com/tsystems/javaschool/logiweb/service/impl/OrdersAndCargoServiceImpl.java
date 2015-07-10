@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import com.tsystems.javaschool.logiweb.dao.CargoDao;
 import com.tsystems.javaschool.logiweb.dao.CityDao;
 import com.tsystems.javaschool.logiweb.dao.DeliveryOrderDao;
+import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.model.Cargo;
 import com.tsystems.javaschool.logiweb.model.City;
@@ -35,13 +36,15 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     private DeliveryOrderDao deliveryOrderDao;
     private CargoDao cargoDao;
     private CityDao cityDao;
+    private TruckDao truckDao;
     private EntityManager em;
 
     public OrdersAndCargoServiceImpl(DeliveryOrderDao deliveryOrderDao,
-            CargoDao cargoDao, CityDao cityDao, EntityManager em) {
+            CargoDao cargoDao, CityDao cityDao, TruckDao truckDao, EntityManager em) {
         this.deliveryOrderDao = deliveryOrderDao;
         this.cargoDao = cargoDao;
         this.cityDao = cityDao;
+        this.truckDao = truckDao;
         this.em = em;
     }
 
@@ -210,17 +213,23 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     @Override
     public void assignTruckToOrder(Truck truck, int orderId)
             throws ServiceValidationException, LogiwebServiceException {
-        //TODO make it receive unmanaged entity
-        if(truck == null) {
-            throw new ServiceValidationException("Truck does not exist.");
-        } else if(truck.getStatus() != TruckStatus.OK) {
-            throw new ServiceValidationException("Truck must have OK status.");
-        } else if (truck.getAssignedDeliveryOrder() != null ) {
-            throw new ServiceValidationException("Truck must not have assigned orders.");
-        }
-        
         try {
             getEntityManager().getTransaction().begin();
+            
+            if(truck == null) {
+                throw new ServiceValidationException("Truck does not exist.");
+            } 
+            truck = truckDao.find(truck.getId());       //switch to managed entity
+            if(truck == null) {
+                throw new ServiceValidationException("Truck does not exist.");
+            } 
+            
+            if(truck.getStatus() != TruckStatus.OK) {
+                throw new ServiceValidationException("Truck must have OK status.");
+            } else if (truck.getAssignedDeliveryOrder() != null ) {
+                throw new ServiceValidationException("Truck must not have assigned orders.");
+            }
+            
             DeliveryOrder order = deliveryOrderDao.find(orderId);
             
             if(order == null) {

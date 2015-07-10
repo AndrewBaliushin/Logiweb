@@ -174,7 +174,8 @@ public class OrderAndCargoController {
         }
         
         try {
-            Truck truck = truckService.findTruckById(truckId);
+            Truck truck = new Truck();
+            truck.setId(truckId);
             orderAndCaroService.assignTruckToOrder(truck, orderId);            
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
