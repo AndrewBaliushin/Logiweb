@@ -29,6 +29,10 @@ public class DriverShiftJournalDaoJpa extends GenericDaoJpa<DriverShiftJournal>
     @Override
     public Set<DriverShiftJournal> findThisMonthJournalsForDrivers(
             Set<Driver> drivers) {
+        if(drivers == null || drivers.isEmpty()) {
+            return new HashSet<DriverShiftJournal>(0);
+        }
+        
         EntityManager em = getEntityManager();
         String journalEntityName = DriverShiftJournal.class.getSimpleName();
         

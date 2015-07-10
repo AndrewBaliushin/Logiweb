@@ -32,27 +32,8 @@
             <param name="LevelMin" value="WARN" />
         </filter>
 	</appender>
+
 	
-<!--            Logger for SQL -->
-<!-- 	<category name="org.hibernate" additivity="false"> -->
-<!-- 		<priority value="WARN" /> -->
-<!-- 		<appender-ref ref="CONSOLE-WARN" /> -->
-<!-- 		<appender-ref ref="CONSOLE-DEBUG" /> -->
-<!-- 	</category> -->
-	
-<!-- 	<category name="org.hibernate.SQL"> -->
-<!-- 		<priority value="DEBUG" /> -->
-<!-- 		<appender-ref ref="CONSOLE-WARN" /> -->
-<!--         <appender-ref ref="CONSOLE-DEBUG" /> -->
-<!--         <appender-ref ref="LOG-FILE-APPENDER" /> -->
-<!-- 	</category> -->
-	
-<!-- 	<category name="org.hibernate.SQL"> -->
-<!--         <priority value="DEBUG" /> -->
-<!--         <appender-ref ref="CONSOLE-WARN" /> -->
-<!--         <appender-ref ref="CONSOLE-DEBUG" /> -->
-<!--         <appender-ref ref="LOG-FILE-APPENDER" />         -->
-<!--     </category> -->
 
     <appender name="LOGIWEB-LOG-WARN-FILE-APPENDER" class="org.apache.log4j.FileAppender">
         <param name="file" value="/home/andrew/JavaSchool/logiweb/logs/logiweb-error.log"/>
@@ -74,11 +55,23 @@
             <param name="LevelMax" value="INFO"/>
         </filter>
     </appender>
+    
+     <appender name="SQL-LOG-ALL-FILE-APPENDER" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/home/andrew/JavaSchool/logiweb/logs/sql-all.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="TRACE"/>
+            <param name="LevelMax" value="ALL"/>
+        </filter>
+    </appender>
 
 	<category name="com.tsystems.javaschool.logiweb">
 		<appender-ref ref="LOGIWEB-LOG-WARN-FILE-APPENDER" />
 		<appender-ref ref="LOGIWEB-LOG-INFO-FILE-APPENDER" />
 	</category>
+	
 	
 	<root>
 		<priority value="INFO" />
@@ -86,5 +79,22 @@
 		<appender-ref ref="CONSOLE-DEBUG" />
 		<appender-ref ref="LOG-FILE-APPENDER" />
 	</root>
+	
+	<!-- Detailed Logger for SQL -->
+<!--     <category name="org.hibernate" additivity="false"> -->
+<!--         <priority value="TRACE" /> -->
+<!--         < -->
+<!--         <appender-ref ref="CONSOLE-WARN" /> -->
+<!--         <appender-ref ref="CONSOLE-DEBUG" /> -->
+<!--         <appender-ref ref="SQL-LOG-ALL-FILE-APPENDER" /> -->
+<!--     </category> -->
+    
+<!--     <category name="org.hibernate.SQL"> -->
+<!--         <priority value="TRACE" /> -->
+<!--         <appender-ref ref="CONSOLE-WARN" /> -->
+<!--         <appender-ref ref="CONSOLE-DEBUG" /> -->
+<!--         <appender-ref ref="SQL-LOG-ALL-FILE-APPENDER" /> -->
+<!--     </category> -->
+    <!-- /SQL -->
 	
 </log4j:configuration>

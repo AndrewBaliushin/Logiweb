@@ -14,7 +14,11 @@
 			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/logiweb"/>
 			<property name="hibernate.connection.username" value="javaschool"/>
 			<property name="hibernate.connection.password" value="12345"/>
-			<property name = "hibernate.show_sql" value = "false" />
+
+	        <!-- Detailed Log -->
+			<!-- <property name="hibernate.show_sql" value="true"/> -->
+			<!-- <property name="hibernate.format_sql" value="true"/> -->
+		    <!-- /Log -->
 		</properties>
 	</persistence-unit>
 </persistence>

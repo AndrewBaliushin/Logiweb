@@ -19,7 +19,7 @@ public interface DriverShiftJournaDao extends GenericDao<DriverShiftJournal> {
      * Shifts that are not ended yet are also selected.
      * 
      * @param drivers
-     * @return
+     * @return empty set if nothing was found or if emty set of drivers was past as param
      */
     Set<DriverShiftJournal> findThisMonthJournalsForDrivers(Set<Driver> drivers);
     
