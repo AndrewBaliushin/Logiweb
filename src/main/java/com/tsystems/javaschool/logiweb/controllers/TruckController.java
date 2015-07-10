@@ -31,7 +31,7 @@ public class TruckController {
     
     private final static Logger LOG = Logger.getLogger(TruckController.class);
 
-    private LogiwebAppContext ctx = LogiwebAppContext.INSTANCE;
+    private LogiwebAppContext ctx = LogiwebAppContext.getInstance();
 
     private TrucksService truckService = ctx.getTruckService();
     private CityService cityService = ctx.getCityService();

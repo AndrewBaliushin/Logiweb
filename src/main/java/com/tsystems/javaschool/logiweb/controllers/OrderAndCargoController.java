@@ -41,7 +41,7 @@ public class OrderAndCargoController {
     
     private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
 
-    private LogiwebAppContext ctx = LogiwebAppContext.INSTANCE;
+    private LogiwebAppContext ctx = LogiwebAppContext.getInstance();
     
     private CityService cityService = ctx.getCityService();
     private OrdersAndCargoService orderAndCaroService = ctx.getOrdersAndCargoService();

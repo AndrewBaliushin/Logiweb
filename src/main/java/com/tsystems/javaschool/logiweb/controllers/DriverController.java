@@ -34,7 +34,7 @@ public class DriverController {
     
     private final static Logger LOG = Logger.getLogger(DriverController.class);
 
-    private LogiwebAppContext ctx = LogiwebAppContext.INSTANCE;
+    private LogiwebAppContext ctx = LogiwebAppContext.getInstance();
 
     private DriverService driverService = ctx.getDriverService();
     private CityService cityService = ctx.getCityService();
@@ -53,6 +53,26 @@ public class DriverController {
                 workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver));
             }
             mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
+        } catch (LogiwebServiceException e) {
+            LOG.warn(e);
+        }
+        
+        return mav;
+    }
+    
+    @RequestMapping(value = "manager/showDriver", method = RequestMethod.GET)
+    public ModelAndView showSingleDriver(HttpServletRequest request) {  
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("manager/SingleDriver");
+        
+        try {
+            int driverId = Integer.parseInt(request.getParameter("driverId"));
+            Driver driver = driverService.findDriverById(driverId);
+            mav.addObject("driver", driver);
+            mav.addObject("workingHours",
+                    driverService.calculateWorkingHoursForDriver(driver));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
         } catch (LogiwebServiceException e) {
             LOG.warn(e);
         }

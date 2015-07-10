@@ -22,7 +22,7 @@ public class AuthController {
 
     private static final Logger LOG = Logger.getLogger(AuthController.class);
     
-    LogiwebAppContext ctx = LogiwebAppContext.INSTANCE;
+    LogiwebAppContext ctx = LogiwebAppContext.getInstance();
     
     UserService userService = ctx.getUserService();
 
