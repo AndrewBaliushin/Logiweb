@@ -263,6 +263,8 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
                 throw new ServiceValidationException("Order " + orderId + " does not exist.");
             } else if (order.getAssignedTruck() != null) {
                 throw new ServiceValidationException("Order " + orderId + " must not be assigned to another truck.");
+            } else if (order.getAssignedCargoes() == null || order.getAssignedCargoes().isEmpty()) {
+                throw new ServiceValidationException("Order " + orderId + " must have cargo.");
             }
             
             truck.setAssignedDeliveryOrder(order);

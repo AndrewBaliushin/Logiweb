@@ -97,7 +97,7 @@
 					</button>
 
 					<!-- Assign driver to tuck -->
-					<button type="button" class="btn btn-default btn-lg <c:if test="${empty order.assignedTruck || order.status != orderNotReady}">disabled</c:if>"
+					<button type="button" class="btn btn-default btn-lg <c:if test="${empty order.assignedTruck || (!empty order.assignedTruck.drivers && fn:length(order.assignedTruck.drivers) >= order.assignedTruck.crewSize)}">disabled</c:if>"
 					data-toggle="modal" data-target="#assign-driver">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-user" aria-hidden="true"></span>
@@ -105,11 +105,19 @@
 					</button>
 					
 					<!-- Status change -->
-					<button type="button" class="btn btn-default btn-lg <c:if test="${order.status != orderNotReady}">disabled</c:if>"
+					<button type="button" class="btn btn-default btn-lg 
+					    <c:choose>
+	                       <c:when test="${!empty order.assignedTruck && (!empty order.assignedTruck.drivers && fn:length(order.assignedTruck.drivers) >= order.assignedTruck.crewSize)}"></c:when>
+	                       <c:otherwise>disabled</c:otherwise>
+                        </c:choose>"
+
 						data-toggle="modal" data-target="#change-status-modal"  onclick="changeOrderStatusToReady(${order.id}) "><span
 							class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
 						Ready!
 					</button>
+					
+					
+
 
 				</div>
 
