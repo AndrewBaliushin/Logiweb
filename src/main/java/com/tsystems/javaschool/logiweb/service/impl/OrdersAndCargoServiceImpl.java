@@ -78,6 +78,26 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
      * {@inheritDoc}
      */
     @Override
+    public Set<Cargo> findAllCargoes() throws LogiwebServiceException {
+        try {
+            getEntityManager().getTransaction().begin();
+            Set<Cargo> orders = cargoDao.findAll();
+            getEntityManager().getTransaction().commit();
+            return orders;
+        } catch (DaoException e) {
+            LOG.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public DeliveryOrder addNewOrder(DeliveryOrder newOrder)
             throws LogiwebServiceException {
         try {

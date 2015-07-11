@@ -25,6 +25,14 @@ public interface OrdersAndCargoService {
     Set<DeliveryOrder> findAllOrders() throws LogiwebServiceException;
     
     /**
+     * Find all cargoes.
+     * 
+     * @return cargoes set or empty set.
+     * @throws LogiwebServiceException if something unexpected happens
+     */
+    Set<Cargo> findAllCargoes() throws LogiwebServiceException;
+    
+    /**
      * Add new order. 
      * @param newOrder
      * @return same order

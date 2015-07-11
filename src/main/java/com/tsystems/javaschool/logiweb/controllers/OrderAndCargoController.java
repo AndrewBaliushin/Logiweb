@@ -268,8 +268,10 @@ public class OrderAndCargoController {
             orderAndCaroService.addNewOrder(newOrder);
         } catch (LogiwebServiceException e) {
             LOG.error(e);
-            //trigger HTTP Status 500 response
-            throw new RuntimeException("Unknown and unexpected error occured while creating new Delivery Order", e);
+            // trigger HTTP Status 500 response
+            throw new RuntimeException(
+                    "Unknown and unexpected error occured while creating new Delivery Order",
+                    e);
         }
         
         ModelAndView mav = new ModelAndView("redirect:/manager/editOrder");
@@ -285,8 +287,29 @@ public class OrderAndCargoController {
         try {
             mav.addObject("orders", orderAndCaroService.findAllOrders());
         } catch (LogiwebServiceException e) {
-            //TODO proper exception
-            mav.addObject("error", "Server error. Check logs.");
+            LOG.error(e);
+            // trigger HTTP Status 500 response
+            throw new RuntimeException(
+                    "Unknown and unexpected error occured while creating new Delivery Order",
+                    e);
+        }
+        
+        return mav;
+    }
+    
+    @RequestMapping(value = {"manager/showCargoes"})
+    public ModelAndView showCargoes() {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("manager/CargoesList");
+        
+        try {
+            mav.addObject("cargoes", orderAndCaroService.findAllCargoes());
+        } catch (LogiwebServiceException e) {
+            LOG.error(e);
+            // trigger HTTP Status 500 response
+            throw new RuntimeException(
+                    "Unknown and unexpected error occured while creating new Delivery Order",
+                    e);
         }
         
         return mav;

@@ -29,7 +29,7 @@
 			<tbody>
 
 				<c:forEach items="${orders}" var="order">
-					<tr id="truck-id-${order.id}-row">
+					<tr>
 
 						<td>${order.id}</td>
 						<td>${order.status}</td>

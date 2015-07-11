@@ -89,7 +89,7 @@
 			</legend>
 
             <div class="btn-group btn-group-justified" role="group"> 
-			<a href="#" role="button" class="btn btn-default btn-large"><span
+			<a href="${pageContext.request.contextPath}/manager/showCargoes" role="button" class="btn btn-default btn-large"><span
 				class="glyphicon glyphicon-list" aria-hidden="true"></span> Show All</a>
 			</div>
 			
