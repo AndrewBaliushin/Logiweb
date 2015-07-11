@@ -48,8 +48,11 @@
 							
 						<td><c:if test="${empty truck.drivers}">Not assigned</c:if>
                             <c:forEach items="${truck.drivers}" var="driver">
-                                <div>${driver.surname}</div>
-                            </c:forEach>
+							    <a href="
+		                            <c:url value="showDriver">
+		                                <c:param name="driverId" value="${driver.id}" />
+		                            </c:url>">${driver.surname}</a><span class="comma-separator">,</span>
+							</c:forEach>
                         </td>	
                             
 						<td class="text-center">

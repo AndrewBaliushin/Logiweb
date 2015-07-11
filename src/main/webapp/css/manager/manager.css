@@ -2,7 +2,6 @@
 	color:red;
 }
 
-
 .modal.modal-wide .modal-dialog {
   width: 90%;
 }
@@ -12,4 +11,8 @@
 
 .margin-bottom{
 	margin-bottom: 25px;
+}
+
+span.comma-separator:last-child {
+	display: none; 
 }

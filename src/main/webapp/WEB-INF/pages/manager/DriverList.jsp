@@ -27,6 +27,7 @@
 					<th>Current Truck</th>
 					<th>Current Order</th>
 					<th>Worked in this month <small>hours</small></th>
+					<th class="text-center">View</th>
 					<th class="text-center">Edit</th>
 					<th class="text-center">Delete</th>
 				</tr>
@@ -54,7 +55,12 @@
 						</td>
 
 						<td><c:out value="${workingHoursForDrivers[driver]}" /></td>
-						
+
+						<td class="text-center"><a
+							href="showDriver?driverId=${driver.id}"><span
+								class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
+						</td>
+
 						<td class="text-center"><span
 							class="glyphicon glyphicon-pencil red-on-hover"
 							aria-hidden="true"></span></td>

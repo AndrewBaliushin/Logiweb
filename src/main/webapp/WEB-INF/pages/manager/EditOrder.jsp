@@ -50,7 +50,10 @@
                  <c:choose>
                      <c:when test="${!empty order.assignedTruck && !empty order.assignedTruck.drivers}">
                         <c:forEach items="${order.assignedTruck.drivers}" var="driver">
-                            ${driver.name} ${driver.surname} 
+                            <a href="
+                                    <c:url value="showDriver">
+                                        <c:param name="driverId" value="${driver.id}" />
+                                    </c:url>">${driver.name} ${driver.surname}</a><span class="comma-separator">,</span>
                         </c:forEach>
                      </c:when>
                      <c:otherwise><span class="label label-danger">Not assigned</span></c:otherwise>
@@ -154,9 +157,16 @@
 		</div>
 		<!-- /Cargo list -->
 
+		<!-- Print waypoints-->
+		<jsp:include page="ext/WaypointsSnippet.jsp">
+			<jsp:param name="routeInfo" value="${routeInfo}" />
+		</jsp:include>
+
 	</div>
 
 </div>
+
+
 
 <!-- Modal: Add cargo -->
 <div class="modal fade modal-wide" id="add-cargo" tabindex="-1"

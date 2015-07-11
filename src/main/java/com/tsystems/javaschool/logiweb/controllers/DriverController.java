@@ -1,7 +1,6 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,11 +22,10 @@ import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
-import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
-import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
+import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 
 @Controller
 public class DriverController {
@@ -38,6 +36,7 @@ public class DriverController {
 
     private DriverService driverService = ctx.getDriverService();
     private CityService cityService = ctx.getCityService();
+    private RouteService routeService = ctx.getRouteService();
 
     @RequestMapping("manager/showDrivers")
     public ModelAndView showDrivers() {  
@@ -71,6 +70,14 @@ public class DriverController {
             mav.addObject("driver", driver);
             mav.addObject("workingHours",
                     driverService.calculateWorkingHoursForDriver(driver));
+            
+            if (driver.getCurrentTruck() != null
+                    && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
+                RouteInformation routeInfo = routeService.getRouteInformationForOrder(driver
+                        .getCurrentTruck().getAssignedDeliveryOrder());
+                mav.addObject("routeInfo", routeInfo);
+            }
+            
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
         } catch (LogiwebServiceException e) {

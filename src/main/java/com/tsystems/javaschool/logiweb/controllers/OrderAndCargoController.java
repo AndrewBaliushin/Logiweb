@@ -1,7 +1,6 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,10 +28,10 @@ import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
-import com.tsystems.javaschool.logiweb.service.RouteService.RouteInformation;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
+import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 
 @Controller
 public class OrderAndCargoController {
