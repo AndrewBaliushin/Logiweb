@@ -13,6 +13,7 @@ import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -96,6 +97,8 @@ public class TrucksSeviceimpl implements TrucksService {
     @Override
     public Truck addTruck(Truck newTruck) throws ServiceValidationException,
             LogiwebServiceException {
+        newTruck.setStatus(TruckStatus.OK);
+        
         try {
             validateForEmptyFields(newTruck); 
         } catch (ServiceValidationException e) {
@@ -152,8 +155,6 @@ public class TrucksSeviceimpl implements TrucksService {
             throw new ServiceValidationException("Cargo size can't be 0 or negative.");
         } else if (t.getCurrentCity() == null || t.getCurrentCity().getId() == 0) {
             throw new ServiceValidationException("City is not set.");
-        } else if (t.getStatus() == null) {
-            throw new ServiceValidationException("Status is not set.");
         } 
     }
 

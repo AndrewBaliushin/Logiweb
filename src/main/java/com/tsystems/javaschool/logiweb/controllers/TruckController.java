@@ -144,12 +144,6 @@ public class TruckController {
         } catch (NumberFormatException | NullPointerException e) {
             throw new FormParamaterParsingException("City selector must return city ID as integer.");
         }
-        
-        try {
-            status = TruckStatus.valueOf(request.getParameter("status"));
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new FormParamaterParsingException("Truck status '" + request.getParameter("status") + "' is not exist in system.");
-        }
              
         Truck truck = new Truck();
     
@@ -160,7 +154,6 @@ public class TruckController {
         truck.setCrewSize(crewSize);
         truck.setCargoCapacity(cargoCapacity);
         truck.setCurrentCity(city);
-        truck.setStatus(status);
     
         return truck;
     }
