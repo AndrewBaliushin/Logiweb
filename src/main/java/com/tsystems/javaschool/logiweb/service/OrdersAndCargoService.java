@@ -70,12 +70,12 @@ public interface OrdersAndCargoService {
     void assignTruckToOrder(Truck truck, int orderId) throws ServiceValidationException, LogiwebServiceException;
 
     /**
-     * Sets status for order.
+     * Sets 'READY' status for order if order have at least one cargo and assign truck with full crew.
      * 
-     * @param status
      * @param order
      * @throws LogiwebServiceException if unexpected happened
+     * @throws ServiceValidationException if validation failed. Description in message.
      */
-    void setStatusForOrder(OrderStatus status, DeliveryOrder order)
-            throws LogiwebServiceException;
+    void setReadyStatusForOrder(DeliveryOrder order)
+            throws ServiceValidationException, LogiwebServiceException;
 }

@@ -280,20 +280,32 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
      * {@inheritDoc}
      */
     @Override
-    public void setStatusForOrder(OrderStatus status, DeliveryOrder order)
-            throws LogiwebServiceException {
+    public void setReadyStatusForOrder(DeliveryOrder order)
+            throws ServiceValidationException, LogiwebServiceException {
         if(order == null) {
             throw new ServiceValidationException("Order does not exist.");
-        } else if (status == null) {
-            throw new ServiceValidationException("Status not set");
+        } 
+        
+        if (order.getAssignedCargoes() == null
+                || order.getAssignedCargoes().isEmpty()) {
+            throw new ServiceValidationException(
+                    "Order must contain at least 1 cargo.");
+        } else if (order.getAssignedTruck() == null) {
+            throw new ServiceValidationException(
+                    "Order must have assigned truck.");
+        } else if (order.getAssignedTruck().getDrivers() == null
+                || order.getAssignedTruck().getDrivers().size() < order
+                        .getAssignedTruck().getCrewSize()) {
+            throw new ServiceValidationException(
+                    "Truck must have full crew. Assign drivers.");
         }
         
         try {
             getEntityManager().getTransaction().begin();
-            order.setStatus(status);
+            order.setStatus(OrderStatus.READY_TO_GO);
             getEntityManager().merge(order);
             
-            LOG.info("Order id#" + order.getId() + " changed status to " + status.name());
+            LOG.info("Order id#" + order.getId() + " changed status to " + OrderStatus.READY_TO_GO);
             
             getEntityManager().getTransaction().commit();
         } catch (Exception e) {

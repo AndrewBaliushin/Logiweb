@@ -236,18 +236,16 @@ public class OrderAndCargoController {
         Map<String, String> jsonResponseMap = new HashMap<String, String>();
         
         int orderId = 0;  
-        OrderStatus status = null;
         try {
             orderId = Integer.parseInt(request.getParameter("orderId"));
-            status = OrderStatus.valueOf(request.getParameter("orderStatus"));
         } catch (IllegalArgumentException | NullPointerException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", "Order id or status is in wrong format.");
+            jsonResponseMap.put("msg", "Order id is in wrong format.");
         }
         
         try {
             DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
-            orderAndCaroService.setStatusForOrder(status, order);            
+            orderAndCaroService.setReadyStatusForOrder(order);            
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonResponseMap.put("msg", e.getMessage());

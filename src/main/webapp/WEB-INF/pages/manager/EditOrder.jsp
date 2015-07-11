@@ -8,7 +8,7 @@
 <jsp:include page="../GlobalHeader.jsp">
 	<jsp:param name="title" value="Edit order # ${orderId}" />
 	<jsp:param value="manager/manager.css" name="css" />
-	<jsp:param value="manager/PostFormByAjax.js,manager/RemoveTruckAndDriversFromOrder.js" name="js" />
+	<jsp:param value="manager/PostFormByAjax.js,manager/RemoveTruckAndDriversFromOrder.js,manager/ChangeOrderStatus.js" name="js" />
 
 </jsp:include>
 
@@ -81,7 +81,7 @@
 				<div class="btn-group-vertical" role="group" aria-label="...">
 
 					<!-- Add cargo -->
-					<button type="button" class="btn btn-default btn-lg <c:if test="${order.status != orderNotReady}">disabled</c:if>" data-toggle="modal" data-target="#add-cargo">
+					<button type="button" class="btn btn-default btn-lg <c:if test="${order.status != orderNotReady || !empty order.assignedTruck}">disabled</c:if>" data-toggle="modal" data-target="#add-cargo">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-oil" aria-hidden="true"></span> Add
 						cargo
@@ -104,11 +104,11 @@
 						Assign drivers to Truck
 					</button>
 					
-					<!-- Assign driver to tuck -->
-					<button type="button" class="btn btn-default btn-lg"
-						data-toggle="modal" data-target="#change-status-modal"><span
+					<!-- Status change -->
+					<button type="button" class="btn btn-default btn-lg <c:if test="${order.status != orderNotReady}">disabled</c:if>"
+						data-toggle="modal" data-target="#change-status-modal"  onclick="changeOrderStatusToReady(${order.id}) "><span
 							class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-						Change status
+						Ready!
 					</button>
 
 				</div>
@@ -360,53 +360,4 @@
 </div>
 <!-- /Modal Assign driver -->
  
-
-<!-- Modal: Set status -->
-<div class="modal fade modal-wide" id="change-status-modal" tabindex="-1"
-    role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel">
-                    Change status of order #
-                    <c:out value="${order.id}"></c:out>
-                </h4>
-            </div>
-            <div class="modal-body">
-
-                <form class="form-horizontal" id="changeStatus" method="POST" action="changeOrderStatus">
-                <input type="hidden" name="orderId" value="${order.id}">
-                
-                    <fieldset>
-                    
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="orderStatus">Status</label>
-                            <div class="col-md-9">
-                                <select id="orderStatus" name="orderStatus" class="form-control">
-                                    <c:forEach items="${statuses}" var="status">
-                                        <option value="${status}">${status}
-                                        </option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                        </div>
-                        
-                    </fieldset>
-                </form>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" 
-                    onclick="postFormByAjax('#changeStatus')">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Modal Set status truck -->
-
 <jsp:include page="../GlobalFooter.jsp" />
