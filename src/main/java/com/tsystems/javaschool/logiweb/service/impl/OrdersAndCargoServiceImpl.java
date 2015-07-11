@@ -160,7 +160,8 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
                     .getId());
             DeliveryOrder orderForCargo = deliveryOrderDao.find(newCargo
                     .getOrderForThisCargo().getId());
-
+            
+            
             //switch detached entities in cargo to managed ones
             newCargo.setOriginCity(originCity);
             newCargo.setDestinationCity(destinationCity);
@@ -198,13 +199,19 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
         if (c.getOriginCity() == null) {
             throw new ServiceValidationException("Origin city does not exist.");
         } else if (c.getDestinationCity() == null) {
-            throw new ServiceValidationException("Destination city does not exist.");
+            throw new ServiceValidationException(
+                    "Destination city does not exist.");
         } else if (c.getOriginCity().equals(c.getDestinationCity())) {
             throw new ServiceValidationException("Cities must be different.");
         } else if (c.getOrderForThisCargo() == null) {
-            throw new ServiceValidationException("Order for this cargo does not exist.");
+            throw new ServiceValidationException(
+                    "Order for this cargo does not exist.");
         } else if (c.getOrderForThisCargo().getStatus() != OrderStatus.NOT_READY) {
-            throw new ServiceValidationException("Order must be in NOT READY status to add new cargo.");
+            throw new ServiceValidationException(
+                    "Order must be in NOT READY status to add new cargo.");
+        } else if (c.getOrderForThisCargo().getAssignedTruck() != null) {
+            throw new ServiceValidationException(
+                    "Order can't be assigned to Truck.");
         }
     }
     
