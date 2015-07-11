@@ -214,6 +214,9 @@ public class OrderAndCargoController {
             if(truck != null) {
                 truckService.removeAssignedOrderAndDriversFromTruck(truck);  
             }
+        } catch (ServiceValidationException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonResponseMap.put("msg", e.getMessage());
         } catch (LogiwebServiceException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             LOG.warn("Unexpected exception.", e);

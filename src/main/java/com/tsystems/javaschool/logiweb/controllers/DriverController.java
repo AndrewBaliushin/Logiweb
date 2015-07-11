@@ -1,5 +1,6 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -223,13 +224,26 @@ public class DriverController {
         Gson gson = new Gson();
         Map<String, String> jsonMap = new HashMap<String, String>();
         
+        String[] driverIdsStrings = request.getParameterValues("driversIds");
+        if (driverIdsStrings == null || driverIdsStrings.length == 0) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonMap.put("msg", "Drivers are not specified.");
+            return gson.toJson(jsonMap);
+        }
+        
+        int[] driversIds = new int[driverIdsStrings.length]; 
         try {
-            int driverId = Integer.parseInt(request.getParameter("driverId"));
+            for (int i = 0; i < driverIdsStrings.length; i++) {
+                driversIds[i] = Integer.parseInt(driverIdsStrings[i]);
+            }
+            
             int truckId = Integer.parseInt(request.getParameter("truckId"));
            
-            driverService.assignDriverToTruck(driverId, truckId);
+            for (int driverId : driversIds) {
+                driverService.assignDriverToTruck(driverId, truckId);
+            }
             
-            jsonMap.put("msg", "Driver added to truck");
+            jsonMap.put("msg", "Drivers added to truck");
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonMap.put("msg", "Can't parse Driver id:" + request.getParameter("driverId") + " to integer.");

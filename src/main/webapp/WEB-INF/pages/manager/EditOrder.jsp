@@ -326,9 +326,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
-                    Assign driver to order #
+                    Assign drivers to order #
                     <c:out value="${order.id}"></c:out>
-                    who has less than <fmt:formatNumber value="${maxWorkingHoursLimit - routeInfo.estimatedTime}" pattern="0.0"/>
+                    who had less than <fmt:formatNumber value="${maxWorkingHoursLimit - routeInfo.estimatedTime}" pattern="0.0"/>
                     working hours in this month
                 </h4>
             </div>
@@ -342,15 +342,16 @@
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="driverId">Suggested drivers</label>
                             <div class="col-md-9">
-                                <select id="truck" name="driverId" class="form-control">
-                                    <c:forEach items="${suggestedDrivers}" var="driver">
-                                        <option value="${driver.id}">
-                                            ${driver.name} ${driver.surname} |
-                                            Currnet city: ${driver.currentCity.name} |
-                                            This month working hours: ${workingHoursForDrivers[driver]}
-                                        </option>
-                                    </c:forEach>
-                                </select>
+								
+                                <c:forEach items="${suggestedDrivers}" var="driver">
+									<label for="driver-checkbox-${driver.id}"> <input type="checkbox"
+										name="driversIds" id="driver-checkbox-${driver.id}" value="${driver.id}">
+										${driver.name} ${driver.surname} | Currnet city:
+										${driver.currentCity.name} | This month working hours:
+										${workingHoursForDrivers[driver]}
+									</label>
+								</c:forEach>
+                                    
                             </div>
                         </div>
                         

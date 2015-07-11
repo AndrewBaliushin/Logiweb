@@ -12,6 +12,7 @@ import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.Truck;
+import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -223,7 +224,12 @@ public class TrucksSeviceimpl implements TrucksService {
      */
     @Override
     public void removeAssignedOrderAndDriversFromTruck(Truck truck)
-            throws LogiwebServiceException {
+            throws ServiceValidationException, LogiwebServiceException {
+        if (truck.getAssignedDeliveryOrder().getStatus() == OrderStatus.READY_TO_GO) {
+            throw new ServiceValidationException(
+                    "Can't remove truck from READY TO GO order.");
+        }
+
         try {
             getEntityManager().getTransaction().begin();
             DeliveryOrder order = truck.getAssignedDeliveryOrder();
