@@ -78,6 +78,8 @@ public class DriverController {
                 mav.addObject("routeInfo", routeInfo);
             }
             
+            mav.addObject("journals", driverService.findDriverJournalsForThisMonth(driver));
+            
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
         } catch (LogiwebServiceException e) {

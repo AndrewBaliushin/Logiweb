@@ -42,10 +42,18 @@
 <!-- /Driver info -->
 
 <c:if test="${!empty routeInfo}">
-        <!-- Print waypoints-->
-        <jsp:include page="ext/WaypointsSnippet.jsp">
-            <jsp:param name="routeInfo" value="${routeInfo}" />
-        </jsp:include>
+	<!-- Print waypoints-->
+	<jsp:include page="ext/WaypointsSnippet.jsp">
+		<jsp:param name="routeInfo" value="${routeInfo}" />
+	</jsp:include>
+</c:if>
+
+<c:if test="${!empty journals}">
+	<!-- Print shift records-->
+	<jsp:include page="ext/ShiftJournalsSnippet.jsp">
+		<jsp:param name="comment" value="this month" />
+		<jsp:param name="journals" value="${journals}" />
+	</jsp:include>
 </c:if>
 
 <jsp:include page="../GlobalFooter.jsp" />

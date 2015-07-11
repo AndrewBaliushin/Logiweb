@@ -286,17 +286,59 @@ public class DriverServiceImpl implements DriverService {
     
     /**
      * {@inheritDoc}
+     * @throws LogiwebServiceException 
      */
     @Override
-    public float calculateWorkingHoursForDriver(Driver driver) {
-        Set<DriverShiftJournal> journals = driverShiftJournalDao
-                .findThisMonthJournalsForDrivers(driver);
-        Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(journals);
+    public Set<DriverShiftJournal> findDriverJournalsForThisMonth(Driver driver)
+            throws LogiwebServiceException {
+        try {
+            getEntityManager().getTransaction().begin();
+            Set<DriverShiftJournal> journals = driverShiftJournalDao
+                    .findThisMonthJournalsForDrivers(driver);
+            getEntityManager().getTransaction().commit();
+
+            return journals;
+        } catch (DaoException e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        } catch (Exception e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
         
-        //if driver don't have any records yet
-        if (workingHours.get(driver) == null) workingHours.put(driver, 0f);
         
-        return workingHours.get(driver);
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @throws LogiwebServiceException 
+     */
+    @Override
+    public float calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException {
+        try {
+            Set<DriverShiftJournal> journals = driverShiftJournalDao
+                    .findThisMonthJournalsForDrivers(driver);
+            Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(journals);
+            
+            //if driver don't have any records yet
+            if (workingHours.get(driver) == null) workingHours.put(driver, 0f);
+            
+            return workingHours.get(driver);
+        } catch (DaoException e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        } catch (Exception e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        } finally {
+            if (getEntityManager().getTransaction().isActive()) {
+                getEntityManager().getTransaction().rollback();
+            }
+        }
     }
     
     /**

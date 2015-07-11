@@ -21,7 +21,7 @@ import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
  */
 public class TruckDaoJpa extends GenericDaoJpa<Truck> implements TruckDao {
 
-    private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);
+    private static final Logger LOG = Logger.getLogger(TruckDaoJpa.class);
     
     public TruckDaoJpa(Class<Truck> entityClass, EntityManager entityManager) {
         super(entityClass, entityManager);

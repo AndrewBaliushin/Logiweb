@@ -2,6 +2,7 @@ package com.tsystems.javaschool.logiweb.dao;
 
 import java.util.Set;
 
+import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 
@@ -22,9 +23,10 @@ public interface DriverShiftJournaDao extends GenericDao<DriverShiftJournal> {
      * in this one, then it will be shown 'as is'. 
      * 
      * @param drivers
-     * @return empty set if nothing was found or if emty set of drivers was past as param
+     * @return empty set if nothing was found or if empty set of drivers was past as param
+     * @throws DaoException if something unexpected happened
      */
-    Set<DriverShiftJournal> findThisMonthJournalsForDrivers(Set<Driver> drivers);
+    Set<DriverShiftJournal> findThisMonthJournalsForDrivers(Set<Driver> drivers) throws DaoException;
     
     /**
      * Overload for {@link #findThisMonthJournalsForDrivers(Set)}
@@ -33,7 +35,8 @@ public interface DriverShiftJournaDao extends GenericDao<DriverShiftJournal> {
      * @see #findThisMonthJournalsForDrivers(Set)
      * 
      * @param driver
-     * @return
+     * @return empty set if nothing was found or if driver is null
+     * @throws DaoException if something unexpected happened
      */
-    Set<DriverShiftJournal> findThisMonthJournalsForDrivers(Driver driver);
+    Set<DriverShiftJournal> findThisMonthJournalsForDrivers(Driver driver) throws DaoException;
 }

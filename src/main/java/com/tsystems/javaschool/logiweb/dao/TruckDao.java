@@ -17,6 +17,7 @@ public interface TruckDao extends GenericDao<Truck> {
      * 
      * @param minCargoCapacity
      * @return trucks or empty set
+     * @throws DaoException if something unexpected happened
      */
     Set<Truck> findByMinCapacityWhereStatusOkAndNotAssignedToOrder(
 	    float minCargoCapacity)  throws DaoException;
@@ -26,7 +27,7 @@ public interface TruckDao extends GenericDao<Truck> {
      * 
      * @param licensePlate
      * @return null if nothing is found
-     * @throws DaoException
+     * @throws DaoException if something unexpected happened
      */
     Truck findByLicensePlate(String licensePlate) throws DaoException;
 

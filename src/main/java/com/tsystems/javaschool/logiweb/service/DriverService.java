@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
+import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.model.Truck;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -84,7 +85,8 @@ public interface DriverService {
      * 
      * @param driver
      * @return
-     * @throws LogiwebServiceException
+     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user
+     *             fault)
      */
     float calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException;
 
@@ -101,4 +103,17 @@ public interface DriverService {
      *             fault)
      */
     void assignDriverToTruck(int driverId, int truckId) throws LogiwebServiceException;
+
+    /**
+     * Find shift records that are started or ended in this month. Records are
+     * not trimmed. (Meaning that if record is started in previous month then it
+     * will be show 'as is'.
+     * 
+     * @param driver
+     * @return shift records or empty set
+     * @throws LogiwebServiceException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
+    Set<DriverShiftJournal> findDriverJournalsForThisMonth(Driver driver) throws LogiwebServiceException;
 }
