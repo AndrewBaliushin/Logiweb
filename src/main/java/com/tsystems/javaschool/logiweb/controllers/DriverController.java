@@ -169,12 +169,6 @@ public class DriverController {
         }
         
         try {
-            status = DriverStatus.valueOf(request.getParameter("status"));
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new FormParamaterParsingException("Driver status '" + request.getParameter("status") + "' is not exist in system.");
-        }
-        
-        try {
             cityId = Integer.parseInt(request.getParameter("city"));
         } catch (NumberFormatException | NullPointerException e) {
             throw new FormParamaterParsingException("City selector must return city ID as integer.");
@@ -189,7 +183,6 @@ public class DriverController {
         driver.setName(request.getParameter("name"));
         driver.setSurname(request.getParameter("surname"));
         driver.setCurrentCity(city);
-        driver.setStatus(status);
 
         return driver;
     }

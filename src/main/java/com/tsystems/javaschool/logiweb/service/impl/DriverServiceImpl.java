@@ -21,6 +21,7 @@ import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.model.Truck;
+import com.tsystems.javaschool.logiweb.model.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -106,6 +107,8 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public Driver addDriver(Driver newDriver) throws ServiceValidationException,
             LogiwebServiceException {
+        newDriver.setStatus(DriverStatus.FREE);
+        
         try {
             validateForEmptyFields(newDriver); 
         } catch (ServiceValidationException e) {
@@ -159,8 +162,6 @@ public class DriverServiceImpl implements DriverService {
             throw new ServiceValidationException("Drivers surname can't be empty.");
         } else if (d.getCurrentCity() == null || d.getCurrentCity().getId() == 0) {
             throw new ServiceValidationException("City is not set.");
-        } else if (d.getStatus() == null) {
-            throw new ServiceValidationException("Status is not set.");
         } 
     }
 

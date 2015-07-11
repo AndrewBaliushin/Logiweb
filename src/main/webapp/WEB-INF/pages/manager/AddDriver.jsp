@@ -58,19 +58,6 @@
 			</div>
 		</div>
 
-		<!-- Status: Select Basic -->
-		<div class="form-group">
-			<label class="col-md-4 control-label" for="status">Status</label>
-			<div class="col-md-4">
-				<select id="status" name="status" class="form-control">
-					<c:forEach items="${statuses}" var="statusOption">
-						<option value="${statusOption}"
-							<c:if test="${not empty status && status == statusOption}">selected="selected"</c:if>>${statusOption}</option>
-					</c:forEach>
-				</select>
-			</div>
-		</div>
-
 		<!-- City: Select Basic -->
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="city">City</label>
