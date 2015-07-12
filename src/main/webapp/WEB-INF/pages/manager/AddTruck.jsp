@@ -32,8 +32,8 @@
 			<div class="col-md-4">
 				<input id="license-plate" name="license-plate" type="text"
 					placeholder="License plate" class="form-control input-md"
-					required value="${licensePlate}"> <span class="help-block">5 letters + 2
-					numbers</span>
+					required value="${licensePlate}"> <span class="help-block">2 letters + 5
+					digits</span>
 			</div>
 		</div>
 

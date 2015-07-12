@@ -293,7 +293,7 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
             throws ServiceValidationException, LogiwebServiceException {
         if(order == null) {
             throw new ServiceValidationException("Order does not exist.");
-        } 
+        }
         
         if (order.getAssignedCargoes() == null
                 || order.getAssignedCargoes().isEmpty()) {
@@ -307,6 +307,9 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
                         .getAssignedTruck().getCrewSize()) {
             throw new ServiceValidationException(
                     "Truck must have full crew. Assign drivers.");
+        } else if (order.getStatus() != OrderStatus.NOT_READY) {
+            throw new ServiceValidationException(
+                    "Order must be in NOT READY STATE.");
         }
         
         try {
