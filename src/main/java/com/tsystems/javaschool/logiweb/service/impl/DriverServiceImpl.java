@@ -400,7 +400,7 @@ public class DriverServiceImpl implements DriverService {
     private void filterDriversByMaxWorkingHours(
             Map<Driver, Float> workingHoursToFilter, float maxWorkingHours) {
         for (Entry<Driver, Float> e : workingHoursToFilter.entrySet()) {
-            if (e.getValue() >= maxWorkingHours) {
+            if (e.getValue() > maxWorkingHours) {
                 workingHoursToFilter.remove(e.getKey());
             }
         }
