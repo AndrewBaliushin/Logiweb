@@ -8,7 +8,9 @@
 <jsp:include page="../GlobalHeader.jsp">
 	<jsp:param name="title" value="Edit order # ${orderId}" />
 	<jsp:param value="manager/manager.css" name="css" />
-	<jsp:param value="manager/PostFormByAjax.js,manager/RemoveTruckAndDriversFromOrder.js,manager/ChangeOrderStatus.js" name="js" />
+	<jsp:param
+		value="manager/PostFormByAjax.js,manager/RemoveTruckAndDriversFromOrder.js,manager/ChangeOrderStatus.js,manager/LimitCheckboxesForDriverAssignment.js"
+		name="js" />
 
 </jsp:include>
 
@@ -337,6 +339,13 @@
 
                 <form class="form-horizontal" id="assignDriverForm" method="POST" action="addDriverToTruck">
                 <input type="hidden" name="truckId" value='<c:if test="${!empty order.assignedTruck }">${order.assignedTruck.id}</c:if>'>
+                
+                <c:if test="${!empty order.assignedTruck && empty order.assignedTruck.drivers}">
+                    <input type="hidden" name="maxDriversToAssign" value='${order.assignedTruck.crewSize}'>
+                </c:if>
+                <c:if test="${!empty order.assignedTruck && !empty order.assignedTruck.drivers}">
+                    <input type="hidden" name="maxDriversToAssign" value='${order.assignedTruck.crewSize - fn:length(order.assignedTruck.drivers)}'>
+                </c:if>
                 
                     <fieldset>
                     
