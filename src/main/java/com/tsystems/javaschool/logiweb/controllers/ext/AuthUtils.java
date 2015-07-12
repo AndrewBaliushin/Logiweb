@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.utils;
+package com.tsystems.javaschool.logiweb.controllers.ext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

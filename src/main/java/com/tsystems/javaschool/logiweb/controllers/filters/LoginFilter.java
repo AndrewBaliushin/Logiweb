@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.tsystems.javaschool.logiweb.utils.AuthUtils;
+import com.tsystems.javaschool.logiweb.controllers.ext.AuthUtils;
 
 public class LoginFilter implements Filter {
 

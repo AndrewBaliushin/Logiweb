@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tsystems.javaschool.logiweb.LogiwebAppContext;
+import com.tsystems.javaschool.logiweb.controllers.ext.AuthUtils;
 import com.tsystems.javaschool.logiweb.model.User;
 import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.UserNotFoundServiceException;
-import com.tsystems.javaschool.logiweb.utils.AuthUtils;
 
 @Controller
 public class AuthController {
@@ -56,8 +56,8 @@ public class AuthController {
         } catch (UserNotFoundServiceException e) {
             mav.addObject("error", "User with this pass and mail is not found.");
         } catch (LogiwebServiceException e) {
-            LOG.warn("Problems in user Service", e);
-            mav.addObject("error", "Error on server");
+            LOG.warn(e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         return mav;
@@ -70,6 +70,7 @@ public class AuthController {
             response.sendRedirect(request.getContextPath());
         } catch (IOException e) {
             LOG.warn("IO exception", e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
     }
     
@@ -79,7 +80,7 @@ public class AuthController {
             response.sendRedirect(request.getContextPath());
         } catch (IOException e) {
             LOG.warn("IO exception", e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
     }
-
 }
