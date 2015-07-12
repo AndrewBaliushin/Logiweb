@@ -146,12 +146,12 @@ public class DriverServiceImplTest {
                         13);
         assertThat(result, hasItems(d2, d3, d4));
         
-      //16 hours test. Expected: d1 (15h), d2 (12h), d3 (0h) and d4(5h)
+        // 16 hours test. Expected: d1 (15h), d2 (12h), d3 (0h) and d4(5h)
         result = driverService
                 .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(anyCity,
                         16);
         assertThat(result, hasItems(d1, d2, d3, d4));
-        
+
     }
 
 }

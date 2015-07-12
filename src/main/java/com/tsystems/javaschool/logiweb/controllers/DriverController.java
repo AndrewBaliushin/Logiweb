@@ -55,6 +55,7 @@ public class DriverController {
             mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
         } catch (LogiwebServiceException e) {
             LOG.warn(e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         return mav;
@@ -85,6 +86,7 @@ public class DriverController {
             throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
         } catch (LogiwebServiceException e) {
             LOG.warn(e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         return mav;
@@ -114,6 +116,7 @@ public class DriverController {
             mav.addObject("cities", cityService.findAllCities());
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexpected exception.", e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         mav.addObject("statuses", DriverStatus.values());
@@ -149,7 +152,7 @@ public class DriverController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonMap.put("msg", e.getMessage());
         } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
             jsonMap.put("msg", "Unexcpected server error. Check logs.");
         }
@@ -244,7 +247,7 @@ public class DriverController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonMap.put("msg", e.getMessage());
         } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
             jsonMap.put("msg", "Unexcpected server error. Check logs.");
         }

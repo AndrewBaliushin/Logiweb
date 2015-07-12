@@ -70,8 +70,8 @@ public class OrderAndCargoController {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
         } catch (LogiwebServiceException e) {
-            LOG.error("Unknown problem.", e);
-            // TODO Figure out how to throw 500 Server err.
+            LOG.warn("Unexpected exception.", e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         try {
@@ -111,6 +111,7 @@ public class OrderAndCargoController {
             }
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexpected exception.", e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         mav.addObject("statuses", OrderStatus.values());
@@ -141,7 +142,7 @@ public class OrderAndCargoController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonResponseMap.put("msg", e.getMessage());
         } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
             jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
         }
@@ -180,7 +181,7 @@ public class OrderAndCargoController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonResponseMap.put("msg", e.getMessage());
         } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
             jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
         }
@@ -218,7 +219,7 @@ public class OrderAndCargoController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonResponseMap.put("msg", e.getMessage());
         } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
             jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
         }
@@ -253,7 +254,7 @@ public class OrderAndCargoController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonResponseMap.put("msg", e.getMessage());
         } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
             jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
         }
@@ -268,11 +269,8 @@ public class OrderAndCargoController {
         try {
             orderAndCaroService.addNewOrder(newOrder);
         } catch (LogiwebServiceException e) {
-            LOG.error(e);
-            // trigger HTTP Status 500 response
-            throw new RuntimeException(
-                    "Unknown and unexpected error occured while creating new Delivery Order",
-                    e);
+            LOG.warn("Unexpected exception.", e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         ModelAndView mav = new ModelAndView("redirect:/manager/editOrder");
@@ -288,11 +286,8 @@ public class OrderAndCargoController {
         try {
             mav.addObject("orders", orderAndCaroService.findAllOrders());
         } catch (LogiwebServiceException e) {
-            LOG.error(e);
-            // trigger HTTP Status 500 response
-            throw new RuntimeException(
-                    "Unknown and unexpected error occured while creating new Delivery Order",
-                    e);
+            LOG.warn("Unexpected exception.", e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         return mav;
@@ -306,11 +301,8 @@ public class OrderAndCargoController {
         try {
             mav.addObject("cargoes", orderAndCaroService.findAllCargoes());
         } catch (LogiwebServiceException e) {
-            LOG.error(e);
-            // trigger HTTP Status 500 response
-            throw new RuntimeException(
-                    "Unknown and unexpected error occured while creating new Delivery Order",
-                    e);
+            LOG.warn("Unexpected exception.", e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
         }
         
         return mav;
