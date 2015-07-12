@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <jsp:include page="../GlobalHeader.jsp">
     <jsp:param name="title" value="Driver info" />
@@ -24,6 +25,19 @@
     
     <c:if test="${!empty driver.currentTruck}">
         <li class="list-group-item">Current truck: ${driver.currentTruck.licencePlate}</li>
+    </c:if>
+    
+    <c:if test="${!empty driver.currentTruck && fn:length(driver.currentTruck.drivers) > 1}">
+        <li class="list-group-item">Co-driver:
+	        <c:forEach var="coDriver" items="${driver.currentTruck.drivers}">
+	            <c:if test="${coDriver.id != driver.id}">
+		            <a href="
+	                   <c:url value="showDriver">
+	                       <c:param name="driverId" value="${coDriver.id}" />
+	                   </c:url>">${coDriver.name} ${coDriver.surname}</a><span class="comma-separator">,</span>
+	            </c:if>
+	        </c:forEach>
+        </li>
     </c:if>
 
 	<c:if test="${!empty driver.currentTruck || !empty driver.currentTruck.assignedOrder}">
