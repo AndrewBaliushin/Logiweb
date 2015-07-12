@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.utils;
+package com.tsystems.javaschool.logiweb.service.validators;
 
 /**
  * Set of static utility methods for license plates validation.

@@ -17,7 +17,7 @@ import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
-import com.tsystems.javaschool.logiweb.utils.LicensePlateValidator;
+import com.tsystems.javaschool.logiweb.service.validators.LicensePlateValidator;
 
 /**
  * Data manipulation and business logic related to Trucks.
