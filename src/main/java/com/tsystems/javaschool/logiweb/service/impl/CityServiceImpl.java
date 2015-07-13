@@ -42,7 +42,7 @@ public class CityServiceImpl implements CityService {
             getEntityManager().getTransaction().commit();
             return city;
         } catch (DaoException e) {
-            LOG.warn(e);
+            LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
         } finally {
             if (getEntityManager().getTransaction().isActive()) {
@@ -59,7 +59,7 @@ public class CityServiceImpl implements CityService {
             getEntityManager().getTransaction().commit();
             return cities;
         } catch (DaoException e) {
-            LOG.warn(e);
+            LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
         } finally {
             if (getEntityManager().getTransaction().isActive()) {

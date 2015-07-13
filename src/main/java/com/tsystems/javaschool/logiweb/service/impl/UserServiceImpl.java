@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
             LOG.info("Failed attemt to get user by mail " + mail);
             throw new UserNotFoundServiceException();
         } catch (Exception e) {
-            LOG.warn(e);
+            LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
         } finally {
             if (em.getTransaction().isActive()) {
