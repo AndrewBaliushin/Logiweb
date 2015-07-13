@@ -24,6 +24,8 @@
 					<th>Current City</th>
 					<th>Delivery order</th>
 					<th>Drivers</th>
+					<th class="text-center">Edit</th>
+                    <th class="text-center">Delete</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -56,8 +58,9 @@
                         </td>	
                             
 						<td class="text-center">
-						  <span class="glyphicon glyphicon-pencil red-on-hover" aria-hidden="true"></span>
+						  <span class="glyphicon glyphicon-pencil disabled-color" aria-hidden="true"></span>
 		                </td>
+		                
 		                <td class="text-center">
 		                    <span onclick="removeTruck(this, ${truck.id})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
 		                </td>

@@ -16,3 +16,7 @@
 span.comma-separator:last-child {
 	display: none; 
 }
+
+.disabled-color {
+	color: grey;
+}
