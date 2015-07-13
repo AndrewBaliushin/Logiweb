@@ -46,4 +46,20 @@ public class AuthUtils {
     public static void destroyAuthSession(HttpSession session) {
         session.setAttribute(LogiwebAppContext.SESSION_ATTR_TO_STORE_ROLE, null);
     }
+    
+    /**
+     * Get user role from session parameter of request.
+     * 
+     * @param request
+     * @return role or null if not set or object in sess. param. is not UserRole
+     */
+    public static UserRole getUserRole(HttpServletRequest request) {
+        Object roleObject = request.getSession().getAttribute(LogiwebAppContext.SESSION_ATTR_TO_STORE_ROLE);
+        if (roleObject != null && roleObject instanceof UserRole) {
+            UserRole role = (UserRole) roleObject;
+            return role;
+        } else {
+            return null;
+        }
+    }
 }
