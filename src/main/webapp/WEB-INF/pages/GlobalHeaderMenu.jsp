@@ -7,13 +7,20 @@
 
 		<!-- Logo -->
 		<div class="navbar-header">
-			<span class="navbar-brand">Manager@LogiWeb</span>
+			<span class="navbar-brand">
+			
+				<c:choose>
+				 <c:when test="${!empty param.userRoleForTitle}">${param.userRoleForTitle}@LogiWeb</c:when>
+				 <c:otherwise>Manager@LogiWeb</c:otherwise>
+				</c:choose>
+			
+			</span>
 		</div>
 
 		<!-- Menu Items -->
 		<div>
 			<ul class="nav navbar-nav">
-				<li><a href="<c:url value="${param.homeLink}"/>">Home${homeLink}</a></li>
+				<li><a href="<c:url value="${param.homeLink}"/>">Home</a></li>
 			</ul>
 
 			<ul class="nav navbar-nav navbar-right">

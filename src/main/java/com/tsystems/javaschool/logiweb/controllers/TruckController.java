@@ -68,6 +68,7 @@ public class TruckController {
                 mav.addObject("error", e.getMessage());
             } catch (LogiwebServiceException e) {
                 mav.addObject("error", "Server error. Check logs.");
+                LOG.warn("Unexpected exception.", e);
             }
         }
 

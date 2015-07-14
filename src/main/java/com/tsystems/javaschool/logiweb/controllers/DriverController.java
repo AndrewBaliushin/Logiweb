@@ -1,6 +1,5 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +52,60 @@ public class DriverController {
                 workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver));
             }
             mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
+        } catch (LogiwebServiceException e) {
+            LOG.warn(e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
+        }
+        
+        return mav;
+    }
+    
+    //TODO combine with 'manager/showDrivers'
+    @RequestMapping("driver")
+    public ModelAndView showDriversForDriver() {  
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("driver/DriverList");
+        
+        try {
+            Set<Driver> drivers = driverService.findAllDrivers();
+            mav.addObject("drivers", drivers);
+            
+            Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
+            for (Driver driver : drivers) {
+                workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver));
+            }
+            mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
+        } catch (LogiwebServiceException e) {
+            LOG.warn(e);
+            throw new RuntimeException("Unrecoverable server exception.", e);
+        }
+        
+        return mav;
+    }
+    
+    @RequestMapping(value = "driver/showDriver", method = RequestMethod.GET)
+    public ModelAndView showSingleDriverForDriver(HttpServletRequest request) {  
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("driver/SingleDriver");
+        
+        try {
+            int driverId = Integer.parseInt(request.getParameter("driverId"));
+            Driver driver = driverService.findDriverById(driverId);
+            mav.addObject("driver", driver);
+            mav.addObject("workingHours",
+                    driverService.calculateWorkingHoursForDriver(driver));
+            
+            if (driver.getCurrentTruck() != null
+                    && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
+                RouteInformation routeInfo = routeService.getRouteInformationForOrder(driver
+                        .getCurrentTruck().getAssignedDeliveryOrder());
+                mav.addObject("routeInfo", routeInfo);
+            }
+            
+            mav.addObject("journals", driverService.findDriverJournalsForThisMonth(driver));
+            
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
         } catch (LogiwebServiceException e) {
             LOG.warn(e);
             throw new RuntimeException("Unrecoverable server exception.", e);
