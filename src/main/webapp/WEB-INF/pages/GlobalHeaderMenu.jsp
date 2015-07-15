@@ -11,7 +11,7 @@
 			
 				<c:choose>
 				 <c:when test="${!empty param.userRoleForTitle}">${param.userRoleForTitle}@LogiWeb</c:when>
-				 <c:otherwise>Manager@LogiWeb</c:otherwise>
+				 <c:otherwise>User@LogiWeb</c:otherwise>
 				</c:choose>
 			
 			</span>

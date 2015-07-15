@@ -16,6 +16,7 @@
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
 	<jsp:param name="homeLink" value="/manager" />
+	<jsp:param name="userRoleForTitle" value="Manager" />
 </jsp:include>
 
 <!-- Edit Order -->
