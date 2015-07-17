@@ -53,14 +53,13 @@
                                     ${driver.currentTruck.assignedDeliveryOrder.id}
                                 </c:otherwise>
                             </c:choose>
-                            
 
                         </td>
 
                         <td><c:out value="${workingHoursForDrivers[driver]}" /></td>
 
                         <td class="text-center"><a
-                            href="showDriver?driverId=${driver.id}"><span
+                            href="${pageContext.request.contextPath}/showDriver?driverId=${driver.id}"><span
                                 class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
                         </td>
 
