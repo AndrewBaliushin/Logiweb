@@ -91,7 +91,9 @@ public final class LogiwebAppContext {
     public RouteService getRouteService() {
         if (routeService == null) {
             synchronized (this) {
-                routeService = new RouteServiceStub();
+                if (routeService == null) {
+                    routeService = new RouteServiceStub();
+                }
             }
         }
         return routeService;
@@ -106,7 +108,10 @@ public final class LogiwebAppContext {
     public EntityManagerFactory getEntityManagerFactory() {
         if (emf == null) {
             synchronized (this) {
-                emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
+                if (emf == null) {
+                    emf = Persistence
+                            .createEntityManagerFactory(PERSISTENCE_UNIT);
+                }
             }
         }
         return emf;
@@ -115,7 +120,9 @@ public final class LogiwebAppContext {
     public EntityManager getEntityManager() {
         if (em == null || !em.isOpen()) {
             synchronized (this) {
-                em = getEntityManagerFactory().createEntityManager();
+                if (em == null || !em.isOpen()) {
+                    em = getEntityManagerFactory().createEntityManager();
+                }
             }
         }
         return em;
@@ -124,7 +131,9 @@ public final class LogiwebAppContext {
     public CargoDao getCargoDao() {
         if (cargoDao == null) {
             synchronized (this) {
-                cargoDao = new CargoDaoJpa(Cargo.class, getEntityManager());
+                if (cargoDao == null) {
+                    cargoDao = new CargoDaoJpa(Cargo.class, getEntityManager());
+                }
             }
         }
         return cargoDao;
@@ -133,7 +142,9 @@ public final class LogiwebAppContext {
     public CityDao getCityDao() {
         if (cityDao == null) {
             synchronized (this) {
-                cityDao = new CityDaoJpa(City.class, getEntityManager());
+                if (cityDao == null) {
+                    cityDao = new CityDaoJpa(City.class, getEntityManager());
+                }
             }
         }
         return cityDao;
@@ -142,8 +153,10 @@ public final class LogiwebAppContext {
     public CityService getCityService() {
         if (cityService == null) {
             synchronized (this) {
-                cityService = new CityServiceImpl(getEntityManager(),
-                        getCityDao());
+                if (cityService == null) {
+                    cityService = new CityServiceImpl(getEntityManager(),
+                            getCityDao());
+                }
             }
         }
         return cityService;
@@ -152,8 +165,10 @@ public final class LogiwebAppContext {
     public DeliveryOrderDao getDeliveryOrderDao() {
         if (deliveryOrderDao == null) {
             synchronized (this) {
-                deliveryOrderDao = new DeliveryOrderDaoJpa(DeliveryOrder.class,
-                        getEntityManager());
+                if (deliveryOrderDao == null) {
+                    deliveryOrderDao = new DeliveryOrderDaoJpa(
+                            DeliveryOrder.class, getEntityManager());
+                }
             }
         }
         return deliveryOrderDao;
@@ -162,9 +177,11 @@ public final class LogiwebAppContext {
     public OrdersAndCargoService getOrdersAndCargoService() {
         if (ordersAndCargoService == null) {
             synchronized (this) {
-                ordersAndCargoService = new OrdersAndCargoServiceImpl(
-                        getDeliveryOrderDao(), getCargoDao(), getCityDao(),
-                        getTruckDao(), getEntityManager());
+                if (ordersAndCargoService == null) {
+                    ordersAndCargoService = new OrdersAndCargoServiceImpl(
+                            getDeliveryOrderDao(), getCargoDao(), getCityDao(),
+                            getTruckDao(), getEntityManager());
+                }
             }
         }
         return ordersAndCargoService;
@@ -173,7 +190,10 @@ public final class LogiwebAppContext {
     public DriverDao getDriverDao() {
         if (driverDao == null) {
             synchronized (this) {
-                driverDao = new DriverDaoJpa(Driver.class, getEntityManager());
+                if (driverDao == null) {
+                    driverDao = new DriverDaoJpa(Driver.class,
+                            getEntityManager());
+                }
             }
         }
         return driverDao;
@@ -182,8 +202,10 @@ public final class LogiwebAppContext {
     public DriverShiftJournaDao geDriverShiftJournaDao() {
         if (driverShiftJournalDao == null) {
             synchronized (this) {
-                driverShiftJournalDao = new DriverShiftJournalDaoJpa(
-                        DriverShiftJournal.class, getEntityManager());
+                if (driverShiftJournalDao == null) {
+                    driverShiftJournalDao = new DriverShiftJournalDaoJpa(
+                            DriverShiftJournal.class, getEntityManager());
+                }
             }
         }
         return driverShiftJournalDao;
@@ -192,7 +214,9 @@ public final class LogiwebAppContext {
     public TruckDao getTruckDao() {
         if (truckDao == null) {
             synchronized (this) {
-                truckDao = new TruckDaoJpa(Truck.class, getEntityManager());
+                if (truckDao == null) {
+                    truckDao = new TruckDaoJpa(Truck.class, getEntityManager());
+                }
             }
         }
         return truckDao;
@@ -201,8 +225,10 @@ public final class LogiwebAppContext {
     public TrucksService getTruckService() {
         if (truckService == null) {
             synchronized (this) {
-                truckService = new TrucksSeviceimpl(getTruckDao(),
-                        getEntityManager());
+                if (truckService == null) {
+                    truckService = new TrucksSeviceimpl(getTruckDao(),
+                            getEntityManager());
+                }
             }
         }
         return truckService;
@@ -211,9 +237,11 @@ public final class LogiwebAppContext {
     public DriverService getDriverService() {
         if (driverService == null) {
             synchronized (this) {
-                driverService = new DriverServiceImpl(getDriverDao(),
-                        getTruckDao(), geDriverShiftJournaDao(),
-                        getEntityManager());
+                if (driverService == null) {
+                    driverService = new DriverServiceImpl(getDriverDao(),
+                            getTruckDao(), geDriverShiftJournaDao(),
+                            getEntityManager());
+                }
             }
         }
         return driverService;
@@ -222,7 +250,9 @@ public final class LogiwebAppContext {
     public UserDao getUserDao() {
         if (userDao == null) {
             synchronized (this) {
-                userDao = new UserDaoJpa(User.class, getEntityManager());
+                if (userDao == null) {
+                    userDao = new UserDaoJpa(User.class, getEntityManager());
+                }
             }
         }
         return userDao;
@@ -231,8 +261,10 @@ public final class LogiwebAppContext {
     public UserService getUserService() {
         if (userService == null) {
             synchronized (this) {
-                userService = new UserServiceImpl(getEntityManager(),
-                        getUserDao());
+                if (userService == null) {
+                    userService = new UserServiceImpl(getEntityManager(),
+                            getUserDao());
+                }
             }
         }
         return userService;
