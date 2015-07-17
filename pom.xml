@@ -4,7 +4,7 @@
  <groupId>com.tsystems.javaschool</groupId>
  <artifactId>logiweb</artifactId>
  <packaging>war</packaging>
- <version>1.0-SNAPSHOT</version>
+ <version>2.0-SNAPSHOT</version>
  <name>Baliushin JavaSchool Logiweb project</name>
  <url>https://github.com/AndrewBaliushin/JavaSchool</url>
 
