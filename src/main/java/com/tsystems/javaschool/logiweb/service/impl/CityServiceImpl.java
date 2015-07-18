@@ -44,7 +44,6 @@ public class CityServiceImpl implements CityService {
     }
     
     @Override
-    @Transactional
     public Set<City> findAllCities() throws LogiwebServiceException {
         try {
             return cityDao.findAll();

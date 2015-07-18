@@ -3,6 +3,7 @@ package com.tsystems.javaschool.logiweb.service.impl;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -80,6 +81,7 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public DeliveryOrder addNewOrder(DeliveryOrder newOrder)
             throws LogiwebServiceException {
         try {
@@ -110,6 +112,7 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void addCargo(Cargo newCargo) throws ServiceValidationException, LogiwebServiceException {
         try {
             validateNewCargoForEmptyFields(newCargo);
@@ -195,6 +198,7 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void assignTruckToOrder(Truck truck, int orderId)
             throws ServiceValidationException, LogiwebServiceException {
         try {
@@ -235,6 +239,7 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void setReadyStatusForOrder(DeliveryOrder order)
             throws ServiceValidationException, LogiwebServiceException {
         if(order == null) {

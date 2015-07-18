@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,7 @@ public class TrucksSeviceimpl implements TrucksService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Truck addTruck(Truck newTruck) throws ServiceValidationException,
             LogiwebServiceException {
         newTruck.setStatus(TruckStatus.OK);
@@ -138,6 +140,7 @@ public class TrucksSeviceimpl implements TrucksService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void removeTruck(Truck truckToRemove)
             throws ServiceValidationException, LogiwebServiceException {
         int truckToRemoveId = truckToRemove.getId();
@@ -185,6 +188,7 @@ public class TrucksSeviceimpl implements TrucksService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void removeAssignedOrderAndDriversFromTruck(Truck truck)
             throws ServiceValidationException, LogiwebServiceException {
         if (truck.getAssignedDeliveryOrder().getStatus() == OrderStatus.READY_TO_GO) {

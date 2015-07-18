@@ -43,8 +43,11 @@ public class OrderAndCargoController {
     private CityService cityService;
     @Autowired
     private OrdersAndCargoService orderAndCaroService;
+    @Autowired
     private RouteService routeService;
+    @Autowired
     private TrucksService truckService;
+    @Autowired
     private DriverService driverService;
 
     @RequestMapping(value = {"manager/editOrder"}, method = RequestMethod.GET)

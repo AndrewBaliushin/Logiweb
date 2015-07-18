@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -88,6 +89,7 @@ public class DriverServiceImpl implements DriverService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Driver addDriver(Driver newDriver) throws ServiceValidationException,
             LogiwebServiceException {
         newDriver.setStatus(DriverStatus.FREE);
@@ -147,6 +149,7 @@ public class DriverServiceImpl implements DriverService {
      * @param update if true -- update. if false -- create new
      * @throws DaoException if employee id is occupied or //TODO add reasons
      */
+    @Transactional
     private void updateOrAddDriver(Driver driver, boolean update)
             throws ServiceValidationException, LogiwebServiceException {
         try {
@@ -185,6 +188,7 @@ public class DriverServiceImpl implements DriverService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void removeDriver(Driver driverToRemove) throws ServiceValidationException, LogiwebServiceException {
         try {
             Driver managedDriverToRemove = driverDao.find(driverToRemove
@@ -351,6 +355,7 @@ public class DriverServiceImpl implements DriverService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void assignDriverToTruck(int driverId, int truckId) throws ServiceValidationException, LogiwebServiceException {
         try {
             Driver driver = driverDao.find(driverId);
