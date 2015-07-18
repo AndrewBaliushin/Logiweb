@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
@@ -19,14 +20,11 @@ import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
  * 
  * @author Andrey Baliushin
  */
+@Component
 public class TruckDaoJpa extends GenericDaoJpa<Truck> implements TruckDao {
 
     private static final Logger LOG = Logger.getLogger(TruckDaoJpa.class);
     
-    public TruckDaoJpa(Class<Truck> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
-    }
-
     /**
      * {@inheritDoc}
      */

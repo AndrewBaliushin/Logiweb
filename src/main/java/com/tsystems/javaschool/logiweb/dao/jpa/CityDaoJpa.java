@@ -2,6 +2,8 @@ package com.tsystems.javaschool.logiweb.dao.jpa;
 
 import javax.persistence.EntityManager;
 
+import org.springframework.stereotype.Component;
+
 import com.tsystems.javaschool.logiweb.dao.CityDao;
 import com.tsystems.javaschool.logiweb.model.City;
 
@@ -10,10 +12,7 @@ import com.tsystems.javaschool.logiweb.model.City;
  * 
  * @author Andrey Baliushin
  */
+@Component
 public class CityDaoJpa extends GenericDaoJpa<City> implements CityDao {
-
-    public CityDaoJpa(Class<City> entityClass, EntityManager entityManager) {
-	super(entityClass, entityManager);
-    }
 
 }

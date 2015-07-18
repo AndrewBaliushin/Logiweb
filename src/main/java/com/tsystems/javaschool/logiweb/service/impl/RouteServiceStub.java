@@ -10,6 +10,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.springframework.stereotype.Service;
+
 import com.tsystems.javaschool.logiweb.model.Cargo;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
@@ -24,6 +26,7 @@ import com.tsystems.javaschool.logiweb.service.ext.RouteInformation.Waypoint;
  * @author Andrey Baliushin
  *
  */
+@Service
 public class RouteServiceStub implements RouteService {
     
     /**

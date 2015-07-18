@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
@@ -24,6 +25,7 @@ import com.tsystems.javaschool.logiweb.service.validators.LicensePlateValidator;
  * 
  * @author Andrey Baliushin
  */
+@Service
 public class TrucksSeviceimpl implements TrucksService {
     
     private static final Logger LOG = Logger.getLogger(TrucksSeviceimpl.class);

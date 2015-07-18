@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.CargoDao;
 import com.tsystems.javaschool.logiweb.dao.CityDao;
@@ -29,6 +30,7 @@ import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationExcep
  * 
  * @author Andrey Baliushin
  */
+@Service
 public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
 
     private static final Logger LOG = Logger.getLogger(OrdersAndCargoServiceImpl.class);

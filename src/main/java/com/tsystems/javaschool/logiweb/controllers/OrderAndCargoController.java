@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,14 +16,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
-import com.tsystems.javaschool.logiweb.LogiwebAppContext;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
 import com.tsystems.javaschool.logiweb.model.Cargo;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.Driver;
 import com.tsystems.javaschool.logiweb.model.Truck;
-import com.tsystems.javaschool.logiweb.model.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
@@ -40,13 +39,13 @@ public class OrderAndCargoController {
     
     private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
 
-    private LogiwebAppContext ctx = LogiwebAppContext.getInstance();
-    
-    private CityService cityService = ctx.getCityService();
-    private OrdersAndCargoService orderAndCaroService = ctx.getOrdersAndCargoService();
-    private RouteService routeService = ctx.getRouteService();
-    private TrucksService truckService = ctx.getTruckService();
-    private DriverService driverService = ctx.getDriverService();
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private OrdersAndCargoService orderAndCaroService;
+    private RouteService routeService;
+    private TrucksService truckService;
+    private DriverService driverService;
 
     @RequestMapping(value = {"manager/editOrder"}, method = RequestMethod.GET)
     public ModelAndView editOrder(HttpServletRequest request) {

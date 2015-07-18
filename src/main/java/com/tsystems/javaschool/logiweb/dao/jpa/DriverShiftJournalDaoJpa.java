@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
@@ -21,16 +22,12 @@ import com.tsystems.javaschool.logiweb.utils.DateUtils;
  * 
  * @author Andrey Baliushin
  */
+@Component
 public class DriverShiftJournalDaoJpa extends GenericDaoJpa<DriverShiftJournal>
         implements DriverShiftJournaDao {
 
     private static final Logger LOG = Logger.getLogger(TruckDaoJpa.class);
     
-    public DriverShiftJournalDaoJpa(Class<DriverShiftJournal> entityClass,
-            EntityManager entityManager) {
-	super(entityClass, entityManager);
-    }
-
     /**
      * {@inheritDoc}
      * @throws DaoException 
@@ -88,7 +85,4 @@ public class DriverShiftJournalDaoJpa extends GenericDaoJpa<DriverShiftJournal>
         drivers.add(driver);
         return findThisMonthJournalsForDrivers(drivers);
     }
-    
-    
-
 }

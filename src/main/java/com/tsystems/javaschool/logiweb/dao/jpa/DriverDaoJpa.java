@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
@@ -19,14 +20,11 @@ import com.tsystems.javaschool.logiweb.model.Driver;
  * 
  * @author Andrey Baliushin
  */
+@Component
 public class DriverDaoJpa extends GenericDaoJpa<Driver> implements DriverDao {
 
     private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);
-    
-    public DriverDaoJpa(Class<Driver> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
-    }
-    
+   
     /**
      * {@inheritDoc}
      */

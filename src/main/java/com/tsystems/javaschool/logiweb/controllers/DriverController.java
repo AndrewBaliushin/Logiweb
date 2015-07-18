@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
-import com.tsystems.javaschool.logiweb.LogiwebAppContext;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
 import com.tsystems.javaschool.logiweb.model.City;
 import com.tsystems.javaschool.logiweb.model.Driver;
@@ -32,11 +32,12 @@ public class DriverController {
     
     private final static Logger LOG = Logger.getLogger(DriverController.class);
 
-    private LogiwebAppContext ctx = LogiwebAppContext.getInstance();
-
-    private DriverService driverService = ctx.getDriverService();
-    private CityService cityService = ctx.getCityService();
-    private RouteService routeService = ctx.getRouteService();
+    @Autowired
+    private DriverService driverService;
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private RouteService routeService;
 
     @RequestMapping("manager/showDrivers")
     public ModelAndView showDrivers() {  

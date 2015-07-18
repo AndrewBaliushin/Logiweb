@@ -5,23 +5,9 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
  
  <display-name>Baliushin Logiweb project</display-name>
  
- <filter>
-    <filter-name>secureFilter</filter-name>
-    <filter-class>com.tsystems.javaschool.logiweb.controllers.filters.LoginFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>secureFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  
-  <filter>
-    <filter-name>managerRstrictionFilter</filter-name>
-    <filter-class>com.tsystems.javaschool.logiweb.controllers.filters.MangerRestrictionFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>managerRstrictionFilter</filter-name>
-    <url-pattern>/manager/*</url-pattern>
-  </filter-mapping>
+ <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+ </listener>
 
  <servlet>
   <servlet-name>mvc-dispatcher</servlet-name>

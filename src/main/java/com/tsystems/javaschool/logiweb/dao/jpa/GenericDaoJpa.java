@@ -1,10 +1,13 @@
 package com.tsystems.javaschool.logiweb.dao.jpa;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 
@@ -22,11 +25,14 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
     private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);
 
     private Class<T> entityClass;
+    
+    @PersistenceContext
     private EntityManager entityManager;
 
-    public GenericDaoJpa(Class<T> entityClass, EntityManager entityManager) {
-        this.entityClass = entityClass;
-        this.entityManager = entityManager;
+    public GenericDaoJpa() {
+        Type t = getClass().getGenericSuperclass();
+        ParameterizedType pt = (ParameterizedType) t;
+        entityClass = (Class) pt.getActualTypeArguments()[0];
     }
 
     /**

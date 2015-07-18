@@ -3,8 +3,11 @@ package com.tsystems.javaschool.logiweb.service.impl;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.CityDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
@@ -17,54 +20,37 @@ import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceExceptio
  * 
  * @author Andrey Baliushin
  */
+@Service
 public class CityServiceImpl implements CityService {
     
     private static final Logger LOG = Logger.getLogger(CityServiceImpl.class);
-
-    private EntityManager em;
     
     private CityDao cityDao;
 
-    public CityServiceImpl(EntityManager em, CityDao cityDao) {
+    @Autowired
+    public CityServiceImpl(CityDao cityDao) {
         this.cityDao = cityDao;
-        this.em = em;
-    }
-    
-    private EntityManager getEntityManager() {
-        return em;
     }
 
     @Override
+    @Transactional
     public City findById(int id) throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            City city = cityDao.find(id);
-            getEntityManager().getTransaction().commit();
-            return city;
+            return cityDao.find(id);
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
     
     @Override
+    @Transactional
     public Set<City> findAllCities() throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            Set<City> cities = cityDao.findAll();
-            getEntityManager().getTransaction().commit();
-            return cities;
+            return cityDao.findAll();
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
 
