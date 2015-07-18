@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
@@ -29,18 +30,12 @@ import com.tsystems.javaschool.logiweb.service.validators.LicensePlateValidator;
 public class TrucksSeviceimpl implements TrucksService {
     
     private static final Logger LOG = Logger.getLogger(TrucksSeviceimpl.class);
-
-    private EntityManager em;
     
     private TruckDao truckDao;
     
-    public TrucksSeviceimpl(TruckDao truckDao, EntityManager em) {
-	this.em = em;
+    @Autowired
+    public TrucksSeviceimpl(TruckDao truckDao) {
 	this.truckDao = truckDao;
-    }
-    
-    private EntityManager getEntityManager() {
-        return em;
     }
     
     /**
@@ -49,17 +44,10 @@ public class TrucksSeviceimpl implements TrucksService {
     @Override
     public Set<Truck> findAllTrucks() throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            Set<Truck> trucks = truckDao.findAll();
-            getEntityManager().getTransaction().commit();
-            return trucks;
+            return truckDao.findAll();
         } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
 
@@ -70,17 +58,10 @@ public class TrucksSeviceimpl implements TrucksService {
     @Override
     public Truck findTruckById(int id) throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            Truck truck = truckDao.find(id);
-            getEntityManager().getTransaction().commit();
-            return truck;
+            return truckDao.find(id);
         } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
     
@@ -114,7 +95,6 @@ public class TrucksSeviceimpl implements TrucksService {
         }
 
         try {
-            getEntityManager().getTransaction().begin();
             Truck truckWithSamePlate = truckDao.findByLicensePlate(newTruck.getLicencePlate());
             
             if (truckWithSamePlate != null) {
@@ -123,8 +103,6 @@ public class TrucksSeviceimpl implements TrucksService {
             }
             
             truckDao.create(newTruck);
-            getEntityManager().refresh(newTruck);
-            getEntityManager().getTransaction().commit();
 
             LOG.info("Truck created. Plate " + newTruck.getLicencePlate()
                     + " ID: " + newTruck.getId());
@@ -135,10 +113,6 @@ public class TrucksSeviceimpl implements TrucksService {
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
 
@@ -168,8 +142,6 @@ public class TrucksSeviceimpl implements TrucksService {
             throws ServiceValidationException, LogiwebServiceException {
         int truckToRemoveId = truckToRemove.getId();
         try {
-            getEntityManager().getTransaction().begin();
-
             truckToRemove = truckDao.find(truckToRemove.getId());
             if (truckToRemove == null) {
                 throw new ServiceValidationException("Truck "
@@ -185,8 +157,7 @@ public class TrucksSeviceimpl implements TrucksService {
             }
             
             truckDao.delete(truckToRemove);
-            getEntityManager().getTransaction().commit();
-
+            
             LOG.info("Truck removed. Plate " + truckToRemove.getLicencePlate()
                     + " ID: " + truckToRemove.getId());
         } catch (ServiceValidationException e) {
@@ -194,10 +165,6 @@ public class TrucksSeviceimpl implements TrucksService {
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
 
@@ -207,18 +174,10 @@ public class TrucksSeviceimpl implements TrucksService {
     @Override
     public Set<Truck> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            Set<Truck> freeTrucks = truckDao.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minCargoWeightCapacity);
-            getEntityManager().getTransaction().commit();
-            
-            return freeTrucks;
+            return truckDao.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minCargoWeightCapacity); 
         } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
     
@@ -234,33 +193,25 @@ public class TrucksSeviceimpl implements TrucksService {
         }
 
         try {
-            getEntityManager().getTransaction().begin();
             DeliveryOrder order = truck.getAssignedDeliveryOrder();
             Set<Driver> drivers = truck.getDrivers();
             
             truck.setAssignedDeliveryOrder(null);
             truck.setDrivers(new HashSet<Driver>());
-            getEntityManager().merge(truck);
             
             for (Driver driver : drivers) {
                 driver.setCurrentTruck(null);
-                getEntityManager().merge(driver);
             }
             
             if(order != null) {
                 order.setAssignedTruck(null);
             }
             
-            getEntityManager().getTransaction().commit();
             
             LOG.info("Truck id#" + truck.getId() + " and its drivers removed from order.");
         } catch (Exception e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
 }

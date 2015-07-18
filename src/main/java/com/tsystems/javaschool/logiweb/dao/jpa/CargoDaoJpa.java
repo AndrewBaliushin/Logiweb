@@ -2,6 +2,8 @@ package com.tsystems.javaschool.logiweb.dao.jpa;
 
 import javax.persistence.EntityManager;
 
+import org.springframework.stereotype.Component;
+
 import com.tsystems.javaschool.logiweb.dao.CargoDao;
 import com.tsystems.javaschool.logiweb.model.Cargo;
 
@@ -10,6 +12,7 @@ import com.tsystems.javaschool.logiweb.model.Cargo;
  * 
  * @author Andrey Baliushin
  */
+@Component("cargoDao")
 public class CargoDaoJpa extends GenericDaoJpa<Cargo> implements CargoDao {
 
 }

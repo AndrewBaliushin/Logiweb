@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.CargoDao;
@@ -39,22 +40,15 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     private CargoDao cargoDao;
     private CityDao cityDao;
     private TruckDao truckDao;
-    private EntityManager em;
 
+    @Autowired
     public OrdersAndCargoServiceImpl(DeliveryOrderDao deliveryOrderDao,
-            CargoDao cargoDao, CityDao cityDao, TruckDao truckDao, EntityManager em) {
+            CargoDao cargoDao, CityDao cityDao, TruckDao truckDao) {
         this.deliveryOrderDao = deliveryOrderDao;
         this.cargoDao = cargoDao;
         this.cityDao = cityDao;
         this.truckDao = truckDao;
-        this.em = em;
     }
-
-    
-    private EntityManager getEntityManager() {
-        return em;
-    }
-
 
     /**
      * {@inheritDoc}
@@ -62,17 +56,10 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     @Override
     public Set<DeliveryOrder> findAllOrders() throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            Set<DeliveryOrder> orders = deliveryOrderDao.findAll();
-            getEntityManager().getTransaction().commit();
-            return orders;
+            return deliveryOrderDao.findAll();
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
     
@@ -82,17 +69,10 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     @Override
     public Set<Cargo> findAllCargoes() throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            Set<Cargo> orders = cargoDao.findAll();
-            getEntityManager().getTransaction().commit();
-            return orders;
+            return cargoDao.findAll();
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
     
@@ -103,20 +83,12 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     public DeliveryOrder addNewOrder(DeliveryOrder newOrder)
             throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
             deliveryOrderDao.create(newOrder);
-            getEntityManager().getTransaction().commit();
-
             LOG.info("Order created. ID#" + newOrder.getId());
-
             return newOrder;
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
 
@@ -126,18 +98,10 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     @Override
     public DeliveryOrder findOrderById(int id) throws LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            DeliveryOrder order = deliveryOrderDao.find(id);
-            getEntityManager().getTransaction().commit();
-
-            return order;
+            return deliveryOrderDao.find(id);
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
 
@@ -154,9 +118,6 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
         }
         
         try {
-            getEntityManager().getTransaction().begin();
-            
-            //get managed entities
             City originCity = cityDao.find(newCargo.getOriginCity().getId());
             City destinationCity = cityDao.find(newCargo.getDestinationCity()
                     .getId());
@@ -175,15 +136,9 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
             
             cargoDao.create(newCargo);
             LOG.info("New cargo with id #" + newCargo.getId() + "created for irder id #" + orderForCargo.getId());
-            getEntityManager().refresh(newCargo.getOrderForThisCargo());
-            getEntityManager().getTransaction().commit();
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
     
@@ -243,8 +198,6 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     public void assignTruckToOrder(Truck truck, int orderId)
             throws ServiceValidationException, LogiwebServiceException {
         try {
-            getEntityManager().getTransaction().begin();
-            
             if(truck == null) {
                 throw new ServiceValidationException("Truck does not exist.");
             } 
@@ -271,20 +224,11 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
             
             truck.setAssignedDeliveryOrder(order);
             order.setAssignedTruck(truck);
-            getEntityManager().merge(truck);
-            
             LOG.info("Truck id#" + truck.getId() + " assign to order id#" + order.getId());
-            
-            getEntityManager().getTransaction().commit();
         } catch (DaoException e) {
             LOG.warn("Something unexpected happened.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
-        }
-        
+        }        
     }
     
     /**
@@ -315,20 +259,11 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
         }
         
         try {
-            getEntityManager().getTransaction().begin();
             order.setStatus(OrderStatus.READY_TO_GO);
-            getEntityManager().merge(order);
-            
             LOG.info("Order id#" + order.getId() + " changed status to " + OrderStatus.READY_TO_GO);
-            
-            getEntityManager().getTransaction().commit();
         } catch (Exception e) {
             LOG.warn("Something unexpected happened.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (getEntityManager().getTransaction().isActive()) {
-                getEntityManager().getTransaction().rollback();
-            }
         }
     }
     

@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.GenericDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
@@ -20,6 +21,7 @@ import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
  * 
  * @author Andrey Baliushin
  */
+@Component
 public abstract class GenericDaoJpa<T> implements GenericDao<T> {
 
     private static final Logger LOG = Logger.getLogger(GenericDaoJpa.class);
