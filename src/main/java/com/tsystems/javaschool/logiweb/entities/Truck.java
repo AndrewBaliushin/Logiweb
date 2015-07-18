@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.model;
+package com.tsystems.javaschool.logiweb.entities;
 
 import java.util.Set;
 
@@ -16,7 +16,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
+import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
 
 /**
  * Entity representation of a Delivery Truck.

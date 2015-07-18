@@ -3,8 +3,8 @@ package com.tsystems.javaschool.logiweb.dao;
 import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.City;
-import com.tsystems.javaschool.logiweb.model.Driver;
+import com.tsystems.javaschool.logiweb.entities.City;
+import com.tsystems.javaschool.logiweb.entities.Driver;
 
 /**
  * Interface for basic operations for Driver entity.

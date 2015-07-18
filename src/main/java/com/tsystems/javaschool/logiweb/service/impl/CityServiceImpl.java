@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.CityDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.City;
+import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 

@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.model.status;
+package com.tsystems.javaschool.logiweb.entities.status;
 
 /**
  * Enum representation of driver status.

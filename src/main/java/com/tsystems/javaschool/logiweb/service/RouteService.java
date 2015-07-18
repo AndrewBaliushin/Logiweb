@@ -1,6 +1,6 @@
 package com.tsystems.javaschool.logiweb.service;
 
-import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 
 /**

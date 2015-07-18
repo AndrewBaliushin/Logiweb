@@ -3,8 +3,8 @@ package com.tsystems.javaschool.logiweb.service.ext;
 import java.util.List;
 import java.util.Map;
 
-import com.tsystems.javaschool.logiweb.model.Cargo;
-import com.tsystems.javaschool.logiweb.model.City;
+import com.tsystems.javaschool.logiweb.entities.Cargo;
+import com.tsystems.javaschool.logiweb.entities.City;
 
 /**
  * Date holder for route information: best order of Cities to deliver,

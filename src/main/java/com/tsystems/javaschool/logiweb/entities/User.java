@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.model;
+package com.tsystems.javaschool.logiweb.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.tsystems.javaschool.logiweb.model.status.UserRole;
+import com.tsystems.javaschool.logiweb.entities.status.UserRole;
 
 /**
  * Entity representation of application user.

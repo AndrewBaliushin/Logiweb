@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
-import com.tsystems.javaschool.logiweb.model.Driver;
-import com.tsystems.javaschool.logiweb.model.Truck;
-import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
-import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
+import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.entities.Driver;
+import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;

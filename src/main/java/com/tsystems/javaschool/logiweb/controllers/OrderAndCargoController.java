@@ -17,12 +17,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
-import com.tsystems.javaschool.logiweb.model.Cargo;
-import com.tsystems.javaschool.logiweb.model.City;
-import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
-import com.tsystems.javaschool.logiweb.model.Driver;
-import com.tsystems.javaschool.logiweb.model.Truck;
-import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.entities.Cargo;
+import com.tsystems.javaschool.logiweb.entities.City;
+import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.entities.Driver;
+import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;

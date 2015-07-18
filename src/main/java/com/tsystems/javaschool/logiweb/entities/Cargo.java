@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.model;
+package com.tsystems.javaschool.logiweb.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.tsystems.javaschool.logiweb.model.status.CargoStatus;
+import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
 
 /**
  * Entity representation of Cargo.

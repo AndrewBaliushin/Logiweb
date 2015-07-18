@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.Driver;
-import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
+import com.tsystems.javaschool.logiweb.entities.Driver;
+import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.utils.DateUtils;
 
 /**

@@ -27,9 +27,9 @@ import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.City;
-import com.tsystems.javaschool.logiweb.model.Driver;
-import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
+import com.tsystems.javaschool.logiweb.entities.City;
+import com.tsystems.javaschool.logiweb.entities.Driver;
+import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 

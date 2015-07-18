@@ -2,10 +2,10 @@ package com.tsystems.javaschool.logiweb.service;
 
 import java.util.Set;
 
-import com.tsystems.javaschool.logiweb.model.Cargo;
-import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
-import com.tsystems.javaschool.logiweb.model.Truck;
-import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.entities.Cargo;
+import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 

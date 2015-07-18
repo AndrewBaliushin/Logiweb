@@ -5,7 +5,7 @@ import javax.persistence.EntityManager;
 import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.CityDao;
-import com.tsystems.javaschool.logiweb.model.City;
+import com.tsystems.javaschool.logiweb.entities.City;
 
 /**
  * CRUD operations for City entity (JPA implementation).

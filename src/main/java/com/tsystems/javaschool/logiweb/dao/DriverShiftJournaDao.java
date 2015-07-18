@@ -3,8 +3,8 @@ package com.tsystems.javaschool.logiweb.dao;
 import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.Driver;
-import com.tsystems.javaschool.logiweb.model.DriverShiftJournal;
+import com.tsystems.javaschool.logiweb.entities.Driver;
+import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 
 /**
  * CRUD operations for Driver Shift entity.

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.Truck;
-import com.tsystems.javaschool.logiweb.model.status.TruckStatus;
+import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
 
 /**
  * CRUD operations for Truck entity (JPA implementation).

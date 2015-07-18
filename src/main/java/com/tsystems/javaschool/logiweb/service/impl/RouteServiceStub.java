@@ -12,9 +12,9 @@ import java.util.TreeSet;
 
 import org.springframework.stereotype.Service;
 
-import com.tsystems.javaschool.logiweb.model.Cargo;
-import com.tsystems.javaschool.logiweb.model.City;
-import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.entities.Cargo;
+import com.tsystems.javaschool.logiweb.entities.City;
+import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation.OperationWithCargo;

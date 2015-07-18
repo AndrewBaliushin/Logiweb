@@ -3,7 +3,7 @@ package com.tsystems.javaschool.logiweb.dao;
 import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.Truck;
+import com.tsystems.javaschool.logiweb.entities.Truck;
 
 /**
  * CRUD operations for Truck entity.

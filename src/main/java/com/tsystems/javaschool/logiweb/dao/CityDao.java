@@ -1,6 +1,6 @@
 package com.tsystems.javaschool.logiweb.dao;
 
-import com.tsystems.javaschool.logiweb.model.City;
+import com.tsystems.javaschool.logiweb.entities.City;
 
 /**
  * CRUD operations for City entity.

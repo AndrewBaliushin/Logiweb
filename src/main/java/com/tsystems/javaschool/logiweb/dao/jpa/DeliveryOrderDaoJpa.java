@@ -5,7 +5,7 @@ import javax.persistence.EntityManager;
 import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.DeliveryOrderDao;
-import com.tsystems.javaschool.logiweb.model.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 
 /**
  * CRUD operations for Cargo entity (JPA implementation).

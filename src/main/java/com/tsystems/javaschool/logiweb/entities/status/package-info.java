@@ -3,4 +3,4 @@
  *
  * @author Andrew Baliushin
  */
-package com.tsystems.javaschool.logiweb.model.status;
+package com.tsystems.javaschool.logiweb.entities.status;

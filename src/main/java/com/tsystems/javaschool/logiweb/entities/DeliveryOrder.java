@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.model;
+package com.tsystems.javaschool.logiweb.entities;
 
 import java.util.Set;
 
@@ -13,7 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.tsystems.javaschool.logiweb.model.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 
 /**
  * Entity representation of a Delivery Order for some Cargo.

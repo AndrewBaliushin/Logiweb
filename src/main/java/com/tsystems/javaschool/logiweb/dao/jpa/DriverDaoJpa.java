@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
-import com.tsystems.javaschool.logiweb.model.City;
-import com.tsystems.javaschool.logiweb.model.Driver;
+import com.tsystems.javaschool.logiweb.entities.City;
+import com.tsystems.javaschool.logiweb.entities.Driver;
 
 /**
  * CRUD operations for Driver entity (JPA implementation).

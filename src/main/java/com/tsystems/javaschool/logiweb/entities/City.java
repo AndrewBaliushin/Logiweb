@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.logiweb.model;
+package com.tsystems.javaschool.logiweb.entities;
 
 import java.util.Set;
 

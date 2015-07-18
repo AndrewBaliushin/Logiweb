@@ -1,6 +1,6 @@
 package com.tsystems.javaschool.logiweb.dao;
 
-import com.tsystems.javaschool.logiweb.model.Cargo;
+import com.tsystems.javaschool.logiweb.entities.Cargo;
 
 /**
  * CRUD operations for Cargo entity.
