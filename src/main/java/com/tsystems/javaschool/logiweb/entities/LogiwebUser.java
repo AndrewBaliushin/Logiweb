@@ -11,6 +11,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.tsystems.javaschool.logiweb.entities.status.UserRole;
 
+
+
 /**
  * Entity representation of application user.
  * 
@@ -19,7 +21,7 @@ import com.tsystems.javaschool.logiweb.entities.status.UserRole;
  */
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "user_mail"))
-public class User {
+public class LogiwebUser {
     
     @Id
     @GeneratedValue
@@ -36,7 +38,7 @@ public class User {
     @Column(name = "md5_pass", nullable = false)
     private String passMd5;
 
-    public User() {
+    public LogiwebUser() {
     }
 
     public int getId() {

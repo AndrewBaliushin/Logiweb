@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
+import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
 import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
@@ -115,29 +118,31 @@ public class DriverController {
         return mav;
     }
     
-    @RequestMapping(value = "manager/showDriver", method = RequestMethod.GET)
-    public ModelAndView showSingleDriver(HttpServletRequest request) {  
+    @RequestMapping(value = "/driver/{driverId}")
+    public ModelAndView showSingleDriver(@PathVariable("driverId") int driverId) {  
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/SingleDriver");
         
         try {
-            int driverId = Integer.parseInt(request.getParameter("driverId"));
             Driver driver = driverService.findDriverById(driverId);
+            if (driver == null) {
+                throw new RecordNotFoundException();
+            }
+            
             mav.addObject("driver", driver);
             mav.addObject("workingHours",
                     driverService.calculateWorkingHoursForDriver(driver));
             
             if (driver.getCurrentTruck() != null
                     && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
-                RouteInformation routeInfo = routeService.getRouteInformationForOrder(driver
-                        .getCurrentTruck().getAssignedDeliveryOrder());
+                RouteInformation routeInfo = routeService
+                        .getRouteInformationForOrder(driver.getCurrentTruck()
+                                .getAssignedDeliveryOrder());
                 mav.addObject("routeInfo", routeInfo);
             }
-            
-            mav.addObject("journals", driverService.findDriverJournalsForThisMonth(driver));
-            
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
+
+            mav.addObject("journals",
+                    driverService.findDriverJournalsForThisMonth(driver));
         } catch (LogiwebServiceException e) {
             LOG.warn(e);
             throw new RuntimeException("Unrecoverable server exception.", e);

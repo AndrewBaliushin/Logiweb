@@ -7,7 +7,6 @@
 		<class>com.tsystems.javaschool.logiweb.entities.Driver</class>
 		<class>com.tsystems.javaschool.logiweb.entities.Truck</class>
 		<class>com.tsystems.javaschool.logiweb.entities.DriverShiftJournal</class>
-		<class>com.tsystems.javaschool.logiweb.entities.User</class>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
 			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>

@@ -6,6 +6,6 @@ package com.tsystems.javaschool.logiweb.entities.status;
  * @author Andrey Baliushin
  */
 public enum UserRole {
-    MANAGER,
-    DRIVER;
+    ROLE_MANAGER,
+    ROLE_DRIVER;
 }

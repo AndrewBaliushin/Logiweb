@@ -1,4 +1,4 @@
-<%@page import="com.tsystems.javaschool.logiweb.model.status.OrderStatus"%>
+<%@page import="com.tsystems.javaschool.logiweb.entities.status.OrderStatus"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
