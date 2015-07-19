@@ -20,7 +20,9 @@
         <intercept-url pattern="/logout" access="permitAll" />
         
         <intercept-url pattern="/manager/**" access="hasRole('ROLE_MANAGER')" />
+        <intercept-url pattern="/driver/**" access="hasRole('ROLE_DRIVER')" />
         
+        <intercept-url pattern="/" access="isAuthenticated()" />
         <intercept-url pattern="/**" access="denyAll" />
         
         <form-login login-page="/login" default-target-url="/"
