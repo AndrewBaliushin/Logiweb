@@ -23,7 +23,7 @@
         
         <intercept-url pattern="/**" access="denyAll" />
         
-        <form-login login-page="/login" default-target-url="/index"
+        <form-login login-page="/login" default-target-url="/"
             authentication-failure-url="/login?error=true" />
         <logout invalidate-session="true" logout-success-url="/login" logout-url="/logout" />
         <remember-me />
