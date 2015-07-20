@@ -72,6 +72,16 @@
 			</tbody>
 		</table>
 	</div>
+	
+	<%-- Edit priveleges --%>
+    <sec:authorize access="hasRole('ROLE_MANAGER')">
+        <div class="panel-footer">
+            <a href="${pageContext.request.contextPath}/truck/new" role="button"
+                class="btn btn-default btn-large btn-block"><span
+                class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
+        </div>
+    </sec:authorize>
+    
 </div>
 
 <jsp:include page="../GlobalFooter.jsp"/>

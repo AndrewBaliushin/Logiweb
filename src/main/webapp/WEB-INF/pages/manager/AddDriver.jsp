@@ -1,4 +1,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <jsp:include page="../GlobalHeader.jsp">
 	<jsp:param name="title" value="Add driver" />
@@ -9,8 +11,7 @@
 	<jsp:param name="userRoleForTitle" value="Manager" />
 </jsp:include>
 
-
-<form class="form-horizontal" method="POST">
+<form:form modelAttribute="driverModel" method="post" cssClass="form-horizontal">
 	<fieldset>
 
 		<!-- Form Name -->
@@ -20,58 +21,59 @@
 		<c:if test="${not empty error}">
 			<div class="form-group">
 				<div class="col-md-4">
-					<!-- blank -->
 				</div>
 				<div class="col-md-4 alert alert-warning">
 					<strong>Warning!</strong> ${error}
+					<form:errors path="*"/>
 				</div>
 			</div>
 		</c:if>
 
-		<!-- ID : Text input-->
-		<div class="form-group">
-			<label class="col-md-4 control-label" for="employeeId">Employee
-				ID</label>
-			<div class="col-md-4">
-				<input id="employeeId" name="employeeId" type="text"
-					placeholder="ID" class="form-control input-md" value="${employeeId}" required="">
-
-			</div>
-		</div>
-
-		<!-- Name : Text input-->
-		<div class="form-group">
-			<label class="col-md-4 control-label" for="name">Name</label>
-			<div class="col-md-4">
-				<input id="name" name="name" type="text" placeholder="Name"
-					class="form-control input-md" required value="${name}">
-
-			</div>
-		</div>
-
-		<!-- Surname : Text input-->
-		<div class="form-group">
-			<label class="col-md-4 control-label" for="surname">Surname</label>
-			<div class="col-md-4">
-				<input id="surname" name="surname" type="text" placeholder="Surname"
-					class="form-control input-md" required value="${surname}">
-
-			</div>
-		</div>
-
-		<!-- City: Select Basic -->
-		<div class="form-group">
-			<label class="col-md-4 control-label" for="city">City</label>
-			<div class="col-md-4">
-				<select id="city" name="city" class="form-control">
-					<c:forEach items="${cities}" var="cityOption">
-						<option value="${cityOption.id}"
-							<c:if test="${not empty city && city == cityOption.id}">selected="selected"</c:if>>${cityOption.name}</option>
-					</c:forEach>
-				</select>
-			</div>
-		</div>
-
+        <spring:bind path="employeeId">
+          <div class="form-group ${status.error ? 'has-error' : ''}">
+            <label class="col-md-4 control-label">Employee Id</label>
+            <div class="col-md-4">
+                <form:input path="employeeId" type="text" class="form-control input-md" 
+                                id="employeeId" placeholder="Employee Id" />
+                <form:errors path="employeeId" class="control-label has-error" />
+            </div>
+          </div>
+        </spring:bind>
+        
+		<spring:bind path="name">
+          <div class="form-group ${status.error ? 'has-error' : ''}">
+            <label class="col-md-4 control-label">Name</label>
+            <div class="col-md-4">
+                <form:input path="name" type="text" class="form-control input-md" 
+                                id="name" placeholder="Name" />
+                <form:errors path="name" class="control-label has-error" />
+            </div>
+          </div>
+        </spring:bind>
+        
+        <spring:bind path="surname">
+          <div class="form-group ${status.error ? 'has-error' : ''}">
+            <label class="col-md-4 control-label">Surname</label>
+            <div class="col-md-4">
+                <form:input path="surname" type="text" class="form-control input-md" 
+                                id="surname" placeholder="Surname" />
+                <form:errors path="surname" class="control-label" />
+            </div>
+          </div>
+        </spring:bind>
+        
+        <spring:bind path="currentCityId">
+          <div class="form-group ${status.error ? 'has-error' : ''}">
+            <label class="col-md-4 control-label">City</label>
+            <div class="col-md-4">
+                <form:select path="currentCityId" class="form-control">
+                    <form:options items="${cities}" itemLabel="name" itemValue="id"  />
+                </form:select>
+                <form:errors path="currentCityId" class="control-label" />
+            </div>
+          </div>
+        </spring:bind>
+        
 		<!-- Submit -->
 		<div class="form-group">
 			<label class="col-md-4 control-label"></label>
@@ -81,7 +83,7 @@
 		</div>
 
 	</fieldset>
-</form>
+</form:form>
 
 
 <jsp:include page="../GlobalFooter.jsp" />

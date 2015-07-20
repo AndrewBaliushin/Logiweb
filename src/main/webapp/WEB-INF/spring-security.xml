@@ -9,6 +9,8 @@
     http://www.springframework.org/schema/security
     http://www.springframework.org/schema/security/spring-security-4.0.xsd">
  
+    <global-method-security secured-annotations="enabled"/>
+ 
     <http  use-expressions="true">
         <csrf disabled="true"/>
     
@@ -19,11 +21,12 @@
         <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/logout" access="permitAll" />
         
-        <intercept-url pattern="/manager/**" access="hasRole('ROLE_MANAGER')" />
-        <intercept-url pattern="/driver/**" access="hasRole('ROLE_DRIVER')" />
+        <intercept-url pattern="/driver/new" access="hasRole('ROLE_MANAGER')" />
+        <intercept-url pattern="/driver/*" access="hasAnyRole('ROLE_MANAGER', 'ROLE_DRIVER')" />
+        <intercept-url pattern="/driver" access="hasAnyRole('ROLE_MANAGER', 'ROLE_DRIVER')" />
         
         <intercept-url pattern="/" access="isAuthenticated()" />
-        <intercept-url pattern="/**" access="denyAll" />
+        <intercept-url pattern="/**" access="hasRole('ROLE_MANAGER')" />
         
         <form-login login-page="/login" default-target-url="/"
             authentication-failure-url="/login?error=true" />

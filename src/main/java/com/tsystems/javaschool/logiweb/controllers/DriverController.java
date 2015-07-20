@@ -4,13 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.management.RuntimeErrorException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +31,8 @@ import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundExce
 import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
+import com.tsystems.javaschool.logiweb.model.DriverModel;
+import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
@@ -42,7 +52,7 @@ public class DriverController {
     @Autowired
     private RouteService routeService;
 
-    @RequestMapping("manager/showDrivers")
+    @RequestMapping("driver")
     public ModelAndView showDrivers() {  
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/DriverList");
@@ -62,61 +72,7 @@ public class DriverController {
         }
         
         return mav;
-    }
-    
-    //TODO combine with 'manager/showDrivers'
-    @RequestMapping("driver")
-    public ModelAndView showDriversForDriver() {  
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("driver/DriverList");
-        
-        try {
-            Set<Driver> drivers = driverService.findAllDrivers();
-            mav.addObject("drivers", drivers);
-            
-            Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
-            for (Driver driver : drivers) {
-                workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver));
-            }
-            mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
-        } catch (LogiwebServiceException e) {
-            LOG.warn(e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
-        }
-        
-        return mav;
-    }
-    
-    @RequestMapping(value = "driver/showDriver", method = RequestMethod.GET)
-    public ModelAndView showSingleDriverForDriver(HttpServletRequest request) {  
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("driver/SingleDriver");
-        
-        try {
-            int driverId = Integer.parseInt(request.getParameter("driverId"));
-            Driver driver = driverService.findDriverById(driverId);
-            mav.addObject("driver", driver);
-            mav.addObject("workingHours",
-                    driverService.calculateWorkingHoursForDriver(driver));
-            
-            if (driver.getCurrentTruck() != null
-                    && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
-                RouteInformation routeInfo = routeService.getRouteInformationForOrder(driver
-                        .getCurrentTruck().getAssignedDeliveryOrder());
-                mav.addObject("routeInfo", routeInfo);
-            }
-            
-            mav.addObject("journals", driverService.findDriverJournalsForThisMonth(driver));
-            
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
-        } catch (LogiwebServiceException e) {
-            LOG.warn(e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
-        }
-        
-        return mav;
-    }
+    }    
     
     @RequestMapping(value = "/driver/{driverId}")
     public ModelAndView showSingleDriver(@PathVariable("driverId") int driverId) {  
@@ -151,62 +107,65 @@ public class DriverController {
         return mav;
     }
     
-    @RequestMapping(value = {"manager/addDriver"})
-    public ModelAndView addDriver (HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView();
+    @RequestMapping(value = {"driver/new"}, method = RequestMethod.GET)
+    public String showFormForNewDriver (Model model) {
+        model.addAttribute("driverModel", new DriverModel());
+        addCitiesToModel(model);
+        return "manager/AddDriver";
+    }
+    
+    @RequestMapping(value = {"driver/new"}, method = RequestMethod.POST)
+    public String addDriver(
+            @ModelAttribute("driverModel") @Valid DriverModel driverModel,
+            BindingResult result, Model model) {
         
-        if("POST".equals(request.getMethod())) { //form is submitted
-            try {
-                Driver newDriver = createDriverEntityFromFormParams(request);
-                driverService.addDriver(newDriver);
-                return new ModelAndView("redirect:/manager/showDrivers");
-            } catch (FormParamaterParsingException e) {
-                mav.addObject("error", e.getMessage());
-            } catch (ServiceValidationException e) {
-                mav.addObject("error", e.getMessage());
-            } catch (LogiwebServiceException e) {
-                mav.addObject("error", "Server error. Check logs.");
-            }
+        if (result.hasErrors()) {
+            model.addAttribute("driverModel", driverModel);
+            addCitiesToModel(model);
+            return "manager/AddDriver";
         }
-
-        mav.setViewName("manager/AddDriver");
         
         try {
-            mav.addObject("cities", cityService.findAllCities());
+            Driver newDriver = driverService.addDriver(ModelToEntityConverter.convertToEntity(driverModel));
+            return "redirect:/driver/" + newDriver.getId();
+        } catch (ServiceValidationException e) {
+            model.addAttribute("error", e.getMessage());
+            addCitiesToModel(model);
+            return "manager/AddDriver";
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Unexcpected error happened.");
+            throw new RuntimeException(e);
+        }        
+    }
+    
+    private Model addCitiesToModel(Model model) {
+        try {
+            model.addAttribute("cities", cityService.findAllCities());
+            return model;
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexpected exception.", e);
             throw new RuntimeException("Unrecoverable server exception.", e);
         }
-        
-        mav.addObject("statuses", DriverStatus.values());
-        
-        sendBackInputParametersToView(mav, request);
-        
-        return mav;
     }
-    
+
     /**
      * Removes driver by its ID received in 'driverID' parameter. 
      * 
      * @param request
      * @return
      */
-    @RequestMapping(value = "manager/deleteDriver", method = RequestMethod.POST)
+    @RequestMapping(value = "driver/{driverId}/remove", method = RequestMethod.POST)
     @ResponseBody
-    public String deleteDriver(HttpServletRequest request, HttpServletResponse response) {
+    public String deleteDriver(@PathVariable("driverId") int driverId, HttpServletResponse response) {
         Gson gson = new Gson();
         Map<String, String> jsonMap = new HashMap<String, String>();
         
         try {
-            int idInt = Integer.parseInt(request.getParameter("driverId"));
             Driver driverToRemove = new Driver();
-            driverToRemove.setId(idInt);
+            driverToRemove.setId(driverId);
             driverService.removeDriver(driverToRemove);
             
             jsonMap.put("msg", "Driver deleted");
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonMap.put("msg", "Can't parse Driver id:" + request.getParameter("driverId") + " to integer.");
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonMap.put("msg", e.getMessage());
@@ -217,36 +176,6 @@ public class DriverController {
         }
         
         return gson.toJson(jsonMap);
-    }
-    
-    private Driver createDriverEntityFromFormParams(HttpServletRequest request) throws FormParamaterParsingException {
-        Integer employeeId;
-        DriverStatus status;
-        Integer cityId;
-        
-        try {
-            employeeId = Integer.parseInt(request.getParameter("employeeId"));
-        } catch (NumberFormatException | NullPointerException e) {
-            throw new FormParamaterParsingException("Employee ID field is in wrong format. Use integers.");
-        }
-        
-        try {
-            cityId = Integer.parseInt(request.getParameter("city"));
-        } catch (NumberFormatException | NullPointerException e) {
-            throw new FormParamaterParsingException("City selector must return city ID as integer.");
-        }
-             
-        Driver driver = new Driver();
-
-        City city = new City();
-        city.setId(cityId);
-
-        driver.setEmployeeId(employeeId);
-        driver.setName(request.getParameter("name"));
-        driver.setSurname(request.getParameter("surname"));
-        driver.setCurrentCity(city);
-
-        return driver;
     }
     
     /**

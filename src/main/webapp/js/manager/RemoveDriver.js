@@ -4,18 +4,17 @@
  * @param element --
  *            reference to element, that triggered this function (needed to
  *            remove row after succesful truck deletion)
- * @param id -
+ * @param driverId -
  *            of the driver
  * 
  * @author Andrey Baliushin
  */
-function removeDriver(element, id) {
+function removeDriver(element, driverId) {
 	bootbox.confirm("Delete driver?", function(result) { // bootboxjs.com
 		if (result) {
 			$.ajax({
-				url : "deleteDriver",
+				url : window.location.pathname + "/" + driverId + "/remove",
 				type : "POST",
-				data : { driverId: id },
 				dataType : "json",
 				success : function(result) {
 					$(element).closest("tr").fadeOut(1000, function() {

@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 <nav class="navbar navbar-inverse navbar-static-top">
 	<div class="container-fluid">
@@ -9,13 +11,16 @@
 		<div class="navbar-header">
 			<span class="navbar-brand">
 			
-				<c:choose>
-				 <c:when test="${!empty param.userRoleForTitle}">${param.userRoleForTitle}@LogiWeb</c:when>
-				 <c:otherwise>User@LogiWeb</c:otherwise>
-				</c:choose>
+				<sec:authorize access="hasRole('ROLE_MANAGER')">
+				    Manager@LogiWeb
+				</sec:authorize>
+				<sec:authorize access="hasRole('ROLE_DRIVER')">
+                    Driver@LogiWeb
+                </sec:authorize>
 			
 			</span>
 		</div>
+		<!-- /Logo -->
 
 		<!-- Menu Items -->
 		<div>

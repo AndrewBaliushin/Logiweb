@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
+import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
 import com.tsystems.javaschool.logiweb.entities.Cargo;
 import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
@@ -50,17 +52,16 @@ public class OrderAndCargoController {
     @Autowired
     private DriverService driverService;
 
-    @RequestMapping(value = {"manager/editOrder"}, method = RequestMethod.GET)
-    public ModelAndView editOrder(HttpServletRequest request) {
+    @RequestMapping(value = {"order/{orderId}/edit", "order/{orderId}"}, method = RequestMethod.GET)
+    public ModelAndView editOrder(@PathVariable("orderId") int orderId) {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/EditOrder");
         
         RouteInformation routeInfo = null;
         DeliveryOrder order = null;
         try {
-            int orderId = Integer.parseInt(request.getParameter("orderId"));
             order = orderAndCaroService.findOrderById(orderId);
-            if (order == null) throw new IllegalArgumentException("Order #" + orderId + " not exist.");
+            if (order == null) throw new RecordNotFoundException("Order #" + orderId + " not exist.");
 
             routeInfo = routeService
                     .getRouteInformationForOrder(order);
@@ -127,9 +128,9 @@ public class OrderAndCargoController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "manager/addCargo", method = RequestMethod.POST)
+    @RequestMapping(value = "/order/{orderId}/addCargo", method = RequestMethod.POST)
     @ResponseBody
-    public String addCargoToOrder(HttpServletRequest request, HttpServletResponse response) {
+    public String addCargoToOrder(@PathVariable("orderId") int orderId, HttpServletRequest request, HttpServletResponse response) {
         Gson gson = new Gson();
         Map<String, String> jsonResponseMap = new HashMap<String, String>();
         
@@ -159,16 +160,14 @@ public class OrderAndCargoController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "manager/assignTruck", method = RequestMethod.POST)
+    @RequestMapping(value = "/order/{orderId}/assignTruck", method = RequestMethod.POST)
     @ResponseBody
-    public String assignTruckToOrder(HttpServletRequest request, HttpServletResponse response) {
+    public String assignTruckToOrder(@PathVariable("orderId") int orderId, HttpServletRequest request, HttpServletResponse response) {
         Gson gson = new Gson();
         Map<String, String> jsonResponseMap = new HashMap<String, String>();
         
-        int orderId = 0;
         int truckId = 0;        
         try {
-            orderId = Integer.parseInt(request.getParameter("orderId"));
             truckId = Integer.parseInt(request.getParameter("truckId"));
         } catch (NumberFormatException | NullPointerException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -264,7 +263,7 @@ public class OrderAndCargoController {
         return gson.toJson(jsonResponseMap);
     }
     
-    @RequestMapping(value = {"manager/addOrder"})
+    @RequestMapping(value = {"/order/new"})
     public ModelAndView addOrder() {
         DeliveryOrder newOrder = new DeliveryOrder();
         newOrder.setStatus(OrderStatus.NOT_READY);
@@ -280,7 +279,7 @@ public class OrderAndCargoController {
         return mav;
     }
     
-    @RequestMapping(value = {"manager/showOrders"})
+    @RequestMapping(value = {"/order"})
     public ModelAndView showOrders() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/OrderList");
@@ -295,7 +294,7 @@ public class OrderAndCargoController {
         return mav;
     }
     
-    @RequestMapping(value = {"manager/showCargoes"})
+    @RequestMapping(value = {"/cargo"})
     public ModelAndView showCargoes() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/CargoesList");

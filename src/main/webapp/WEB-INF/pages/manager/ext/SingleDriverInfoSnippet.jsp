@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- Driver info -->
@@ -32,17 +33,16 @@
 
     <c:if test="${!empty driver.currentTruck || !empty driver.currentTruck.assignedOrder}">
 			<li class="list-group-item">Current order: 
-			   <c:choose>
-					<c:when test="${param.privelege == 'edit'}">
+			   
+			   <sec:authorize access="hasRole('ROLE_MANAGER')">
 						<a href="
 						  <c:url value="editOrder">
                               <c:param name="orderId" value="${driver.currentTruck.assignedDeliveryOrder.id}" />
                           </c:url>">${driver.currentTruck.assignedDeliveryOrder.id}</a>
-					</c:when>
-					<c:otherwise>
+				</sec:authorize>
+                <sec:authorize access="hasRole('ROLE_DRIVER')">
 					   ${driver.currentTruck.assignedDeliveryOrder.id}
-                    </c:otherwise>
-				</c:choose>
+                </sec:authorize>
 
 			</li>
 		</c:if>

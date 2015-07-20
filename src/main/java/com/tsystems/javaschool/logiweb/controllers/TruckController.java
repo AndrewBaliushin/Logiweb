@@ -36,7 +36,7 @@ public class TruckController {
     @Autowired
     private CityService cityService;
 
-    @RequestMapping(value = {"manager/showTrucks"})
+    @RequestMapping(value = {"truck"})
     public ModelAndView showTrucks() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("manager/TrucksList");
@@ -53,7 +53,7 @@ public class TruckController {
         return mav;
     }
     
-    @RequestMapping(value = {"manager/addTruck"})
+    @RequestMapping(value = {"truck/new"})
     public ModelAndView addTruck(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
         
