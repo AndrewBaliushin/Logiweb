@@ -2,12 +2,24 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
+<c:choose>
+	<c:when test="${formAction == 'new'}">
+	   <c:set var="title" value="Add driver"></c:set>
+	   <c:set var="buttonText" value="Create driver"></c:set>
+	</c:when>
+	<c:when test="${formAction == 'edit'}">
+	   <c:set var="title" value="Edit driver"></c:set>
+	   <c:set var="buttonText" value="Edit driver"></c:set>
+	</c:when>
+</c:choose>
+
+
 <jsp:include page="../GlobalHeader.jsp">
-	<jsp:param name="title" value="Add driver" />
+	<jsp:param name="title" value="${title}" />
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
-	<jsp:param name="homeLink" value="/manager" />
+	<jsp:param name="homeLink" value="/" />
 	<jsp:param name="userRoleForTitle" value="Manager" />
 </jsp:include>
 
@@ -15,7 +27,7 @@
 	<fieldset>
 
 		<!-- Form Name -->
-		<legend>Add driver</legend>
+		<legend>${title}</legend>
 
 		<%--Error message --%>
 		<c:if test="${not empty error}">
@@ -28,6 +40,8 @@
 				</div>
 			</div>
 		</c:if>
+		
+		<form:hidden path="id" />
 
         <spring:bind path="employeeId">
           <div class="form-group ${status.error ? 'has-error' : ''}">
@@ -73,12 +87,26 @@
             </div>
           </div>
         </spring:bind>
-        
+
+		<c:if test="${formAction == 'edit'}">
+			<spring:bind path="status">
+				<div class="form-group ${status.error ? 'has-error' : ''}">
+					<label class="col-md-4 control-label">Status</label>
+					<div class="col-md-4">
+						<form:select path="status" class="form-control">
+							<form:options items="${driverStatuses}"/>
+						</form:select>
+						<form:errors path="status" class="control-label" />
+					</div>
+				</div>
+			</spring:bind>
+		</c:if>
+
 		<!-- Submit -->
 		<div class="form-group">
 			<label class="col-md-4 control-label"></label>
 			<div class="col-md-4">
-				<button class="btn btn-primary" type="submit">Create Driver</button>
+				<button class="btn btn-primary" type="submit">${buttonText}</button>
 			</div>
 		</div>
 

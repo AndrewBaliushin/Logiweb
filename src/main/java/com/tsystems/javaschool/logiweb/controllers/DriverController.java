@@ -4,20 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
-import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
-import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
@@ -109,6 +102,7 @@ public class DriverController {
     
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.GET)
     public String showFormForNewDriver (Model model) {
+        model.addAttribute("formAction", "new");
         model.addAttribute("driverModel", new DriverModel());
         addCitiesToModel(model);
         return "manager/AddDriver";
@@ -122,15 +116,17 @@ public class DriverController {
         if (result.hasErrors()) {
             model.addAttribute("driverModel", driverModel);
             addCitiesToModel(model);
+            model.addAttribute("formAction", "new");
             return "manager/AddDriver";
         }
         
         try {
-            Driver newDriver = driverService.addDriver(ModelToEntityConverter.convertToEntity(driverModel));
-            return "redirect:/driver/" + newDriver.getId();
+            int newDriverId = driverService.addDriver(driverModel);
+            return "redirect:/driver/" + newDriverId;
         } catch (ServiceValidationException e) {
             model.addAttribute("error", e.getMessage());
             addCitiesToModel(model);
+            model.addAttribute("formAction", "new");
             return "manager/AddDriver";
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexcpected error happened.");
@@ -138,6 +134,51 @@ public class DriverController {
         }        
     }
     
+    @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.GET)
+    public String showFormForEditDriver (@PathVariable("driverId") int driverId, Model model) {
+        model.addAttribute("formAction", "edit");
+        
+        try {
+            Driver driver = driverService.findDriverById(driverId);
+            if(driver == null) {
+                throw new RecordNotFoundException();
+            }
+            model.addAttribute("driverModel", ModelToEntityConverter.convertToModel(driver));
+            addCitiesToModel(model);
+            model.addAttribute("driverStatuses", DriverStatus.values());
+            return "manager/AddDriver";
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Unexcpected error happened.");
+            throw new RuntimeException(e);
+        }
+    }
+    
+    @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.POST)
+    public String editDriver(@PathVariable("driverId") int driverId,
+            @ModelAttribute("driverModel") @Valid DriverModel driverModel,
+            BindingResult result, Model model) {
+        
+        if (result.hasErrors()) {
+            model.addAttribute("driverModel", driverModel);
+            addCitiesToModel(model);
+            model.addAttribute("formAction", "edit");
+            return "manager/AddDriver";
+        }
+        
+        try {
+            driverService.editDriver(driverModel);
+            return "redirect:/driver/" + driverModel.getId();
+        } catch (ServiceValidationException e) {
+            model.addAttribute("error", e.getMessage());
+            addCitiesToModel(model);
+            model.addAttribute("formAction", "edit");
+            return "manager/AddDriver";
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Unexcpected error happened.");
+            throw new RuntimeException(e);
+        }        
+    }
+
     private Model addCitiesToModel(Model model) {
         try {
             model.addAttribute("cities", cityService.findAllCities());
@@ -147,53 +188,30 @@ public class DriverController {
             throw new RuntimeException("Unrecoverable server exception.", e);
         }
     }
-
+    
     /**
      * Removes driver by its ID received in 'driverID' parameter. 
      * 
      * @param request
      * @return
      */
-    @RequestMapping(value = "driver/{driverId}/remove", method = RequestMethod.POST)
+    @RequestMapping(value = "driver/{driverId}/remove", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
     public String deleteDriver(@PathVariable("driverId") int driverId, HttpServletResponse response) {
-        Gson gson = new Gson();
-        Map<String, String> jsonMap = new HashMap<String, String>();
-        
         try {
             Driver driverToRemove = new Driver();
             driverToRemove.setId(driverId);
             driverService.removeDriver(driverToRemove);
             
-            jsonMap.put("msg", "Driver deleted");
+            return "Driver deleted";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonMap.put("msg", e.getMessage());
+            return e.getMessage();
         } catch (LogiwebServiceException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
-            jsonMap.put("msg", "Unexcpected server error. Check logs.");
+            return "Unexcpected server error. Check logs.";
         }
-        
-        return gson.toJson(jsonMap);
-    }
-    
-    /**
-     * Send back params received from form.
-     * Use this to repopulate form input fields.
-     * 
-     * @param mav
-     * @param request
-     * @return
-     */
-    private ModelAndView sendBackInputParametersToView(ModelAndView mav, HttpServletRequest request) {
-        mav.addObject("city", request.getParameter("city"));
-        mav.addObject("status", request.getParameter("status"));
-        mav.addObject("employeeId", request.getParameter("employeeId"));
-        mav.addObject("name", request.getParameter("name"));
-        mav.addObject("surname", request.getParameter("surname"));
-        
-        return mav;
     }
 
     /**

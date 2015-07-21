@@ -45,11 +45,9 @@
 
 
 							<sec:authorize access="hasRole('ROLE_MANAGER')">
-								<a
-									href="
-			                          <c:url value="editOrder">
-			                              <c:param name="orderId" value="${driver.currentTruck.assignedDeliveryOrder.id}" />
-			                          </c:url>">${driver.currentTruck.assignedDeliveryOrder.id}</a>
+								<a href="${pageContext.request.contextPath}/order/${driver.currentTruck.assignedDeliveryOrder.id}">
+								    ${driver.currentTruck.assignedDeliveryOrder.id}
+								</a>
 							</sec:authorize> <sec:authorize access="hasRole('ROLE_DRIVER')">
 			                       ${driver.currentTruck.assignedDeliveryOrder.id}
 			                </sec:authorize></td>
@@ -63,9 +61,12 @@
 
 						<%-- Edit priveleges --%>
 						<sec:authorize access="hasRole('ROLE_MANAGER')">
-							<td class="text-center"><span
-								class="glyphicon glyphicon-pencil disabled-color"
-								aria-hidden="true" disabled></span></td>
+							<td class="text-center">
+								 <a
+	                             href="${pageContext.request.contextPath}/driver/${driver.id}/edit"><span
+									class="glyphicon glyphicon-pencil"
+									aria-hidden="true"></span></a>
+							</td>
 
 							<td class="text-center"><span
 								onclick="removeDriver(this, ${driver.id})"

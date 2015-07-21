@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
@@ -25,6 +26,7 @@ import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
+import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -55,6 +57,7 @@ public class DriverServiceImpl implements DriverService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Set<Driver> findAllDrivers() throws LogiwebServiceException {
         try {
             return driverDao.findAll();
@@ -68,6 +71,7 @@ public class DriverServiceImpl implements DriverService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Driver findDriverById(int id) throws LogiwebServiceException {
         try {
             return driverDao.find(id);
@@ -76,112 +80,105 @@ public class DriverServiceImpl implements DriverService {
             throw new LogiwebServiceException(e);
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void editDriver(Driver editedDriver) throws LogiwebServiceException {
-	updateOrAddDriver(editedDriver, true);
-    }
     
     /**
      * {@inheritDoc}
+     * @throws DaoException 
      */
     @Override
     @Transactional
-    public Driver addDriver(Driver newDriver) throws ServiceValidationException,
-            LogiwebServiceException {
-        newDriver.setStatus(DriverStatus.FREE);
-        
-        try {
-            validateForEmptyFields(newDriver); 
-        } catch (ServiceValidationException e) {
-            throw e;
+    public void editDriver(DriverModel editedDriver) throws ServiceValidationException, LogiwebServiceException {
+        if(editedDriver.getId() == null || editedDriver.getId() <= 0) {
+            throw new ServiceValidationException("Driver id isn't provided.");
         }
         
         try {
-            Driver driverWithSameEmployeeId = driverDao
-                    .findByEmployeeId(newDriver.getEmployeeId());
-
-            if (driverWithSameEmployeeId != null) {
-                throw new ServiceValidationException("Employee ID  #"
-                        + newDriver.getEmployeeId() + " is already in use.");
+            Driver driverEnitytyToEdit = driverDao.find(editedDriver.getId());
+            if(driverEnitytyToEdit == null) {
+                throw new ServiceValidationException("Driver record not found.");
             }
             
-            driverDao.create(newDriver);
+            populateAllowedDriverFieldsFromModel(driverEnitytyToEdit,
+                    editedDriver);
+            
+            validateThatEmployeeIdAvailiable(driverEnitytyToEdit);
+            driverDao.update(driverEnitytyToEdit);
 
-            LOG.info("Driver created. " + newDriver.getName() + " "
-                    + newDriver.getSurname()
-                    + " ID#" + newDriver.getId());
-
-            return newDriver;
-        } catch (ServiceValidationException e) {
-            throw e;        
-        } catch (DaoException e) {         
+            LOG.info("Driver edited. " + driverEnitytyToEdit.getName() + " "
+                    + driverEnitytyToEdit.getSurname() + " ID#" + driverEnitytyToEdit.getId());
+        } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
         }
     }
     
     /**
-     * Check if driver has empty fields that should not be empty.
-     * @param d Driver
-     * @return Doesn't return anything -- throws exception if failed.
-     * @throws ServiceValidationException with message that describes why validation failed.
+     * Populate fields that are used to edit or create new driver.
+     * (city, name, surname, employee id, status)
+     * @param driverToPopulate
+     * @param source DriverModel
+     * @return
      */
-    private void validateForEmptyFields(Driver d) throws ServiceValidationException {
-        if(d.getEmployeeId() <= 0) {
-            throw new ServiceValidationException("Employee ID can't be 0 or negative.");
-        } else if (StringUtils.isBlank(d.getName())) {
-            throw new ServiceValidationException("Drivers name can't be empty.");
-        } else if (StringUtils.isBlank(d.getSurname())) {
-            throw new ServiceValidationException("Drivers surname can't be empty.");
-        } else if (d.getCurrentCity() == null || d.getCurrentCity().getId() == 0) {
-            throw new ServiceValidationException("City is not set.");
-        } 
-    }
-
-    /**
-     * Create or update Driver entity.
-     * 
-     * @param driver
-     * @param update if true -- update. if false -- create new
-     * @throws DaoException if employee id is occupied or //TODO add reasons
-     */
-    @Transactional
-    private void updateOrAddDriver(Driver driver, boolean update)
-            throws ServiceValidationException, LogiwebServiceException {
-        try {
-            if (isEmployeeIdAvailiable(driver)) {
-                if (update) {
-                    driverDao.update(driver);
-                } else {
-                    driverDao.create(driver);
-                }
-            } else {
-                throw new ServiceValidationException("Employee id "
-                        + " occupied");
-            }
-        } catch (DaoException e) { 
-            LOG.warn("Something wrong..."); //TODO ????????
-            throw new LogiwebServiceException();
-        }
+    private Driver populateAllowedDriverFieldsFromModel(Driver driverToPopulate, DriverModel source) {
+        City city = new City();
+        city.setId(source.getCurrentCityId());
+        
+        driverToPopulate.setCurrentCity(city);
+        driverToPopulate.setEmployeeId(source.getEmployeeId());
+        driverToPopulate.setSurname(source.getSurname());
+        driverToPopulate.setName(source.getName());
+        driverToPopulate.setStatus(source.getStatus());
+        
+        return driverToPopulate;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public int addDriver(DriverModel newDriverAsModel) throws ServiceValidationException,
+            LogiwebServiceException {
+        newDriverAsModel.setStatus(DriverStatus.FREE); //default status
+        
+        try {
+            Driver newDriverEnity = new Driver();
+            populateAllowedDriverFieldsFromModel(newDriverEnity, newDriverAsModel);
+            
+            validateThatEmployeeIdAvailiable(newDriverEnity);
+            
+            driverDao.create(newDriverEnity);
+
+            LOG.info("Driver created. " + newDriverEnity.getName() + " "
+                    + newDriverEnity.getSurname()
+                    + " ID#" + newDriverEnity.getId());
+            
+            return newDriverEnity.getId();
+        } catch (DaoException e) {         
+            LOG.warn("Something unexpected happend.", e);
+            throw new LogiwebServiceException(e);
+        }
+    }
+
     /**
      * Checks that employee id for this Driver entity is free or already belongs to this Driver.
      * 
      * @param driverToCheck
      * @return true if employee id is unoccupied or already belongs to this driver.
      * @throws DaoException if multiple result is found.
+     * @throws ServiceValidationException 
      */
-    private boolean isEmployeeIdAvailiable(Driver driverToCheck) throws DaoException{
+    private boolean validateThatEmployeeIdAvailiable(Driver driverToCheck) throws DaoException, ServiceValidationException{
         int employeeId = driverToCheck.getEmployeeId();
 
         Driver driver = driverDao.findByEmployeeId(employeeId);
-
-        return driver == null || driver.getId() == driverToCheck.getId();
+        
+        if(driver == null || driver.getId() == driverToCheck.getId()) {
+            return true;
+        } else {
+            throw new ServiceValidationException("Employee ID  #"
+                    + employeeId + " is already in use.");
+        }
     }
 
     /**
@@ -219,6 +216,7 @@ public class DriverServiceImpl implements DriverService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
             City city, float maxWorkingHours) throws LogiwebServiceException {
         try {
@@ -249,6 +247,7 @@ public class DriverServiceImpl implements DriverService {
      * @throws LogiwebServiceException 
      */
     @Override
+    @Transactional
     public Set<DriverShiftJournal> findDriverJournalsForThisMonth(Driver driver)
             throws LogiwebServiceException {
         try {
@@ -268,6 +267,7 @@ public class DriverServiceImpl implements DriverService {
      * @throws LogiwebServiceException 
      */
     @Override
+    @Transactional
     public float calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException {
         try {
             Set<DriverShiftJournal> journals = driverShiftJournalDao

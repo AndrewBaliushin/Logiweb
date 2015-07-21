@@ -6,6 +6,7 @@ import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
@@ -36,23 +37,23 @@ public interface DriverService {
     /**
      * Edit driver.
      * 
-     * @param editedDriver
+     * @param editedDriver as model
      * @throws ServiceValidationException
      *             if after edit driver don't have all required fields or have
      *             not unique employee ID
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
-    void editDriver(Driver editedDriver) throws ServiceValidationException, LogiwebServiceException;
+    void editDriver(DriverModel editedDriver) throws ServiceValidationException, LogiwebServiceException;
 
     /**
      * Add Driver.
      * 
-     * @param new Driver
-     * @return same Driver
+     * @param new Driver as model
+     * @return id in db of created driver
      * @throws ServiceValidationException if driver don't have all required fields or have not unique employee ID
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
-    Driver addDriver(Driver newDriver) throws ServiceValidationException, LogiwebServiceException;
+    int addDriver(DriverModel newDriver) throws ServiceValidationException, LogiwebServiceException;
     
     /**
      * Remove driver.

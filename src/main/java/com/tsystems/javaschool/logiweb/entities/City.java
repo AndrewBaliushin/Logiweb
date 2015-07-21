@@ -42,6 +42,10 @@ public class City {
     public City() {
     }
     
+    public City(int id) {
+       setId(id);
+    }
+    
     public int getId() {
         return id;
     }

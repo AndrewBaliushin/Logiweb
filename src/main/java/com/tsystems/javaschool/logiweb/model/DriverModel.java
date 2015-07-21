@@ -11,8 +11,7 @@ import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 
 public class DriverModel {
     
-    @NotNull
-    private int id;
+    private Integer id;
 
     @NotNull
     @Min(1)
@@ -66,11 +65,11 @@ public class DriverModel {
     public DriverModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

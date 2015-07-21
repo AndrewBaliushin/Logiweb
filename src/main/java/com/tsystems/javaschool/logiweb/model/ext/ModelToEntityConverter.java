@@ -26,5 +26,25 @@ public class ModelToEntityConverter {
         
         return entity;
     }
+    
+    public static DriverModel convertToModel(Driver entity) {
+        DriverModel model = new DriverModel();
+        
+        model.setCurrentCityId(entity.getCurrentCity() == null ? 0 : entity.getCurrentCity().getId());
+        
+        model.setCurrentTruck(entity.getCurrentTruck());
+        model.setEmployeeId(entity.getEmployeeId());
+        model.setId(entity.getId());
+        model.setName(entity.getName());
+        model.setOrder(null);
+        model.setRouteInfo(null);
+        model.setStatus(entity.getStatus());
+        model.setSurname(entity.getSurname());
+        model.setWorkingHoursThisMonth(0);
+        
+        return model;
+    }
+    
+    
 
 }

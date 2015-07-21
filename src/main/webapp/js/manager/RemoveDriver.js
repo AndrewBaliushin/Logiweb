@@ -15,14 +15,14 @@ function removeDriver(element, driverId) {
 			$.ajax({
 				url : window.location.pathname + "/" + driverId + "/remove",
 				type : "POST",
-				dataType : "json",
+				dataType : "text",
 				success : function(result) {
 					$(element).closest("tr").fadeOut(1000, function() {
 						$(this).remove();
 					});
 				},
 				error : function(result) {
-					bootbox.alert(result.responseJSON.msg);
+					bootbox.alert(result.responseText);
 				}
 			});
 		}
