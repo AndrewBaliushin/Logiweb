@@ -7,10 +7,16 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,9 +24,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
+import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
 import com.tsystems.javaschool.logiweb.entities.City;
+import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
+import com.tsystems.javaschool.logiweb.model.DriverModel;
+import com.tsystems.javaschool.logiweb.model.TruckModel;
+import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
@@ -30,6 +42,8 @@ import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationExcep
 public class TruckController {
     
     private final static Logger LOG = Logger.getLogger(TruckController.class);
+    
+    private @Value("${views.addOrEditTruck}") String addOrUpdateTruckViewPath;
 
     @Autowired
     private TrucksService truckService ;
@@ -53,39 +67,92 @@ public class TruckController {
         return mav;
     }
     
-    @RequestMapping(value = {"truck/new"})
-    public ModelAndView addTruck(HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView();
+    @RequestMapping(value = {"truck/new"}, method = RequestMethod.GET)
+    public String showFormForNewTruck (Model model) {
+        model.addAttribute("formAction", "new");
+        model.addAttribute("truckModel", new TruckModel());
+        addCitiesToModel(model);
+        return addOrUpdateTruckViewPath;
+    }
+    
+    @RequestMapping(value = {"truck/new"}, method = RequestMethod.POST)
+    public String addDriver(@ModelAttribute("truckModel") @Valid TruckModel newTruckModel,
+            BindingResult result, Model model) {
         
-        if("POST".equals(request.getMethod())) { //form is submitted
-            try {
-                Truck newTruck = createTruckEntityFromFormParams(request);
-                truckService.addTruck(newTruck);
-                return new ModelAndView("redirect:/manager/showTrucks");
-            } catch (FormParamaterParsingException e) {
-                mav.addObject("error", e.getMessage());
-            } catch (ServiceValidationException e) {
-                mav.addObject("error", e.getMessage());
-            } catch (LogiwebServiceException e) {
-                mav.addObject("error", "Server error. Check logs.");
-                LOG.warn("Unexpected exception.", e);
-            }
+        if (result.hasErrors()) {
+            model.addAttribute("truckModel", newTruckModel);
+            addCitiesToModel(model);
+            model.addAttribute("formAction", "new");
+            return addOrUpdateTruckViewPath;
         }
-
-        mav.setViewName("manager/AddTruck");
         
         try {
-            mav.addObject("cities", cityService.findAllCities());
+            truckService.addTruck(newTruckModel);
+            return "redirect:/truck";
+        } catch (ServiceValidationException e) {
+            model.addAttribute("error", e.getMessage());
+            addCitiesToModel(model);
+            model.addAttribute("formAction", "new");
+            return addOrUpdateTruckViewPath;
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Unexcpected error happened.");
+            throw new RuntimeException(e);
+        }        
+    }
+    
+    private Model addCitiesToModel(Model model) {
+        try {
+            model.addAttribute("cities", cityService.findAllCities());
+            return model;
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexpected exception.", e);
             throw new RuntimeException("Unrecoverable server exception.", e);
         }
+    }
+    
+    @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.GET)
+    public String showFormForEditDriver (@PathVariable("truckId") int truckId, Model model) {
+        model.addAttribute("formAction", "edit");
         
-        mav.addObject("statuses", TruckStatus.values());
+        try {
+            Truck truck = truckService.findTruckById(truckId);
+            if(truck == null) {
+                throw new RecordNotFoundException();
+            }
+            model.addAttribute("truckModel", ModelToEntityConverter.convertToModel(truck));
+            addCitiesToModel(model);
+            model.addAttribute("truckStatuses", TruckStatus.values());
+            return addOrUpdateTruckViewPath;
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Unexcpected error happened.");
+            throw new RuntimeException(e);
+        }
+    }
+    
+    @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.POST)
+    public String editTruck(@PathVariable("truckId") int truckId,
+            @ModelAttribute("truckModel") @Valid TruckModel truckModel,
+            BindingResult result, Model model) {
         
-        sendBackInputParametersToView(mav, request);
+        if (result.hasErrors()) {
+            model.addAttribute("driverModel", truckModel);
+            addCitiesToModel(model);
+            model.addAttribute("formAction", "edit");
+            return addOrUpdateTruckViewPath;
+        }
         
-        return mav;
+        try {
+            truckService.editTruck(truckModel);
+            return "redirect:/truck";
+        } catch (ServiceValidationException e) {
+            model.addAttribute("error", e.getMessage());
+            addCitiesToModel(model);
+            model.addAttribute("formAction", "edit");
+            return addOrUpdateTruckViewPath;
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Unexcpected error happened.");
+            throw new RuntimeException(e);
+        }        
     }
     
     /**

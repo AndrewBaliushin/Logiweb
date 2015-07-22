@@ -12,11 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
+import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
+import com.tsystems.javaschool.logiweb.model.TruckModel;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -43,6 +45,7 @@ public class TrucksSeviceimpl implements TrucksService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Set<Truck> findAllTrucks() throws LogiwebServiceException {
         try {
             return truckDao.findAll();
@@ -57,6 +60,7 @@ public class TrucksSeviceimpl implements TrucksService {
      * @throws LogiwebServiceException 
      */
     @Override
+    @Transactional
     public Truck findTruckById(int id) throws LogiwebServiceException {
         try {
             return truckDao.find(id);
@@ -70,9 +74,55 @@ public class TrucksSeviceimpl implements TrucksService {
      * {@inheritDoc}
      */
     @Override
-    public void editTruck(Truck editedTruck){
-	// TODO Auto-generated method stub
+    @Transactional
+    public void editTruck(TruckModel editedTruckModel) throws ServiceValidationException, LogiwebServiceException {
+        if(editedTruckModel.getId() == null || editedTruckModel.getId() <= 0) {
+            throw new ServiceValidationException("Truck id is not provided or incorrect.");
+        }
+        
+        if (!LicensePlateValidator.validateLicensePlate(editedTruckModel
+                .getLicencePlate())) {
+            throw new ServiceValidationException("License plate "
+                    + editedTruckModel.getLicencePlate() + " is not valid.");
+        }
+        
+        try {
+            Truck truckWithSamePlate = truckDao.findByLicensePlate(editedTruckModel.getLicencePlate());
+            
+            if (truckWithSamePlate != null && truckWithSamePlate.getId() != truckWithSamePlate.getId()) {
+                throw new ServiceValidationException("License plate "
+                        + editedTruckModel.getLicencePlate() + " is already in use.");
+            }
+            
+            Truck truckEntityToEdit = truckDao.find(editedTruckModel.getId());
+            if(truckEntityToEdit == null) {
+                throw new ServiceValidationException("Truck with id " + editedTruckModel.getId() + " not found.");
+            }
+            
+            populateAllowedFieldsFromModel(truckEntityToEdit, editedTruckModel);
+            validateForEmptyFields(truckEntityToEdit);
+            
+            truckDao.update(truckEntityToEdit);
 
+            LOG.info("Truck edited. Plate " + truckEntityToEdit.getLicencePlate()
+                    + " ID: " + truckEntityToEdit.getId());
+        } catch (DaoException e) {
+            LOG.warn("Something unexpected happend.", e);
+            throw new LogiwebServiceException(e);
+        }
+    }
+    
+    private Truck populateAllowedFieldsFromModel(Truck entityToEdit, TruckModel source) {
+        City city = new City();
+        city.setId(source.getCurrentCityId());
+        
+        entityToEdit.setCurrentCity(city);
+        entityToEdit.setCargoCapacity(source.getCargoCapacity());
+        entityToEdit.setCrewSize(source.getCrewSize());
+        entityToEdit.setStatus(source.getStatus());
+        entityToEdit.setLicencePlate(source.getLicencePlate());
+        
+        return entityToEdit;
     }
     
     /**
@@ -80,36 +130,35 @@ public class TrucksSeviceimpl implements TrucksService {
      */
     @Override
     @Transactional
-    public Truck addTruck(Truck newTruck) throws ServiceValidationException,
+    public int addTruck(TruckModel newTruckModel) throws ServiceValidationException,
             LogiwebServiceException {
-        newTruck.setStatus(TruckStatus.OK);
+        newTruckModel.setStatus(TruckStatus.OK); //default status
         
-        try {
-            validateForEmptyFields(newTruck); 
-        } catch (ServiceValidationException e) {
-            throw e;
-        }
-
-        if (!LicensePlateValidator.validateLicensePlate(newTruck
+        if (!LicensePlateValidator.validateLicensePlate(newTruckModel
                 .getLicencePlate())) {
             throw new ServiceValidationException("License plate "
-                    + newTruck.getLicencePlate() + " is not valid.");
+                    + newTruckModel.getLicencePlate() + " is not valid.");
         }
-
+        
         try {
-            Truck truckWithSamePlate = truckDao.findByLicensePlate(newTruck.getLicencePlate());
-            
+            Truck truckWithSamePlate = truckDao
+                    .findByLicensePlate(newTruckModel.getLicencePlate());
+    
             if (truckWithSamePlate != null) {
                 throw new ServiceValidationException("License plate "
-                        + newTruck.getLicencePlate() + " is already in use.");
+                        + newTruckModel.getLicencePlate()
+                        + " is already in use.");
             }
             
-            truckDao.create(newTruck);
+            Truck newTruckEntity = new Truck();
+            populateAllowedFieldsFromModel(newTruckEntity, newTruckModel);
+            validateForEmptyFields(newTruckEntity); 
+        
+            truckDao.create(newTruckEntity);
+            LOG.info("Truck created. Plate " + newTruckEntity.getLicencePlate()
+                    + " ID: " + newTruckEntity.getId());
 
-            LOG.info("Truck created. Plate " + newTruck.getLicencePlate()
-                    + " ID: " + newTruck.getId());
-
-            return newTruck;
+            return newTruckEntity.getId();
         } catch (ServiceValidationException e) {
             throw e;        
         } catch (DaoException e) {         
@@ -175,6 +224,7 @@ public class TrucksSeviceimpl implements TrucksService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Set<Truck> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException {
         try {
             return truckDao.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minCargoWeightCapacity); 

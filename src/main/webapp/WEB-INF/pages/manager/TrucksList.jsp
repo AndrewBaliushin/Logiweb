@@ -8,7 +8,7 @@
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
-    <jsp:param name="homeLink" value="/manager" />
+    <jsp:param name="homeLink" value="/" />
     <jsp:param name="userRoleForTitle" value="Manager" />
 </jsp:include>
 
@@ -52,15 +52,16 @@
 						<td><c:if test="${empty truck.drivers}">Not assigned</c:if>
                             <c:forEach items="${truck.drivers}" var="driver">
 							    <a href="
-		                            <c:url value="showDriver">
-		                                <c:param name="driverId" value="${driver.id}" />
+		                            <c:url value="/driver/${driver.id}">
 		                            </c:url>">${driver.surname}</a><span class="comma-separator">,</span>
 							</c:forEach>
                         </td>	
                             
 						<td class="text-center">
-						  <span class="glyphicon glyphicon-pencil disabled-color" aria-hidden="true"></span>
-		                </td>
+							 <a
+								href="${pageContext.request.contextPath}/truck/${truck.id}/edit"><span
+									class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+						</td>
 		                
 		                <td class="text-center">
 		                    <span onclick="removeTruck(this, ${truck.id})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>

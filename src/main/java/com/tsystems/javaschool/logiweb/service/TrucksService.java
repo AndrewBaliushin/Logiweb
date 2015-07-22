@@ -3,6 +3,7 @@ package com.tsystems.javaschool.logiweb.service;
 import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.model.TruckModel;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
@@ -44,13 +45,13 @@ public interface TrucksService {
      *             if unexpected exception occurred on lower level (not user
      *             fault)
      */
-    void editTruck(Truck editedTruck) throws ServiceValidationException, LogiwebServiceException;
+    void editTruck(TruckModel editedTruckModel) throws ServiceValidationException, LogiwebServiceException;
 
     /**
      * Add truck.
      * 
-     * @param newTruck
-     * @return same truck
+     * @param newTruck as model
+     * @return id of created truck
      * @throws ServiceValidationException
      *             if truck don't have all required fields or not unique license
      *             plate
@@ -58,7 +59,7 @@ public interface TrucksService {
      *             if unexpected exception occurred on lower level (not user
      *             fault)
      */
-    Truck addTruck(Truck newTruck) throws ServiceValidationException, LogiwebServiceException;
+    int addTruck(TruckModel newTruckModel) throws ServiceValidationException, LogiwebServiceException;
     
     /**
      * Remove truck.
