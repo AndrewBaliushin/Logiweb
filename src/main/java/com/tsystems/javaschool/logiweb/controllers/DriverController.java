@@ -10,6 +10,8 @@ import javax.validation.Valid;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,6 +39,10 @@ import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 public class DriverController {
     
     private final static Logger LOG = Logger.getLogger(DriverController.class);
+    
+    private @Value("${views.addOrEditDriver}") String addOrUpdateDriverViewPath;
+    private @Value("${views.driverList}") String driverListViewPath;
+    private @Value("${views.driverInfo}") String driverInfoViewPath;
 
     @Autowired
     private DriverService driverService;
@@ -48,7 +54,7 @@ public class DriverController {
     @RequestMapping("driver")
     public ModelAndView showDrivers() {  
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("manager/DriverList");
+        mav.setViewName(driverListViewPath);
         
         try {
             Set<Driver> drivers = driverService.findAllDrivers();
@@ -70,7 +76,7 @@ public class DriverController {
     @RequestMapping(value = "/driver/{driverId}")
     public ModelAndView showSingleDriver(@PathVariable("driverId") int driverId) {  
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("manager/SingleDriver");
+        mav.setViewName(driverInfoViewPath);
         
         try {
             Driver driver = driverService.findDriverById(driverId);
@@ -105,7 +111,7 @@ public class DriverController {
         model.addAttribute("formAction", "new");
         model.addAttribute("driverModel", new DriverModel());
         addCitiesToModel(model);
-        return "manager/AddDriver";
+        return addOrUpdateDriverViewPath;
     }
     
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.POST)
@@ -117,7 +123,7 @@ public class DriverController {
             model.addAttribute("driverModel", driverModel);
             addCitiesToModel(model);
             model.addAttribute("formAction", "new");
-            return "manager/AddDriver";
+            return addOrUpdateDriverViewPath;
         }
         
         try {
@@ -127,7 +133,7 @@ public class DriverController {
             model.addAttribute("error", e.getMessage());
             addCitiesToModel(model);
             model.addAttribute("formAction", "new");
-            return "manager/AddDriver";
+            return addOrUpdateDriverViewPath;
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexcpected error happened.");
             throw new RuntimeException(e);
@@ -146,7 +152,7 @@ public class DriverController {
             model.addAttribute("driverModel", ModelToEntityConverter.convertToModel(driver));
             addCitiesToModel(model);
             model.addAttribute("driverStatuses", DriverStatus.values());
-            return "manager/AddDriver";
+            return addOrUpdateDriverViewPath;
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexcpected error happened.");
             throw new RuntimeException(e);
@@ -162,7 +168,7 @@ public class DriverController {
             model.addAttribute("driverModel", driverModel);
             addCitiesToModel(model);
             model.addAttribute("formAction", "edit");
-            return "manager/AddDriver";
+            return addOrUpdateDriverViewPath;
         }
         
         try {
@@ -172,7 +178,7 @@ public class DriverController {
             model.addAttribute("error", e.getMessage());
             addCitiesToModel(model);
             model.addAttribute("formAction", "edit");
-            return "manager/AddDriver";
+            return addOrUpdateDriverViewPath;
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexcpected error happened.");
             throw new RuntimeException(e);

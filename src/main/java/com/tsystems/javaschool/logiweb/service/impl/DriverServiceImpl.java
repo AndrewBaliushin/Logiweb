@@ -93,6 +93,14 @@ public class DriverServiceImpl implements DriverService {
         }
         
         try {
+            Driver driverWithSameEmployeeId = driverDao
+                    .findByEmployeeId(editedDriver.getEmployeeId());
+            
+            if (driverWithSameEmployeeId != null && driverWithSameEmployeeId.getId() != editedDriver.getId()) {
+                throw new ServiceValidationException("Employee ID  #"
+                        + editedDriver.getEmployeeId() + " is already in use.");
+            }
+            
             Driver driverEnitytyToEdit = driverDao.find(editedDriver.getId());
             if(driverEnitytyToEdit == null) {
                 throw new ServiceValidationException("Driver record not found.");
@@ -101,7 +109,6 @@ public class DriverServiceImpl implements DriverService {
             populateAllowedDriverFieldsFromModel(driverEnitytyToEdit,
                     editedDriver);
             
-            validateThatEmployeeIdAvailiable(driverEnitytyToEdit);
             driverDao.update(driverEnitytyToEdit);
 
             LOG.info("Driver edited. " + driverEnitytyToEdit.getName() + " "
@@ -142,10 +149,17 @@ public class DriverServiceImpl implements DriverService {
         newDriverAsModel.setStatus(DriverStatus.FREE); //default status
         
         try {
-            Driver newDriverEnity = new Driver();
-            populateAllowedDriverFieldsFromModel(newDriverEnity, newDriverAsModel);
+            Driver driverWithSameEmployeeId = driverDao
+                    .findByEmployeeId(newDriverAsModel.getEmployeeId());
+
+            if (driverWithSameEmployeeId != null) {
+                throw new ServiceValidationException("Employee ID  #"
+                        + newDriverAsModel.getEmployeeId() + " is already in use.");
+            }
             
-            validateThatEmployeeIdAvailiable(newDriverEnity);
+            Driver newDriverEnity = new Driver();
+            
+            populateAllowedDriverFieldsFromModel(newDriverEnity, newDriverAsModel);
             
             driverDao.create(newDriverEnity);
 
@@ -157,27 +171,6 @@ public class DriverServiceImpl implements DriverService {
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        }
-    }
-
-    /**
-     * Checks that employee id for this Driver entity is free or already belongs to this Driver.
-     * 
-     * @param driverToCheck
-     * @return true if employee id is unoccupied or already belongs to this driver.
-     * @throws DaoException if multiple result is found.
-     * @throws ServiceValidationException 
-     */
-    private boolean validateThatEmployeeIdAvailiable(Driver driverToCheck) throws DaoException, ServiceValidationException{
-        int employeeId = driverToCheck.getEmployeeId();
-
-        Driver driver = driverDao.findByEmployeeId(employeeId);
-        
-        if(driver == null || driver.getId() == driverToCheck.getId()) {
-            return true;
-        } else {
-            throw new ServiceValidationException("Employee ID  #"
-                    + employeeId + " is already in use.");
         }
     }
 
