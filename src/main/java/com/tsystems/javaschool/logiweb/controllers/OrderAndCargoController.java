@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +38,8 @@ import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 @Controller
 public class OrderAndCargoController {
     
-    private final static Float MAX_WORKING_HOURS_LIMIT = 176f;
+    @Value("#{T(java.lang.Float).parseFloat('176')}") 
+    private Float driverMonthlyWorkingHoursLimit;
     
     private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
 
@@ -69,7 +71,7 @@ public class OrderAndCargoController {
             mav.addObject("orderId", orderId);
             mav.addObject("order", order);
             mav.addObject("routeInfo", routeInfo);
-            mav.addObject("maxWorkingHoursLimit", MAX_WORKING_HOURS_LIMIT);
+            mav.addObject("maxWorkingHoursLimit", driverMonthlyWorkingHoursLimit);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
         } catch (LogiwebServiceException e) {
@@ -98,7 +100,7 @@ public class OrderAndCargoController {
         //suggest drivers
         try {
             if (order.getAssignedTruck() != null) {
-                float workingHoursLimit = MAX_WORKING_HOURS_LIMIT - routeInfo.getEstimatedTime();
+                float workingHoursLimit = driverMonthlyWorkingHoursLimit - routeInfo.getEstimatedTime();
                 
                 Set<Driver> suggestedDrivers = driverService
                         .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(

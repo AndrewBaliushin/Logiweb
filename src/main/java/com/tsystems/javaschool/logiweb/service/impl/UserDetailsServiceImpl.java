@@ -17,6 +17,8 @@ import com.tsystems.javaschool.logiweb.dao.UserDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.entities.LogiwebUser;
 import com.tsystems.javaschool.logiweb.model.UserModel;
+import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
+import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService{
@@ -45,6 +47,30 @@ public class UserDetailsServiceImpl implements UserDetailsService{
             throw new UsernameNotFoundException(userName);
         }
     }
+    
+//    public User createNewUser(String userName, String pass) throws LogiwebServiceException {
+//        if (userName == null || userName.isEmpty()) {
+//            throw new ServiceValidationException(
+//                    "Username can't be empty.");
+//        }
+//        
+//        try {
+//            LogiwebUser userWithSameMail = userDao.findByEmail(userName);
+//            if (userWithSameMail != null) {
+//                throw new ServiceValidationException(
+//                        "User with username: " + userName + " already exist.");
+//            }
+//            
+//            LogiwebUser newUser = new LogiwebUser();
+//            newUser.setMail(userName);
+//            newUser.setPassMd5(passMd5);
+//            
+//            userDao.create(new LogiwebUser())
+//        } catch (DaoException e) {
+//            LOG.warn("Something unexpected happend.", e);
+//            throw new LogiwebServiceException(e);
+//        }
+//    }
     
     private User buildSecurityUserFromUserEntity(LogiwebUser userEntity) {
         String username = userEntity.getMail();

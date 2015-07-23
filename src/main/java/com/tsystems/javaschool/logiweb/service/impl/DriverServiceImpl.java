@@ -263,6 +263,8 @@ public class DriverServiceImpl implements DriverService {
     @Transactional
     public float calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException {
         try {
+            driver = driverDao.find(driver.getId()); //get managed entity
+            
             Set<DriverShiftJournal> journals = driverShiftJournalDao
                     .findThisMonthJournalsForDrivers(driver);
             Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(journals);
