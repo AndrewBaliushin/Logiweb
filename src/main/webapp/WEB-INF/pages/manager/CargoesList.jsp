@@ -3,7 +3,7 @@
 
 <jsp:include page="../GlobalHeader.jsp">
 	<jsp:param name="title" value="Cargoes List" />
-	<jsp:param value="manager/manager.css" name="css" />
+	<jsp:param value="common/common.css" name="css" />
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">

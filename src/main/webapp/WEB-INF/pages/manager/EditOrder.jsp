@@ -7,7 +7,7 @@
 
 <jsp:include page="../GlobalHeader.jsp">
 	<jsp:param name="title" value="Edit order # ${orderId}" />
-	<jsp:param value="manager/manager.css" name="css" />
+	<jsp:param value="common/common.css" name="css" />
 	<jsp:param
 		value="manager/PostFormByAjax.js,manager/RemoveTruckAndDriversFromOrder.js,manager/ChangeOrderStatus.js,manager/LimitCheckboxesForDriverAssignment.js"
 		name="js" />
@@ -15,7 +15,7 @@
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
-	<jsp:param name="homeLink" value="/manager" />
+	<jsp:param name="homeLink" value="/" />
 	<jsp:param name="userRoleForTitle" value="Manager" />
 </jsp:include>
 

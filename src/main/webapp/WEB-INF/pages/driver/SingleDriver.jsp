@@ -3,7 +3,7 @@
 
 <jsp:include page="../GlobalHeader.jsp">
     <jsp:param name="title" value="Driver info" />
-    <jsp:param value="manager/manager.css" name="css" />
+    <jsp:param value="common/common.css" name="css" />
     <jsp:param value="manager/RemoveDriver.js" name="js" />
 </jsp:include>
 

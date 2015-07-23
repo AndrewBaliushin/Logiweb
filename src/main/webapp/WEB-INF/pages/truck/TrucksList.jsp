@@ -2,7 +2,7 @@
 
 <jsp:include page="../GlobalHeader.jsp">
     <jsp:param name="title" value="Trucks List" />
-    <jsp:param value="manager/manager.css" name="css"/>
+    <jsp:param value="common/common.css" name="css"/>
     <jsp:param value="common/RemoveRecord.js" name="js"/>
     
 </jsp:include>
