@@ -69,7 +69,7 @@
 							</td>
 
 							<td class="text-center"><span
-								onclick="removeDriver(this, ${driver.id})"
+								onclick="removeRecord(this, ${driver.id})"
 								class="glyphicon glyphicon-remove red-on-hover"
 								aria-hidden="true"></span></td>
 

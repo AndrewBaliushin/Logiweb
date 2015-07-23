@@ -3,7 +3,7 @@
 <jsp:include page="../GlobalHeader.jsp">
     <jsp:param name="title" value="Trucks List" />
     <jsp:param value="manager/manager.css" name="css"/>
-    <jsp:param value="manager/RemoveTruck.js" name="js"/>
+    <jsp:param value="common/RemoveRecord.js" name="js"/>
     
 </jsp:include>
 
@@ -58,13 +58,22 @@
                         </td>	
                             
 						<td class="text-center">
-							 <a
-								href="${pageContext.request.contextPath}/truck/${truck.id}/edit"><span
-									class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+						  <c:choose>
+						      <c:when test="${empty truck.assignedDeliveryOrder}">
+						          <a
+                                href="${pageContext.request.contextPath}/truck/${truck.id}/edit"><span
+                                    class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+						      </c:when>
+						      <c:otherwise>
+						          <span
+                                    class="glyphicon glyphicon-pencil disabled-color" aria-hidden="true"></span>
+						      </c:otherwise>
+						  </c:choose>
+							 
 						</td>
 		                
 		                <td class="text-center">
-		                    <span onclick="removeTruck(this, ${truck.id})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
+		                    <span onclick="removeRecord(this, ${truck.id})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
 		                </td>
 		
 					</tr>

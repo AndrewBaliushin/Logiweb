@@ -95,8 +95,12 @@ public class TrucksSeviceimpl implements TrucksService {
             }
             
             Truck truckEntityToEdit = truckDao.find(editedTruckModel.getId());
-            if(truckEntityToEdit == null) {
+            if (truckEntityToEdit == null) {
                 throw new ServiceValidationException("Truck with id " + editedTruckModel.getId() + " not found.");
+            }
+            
+            if (truckEntityToEdit.getAssignedDeliveryOrder() != null) {
+                throw new ServiceValidationException("Can't edit truck while order is assigned.");
             }
             
             populateAllowedFieldsFromModel(truckEntityToEdit, editedTruckModel);
