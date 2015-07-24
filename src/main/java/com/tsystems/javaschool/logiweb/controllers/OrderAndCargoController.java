@@ -41,6 +41,9 @@ public class OrderAndCargoController {
     @Value("#{T(java.lang.Float).parseFloat('176')}") 
     private Float driverMonthlyWorkingHoursLimit;
     
+    private @Value("${views.orderList}") String orderListViewPath;
+    private @Value("${views.editOrder}") String editOrderViewPath;
+    
     private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
 
     @Autowired
@@ -57,7 +60,7 @@ public class OrderAndCargoController {
     @RequestMapping(value = {"order/{orderId}/edit", "order/{orderId}"}, method = RequestMethod.GET)
     public ModelAndView editOrder(@PathVariable("orderId") int orderId) {
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("manager/EditOrder");
+        mav.setViewName(editOrderViewPath);
         
         RouteInformation routeInfo = null;
         DeliveryOrder order = null;
@@ -284,7 +287,7 @@ public class OrderAndCargoController {
     @RequestMapping(value = {"/order"})
     public ModelAndView showOrders() {
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("manager/OrderList");
+        mav.setViewName(orderListViewPath);
         
         try {
             mav.addObject("orders", orderAndCaroService.findAllOrders());

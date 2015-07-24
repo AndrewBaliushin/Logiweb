@@ -170,7 +170,7 @@
 		<!-- /Cargo list -->
 
 		<!-- Print waypoints-->
-		<jsp:include page="ext/WaypointsSnippet.jsp">
+		<jsp:include page="../manager/ext/WaypointsSnippet.jsp">
 			<jsp:param name="routeInfo" value="${routeInfo}" />
 		</jsp:include>
 

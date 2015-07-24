@@ -106,11 +106,12 @@
 						<td><c:if test="${empty order.assignedTruck.licencePlate}">Not assigned</c:if>
 							${order.assignedTruck.licencePlate}</td>
 
-						<td class="text-center"><a
-							href="editOrder?orderId=${order.id}"> <span
-								class="glyphicon glyphicon-pencil red-on-hover"
-								aria-hidden="true"></span>
-						</a></td>
+						<td class="text-center">
+						  <a
+                                 href="${pageContext.request.contextPath}/order/${order.id}/edit"><span
+                                    class="glyphicon glyphicon-pencil"
+                                    aria-hidden="true"></span></a>
+						</td>
 
 					</tr>
 				</c:forEach>
