@@ -7,7 +7,7 @@
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
-	<jsp:param name="homeLink" value="/manager" />
+	<jsp:param name="homeLink" value="/" />
 	<jsp:param name="userRoleForTitle" value="Manager" />
 </jsp:include>
 

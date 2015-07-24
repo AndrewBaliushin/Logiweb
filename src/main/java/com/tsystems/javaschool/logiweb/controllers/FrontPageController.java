@@ -31,6 +31,6 @@ public class FrontPageController {
             return "forward:/driver";
         } 
         
-        throw new AccessDeniedException("Your user role is unknown.");
+        throw new AccessDeniedException("User role is unknown.");
     }
 }

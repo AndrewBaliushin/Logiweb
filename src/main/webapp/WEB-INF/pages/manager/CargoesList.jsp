@@ -39,10 +39,10 @@
 					   <td>${cargo.originCity.name}</td>
 					   <td>${cargo.destinationCity.name}</td>
 
-						<td class="text-center"><a href="
-                            <c:url value="editOrder">
-                                <c:param name="orderId" value="${cargo.orderForThisCargo.id}" />
-                            </c:url>">${cargo.orderForThisCargo.id}</a>
+						<td class="text-center">
+                            <a href="${pageContext.request.contextPath}/order/${cargo.orderForThisCargo.id}">
+                                ${cargo.orderForThisCargo.id}
+                            </a>
                         </td>
 
 					</tr>

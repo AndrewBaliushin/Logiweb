@@ -40,13 +40,10 @@
 						<td>${truck.status}</td>
 						<td>${truck.currentCity.name}</td>
 						
-						<td><c:if
-                                test="${empty truck.assignedDeliveryOrder}">Not assigned</c:if>
-                            <a href="
-                            <c:url value="editOrder">
-                                <c:param name="orderId" value="${truck.assignedDeliveryOrder.id}" />
-                            </c:url>">${truck.assignedDeliveryOrder.id}</a>
-
+						<td><c:if test="${empty truck.assignedDeliveryOrder}">Not assigned</c:if>
+	                            <a href="${pageContext.request.contextPath}/order/${truck.assignedDeliveryOrder.id}">
+	                                ${truck.assignedDeliveryOrder.id}
+	                            </a>
                         </td>
 							
 						<td><c:if test="${empty truck.drivers}">Not assigned</c:if>
