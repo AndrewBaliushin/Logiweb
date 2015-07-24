@@ -22,10 +22,8 @@
         <li class="list-group-item">Co-driver:
             <c:forEach var="coDriver" items="${driver.currentTruck.drivers}">
                 <c:if test="${coDriver.id != driver.id}">
-                    <a href="
-                       <c:url value="showDriver">
-                           <c:param name="driverId" value="${coDriver.id}" />
-                       </c:url>">${coDriver.name} ${coDriver.surname}</a><span class="comma-separator">,</span>
+                    <a href="${pageContext.request.contextPath}/driver/${coDriver.id}">
+                        ${coDriver.name} ${coDriver.surname}</a><span class="comma-separator">,</span>
                 </c:if>
             </c:forEach>
         </li>

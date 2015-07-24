@@ -53,10 +53,7 @@
                  <c:choose>
                      <c:when test="${!empty order.assignedTruck && !empty order.assignedTruck.drivers}">
                         <c:forEach items="${order.assignedTruck.drivers}" var="driver">
-                            <a href="
-                                    <c:url value="showDriver">
-                                        <c:param name="driverId" value="${driver.id}" />
-                                    </c:url>">${driver.name} ${driver.surname}</a><span class="comma-separator">,</span>
+                            <a href="${pageContext.request.contextPath}/driver/${driver.id}">${driver.name} ${driver.surname}</a><span class="comma-separator">,</span>
                         </c:forEach>
                      </c:when>
                      <c:otherwise><span class="label label-danger">Not assigned</span></c:otherwise>
