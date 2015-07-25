@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.tsystems.javaschool.logiweb.entities.Cargo;
 import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
 import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation.OperationWithCargo;
@@ -113,7 +114,9 @@ public class RouteServiceStub implements RouteService {
         
         Random rand = new Random();
         for (Cargo cargo : cargoes) {
-            rand.setSeed(cargo.hashCode());
+            if (cargo.getStatus() == CargoStatus.DELIVERED) continue;
+            
+            rand.setSeed(cargo.getDestinationCity().getName().hashCode());
             result += rand.nextFloat() * (MAX_DELIVERY_TIME - MIN_DELIVERY_TIME) + MIN_DELIVERY_TIME;
         }
         return result;
