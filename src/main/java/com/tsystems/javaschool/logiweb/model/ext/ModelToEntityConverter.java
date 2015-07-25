@@ -20,7 +20,6 @@ public class ModelToEntityConverter {
         entity.setCurrentCity(city);
         entity.setName(driverModel.getName());
         entity.setSurname(driverModel.getSurname());
-        entity.setCurrentTruck(driverModel.getCurrentTruck());
         entity.setEmployeeId(driverModel.getEmployeeId());
         entity.setStatus(driverModel.getStatus());
         
@@ -33,11 +32,11 @@ public class ModelToEntityConverter {
         model.setCurrentCityId(entity.getCurrentCity() == null ? 0 : entity
                 .getCurrentCity().getId());
 
-        model.setCurrentTruck(entity.getCurrentTruck());
+        model.setCurrentTruckLicensePlate(entity.getCurrentTruck() == null ? null : entity.getCurrentTruck().getLicencePlate());
         model.setEmployeeId(entity.getEmployeeId());
         model.setId(entity.getId());
         model.setName(entity.getName());
-        model.setOrder(null);
+        model.setOrderId(null);
         model.setRouteInfo(null);
         model.setStatus(entity.getStatus());
         model.setSurname(entity.getSurname());

@@ -27,17 +27,17 @@ public class City {
     @Column(name = "city_name", nullable = false)
     private String name;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "currentCity")
-    private Set<Truck> trucksInCity;
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "currentCity")
-    private Set<Driver> driversInCity;
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "originCity")
-    private Set<Cargo> originCityForCargoes;
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "destinationCity")
-    private Set<Cargo> destinationCityForCargoes;
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "currentCity")
+//    private Set<Truck> trucksInCity;
+//    
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "currentCity")
+//    private Set<Driver> driversInCity;
+//    
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "originCity")
+//    private Set<Cargo> originCityForCargoes;
+//    
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "destinationCity")
+//    private Set<Cargo> destinationCityForCargoes;
 
     public City() {
     }
@@ -62,36 +62,37 @@ public class City {
         this.name = name;
     }
 
-    public Set<Truck> getTrucksInCity() {
-        return trucksInCity;
-    }
+//    public Set<Truck> getTrucksInCity() {
+//        return trucksInCity;
+//    }
+//
+//    public void setTrucksInCity(Set<Truck> trucksInCity) {
+//        this.trucksInCity = trucksInCity;
+//    }
+//
+//    public Set<Driver> getDriversInCity() {
+//        return driversInCity;
+//    }
+//
+//    public void setDriversInCity(Set<Driver> driversInCity) {
+//        this.driversInCity = driversInCity;
+//    }
+//
+//    public Set<Cargo> getOriginCityForCargoes() {
+//        return originCityForCargoes;
+//    }
+//
+//    public void setOriginCityForCargoes(Set<Cargo> originCityForCargoes) {
+//        this.originCityForCargoes = originCityForCargoes;
+//    }
+//
+//    public Set<Cargo> getDestinationCityForCargoes() {
+//        return destinationCityForCargoes;
+//    }
+//
+//    public void setDestinationCityForCargoes(
+//            Set<Cargo> destinationCityForCargoes) {
+//        this.destinationCityForCargoes = destinationCityForCargoes;
+//    }
 
-    public void setTrucksInCity(Set<Truck> trucksInCity) {
-        this.trucksInCity = trucksInCity;
-    }
-
-    public Set<Driver> getDriversInCity() {
-        return driversInCity;
-    }
-
-    public void setDriversInCity(Set<Driver> driversInCity) {
-        this.driversInCity = driversInCity;
-    }
-
-    public Set<Cargo> getOriginCityForCargoes() {
-        return originCityForCargoes;
-    }
-
-    public void setOriginCityForCargoes(Set<Cargo> originCityForCargoes) {
-        this.originCityForCargoes = originCityForCargoes;
-    }
-
-    public Set<Cargo> getDestinationCityForCargoes() {
-        return destinationCityForCargoes;
-    }
-
-    public void setDestinationCityForCargoes(Set<Cargo> destinationCityForCargoes) {
-        this.destinationCityForCargoes = destinationCityForCargoes;
-    }
-    
 }

@@ -8,6 +8,7 @@ import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
+import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
 /**
@@ -29,10 +30,20 @@ public interface DriverService {
      * Find driver by id.
      * 
      * @param id
-     * @return truck or null
+     * @return driver or null
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
     Driver findDriverById(int id) throws LogiwebServiceException;
+
+    /**
+     * Find driver by employee id.
+     * 
+     * @param employeeId
+     * @return driver or null
+     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
+     */
+    Driver findDriverByEmployeeId(int employeeId)
+            throws LogiwebServiceException;
 
     /**
      * Edit driver.
@@ -117,4 +128,7 @@ public interface DriverService {
      *             fault)
      */
     Set<DriverShiftJournal> findDriverJournalsForThisMonth(Driver driver) throws LogiwebServiceException;
+
+    void setDriverStatusToDriving(int driverEpmloyeeId) throws RecordNotFoundServiceException, LogiwebServiceException;
+    void setDriverStatusToResting(int driverEmployeeId) throws RecordNotFoundServiceException, LogiwebServiceException;
 }

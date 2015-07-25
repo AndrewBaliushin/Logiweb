@@ -107,7 +107,7 @@
 					<!-- Status change -->
 					<button type="button" class="btn btn-default btn-lg 
 					    <c:choose>
-	                       <c:when test="${order.status != 'READY_TO_GO' && !empty order.assignedTruck && (!empty order.assignedTruck.drivers && fn:length(order.assignedTruck.drivers) >= order.assignedTruck.crewSize)}"></c:when>
+	                       <c:when test="${order.status == 'NOT_READY' && !empty order.assignedTruck && (!empty order.assignedTruck.drivers && fn:length(order.assignedTruck.drivers) >= order.assignedTruck.crewSize)}"></c:when>
 	                       
 	                       <c:otherwise>disabled</c:otherwise>
                         </c:choose>"

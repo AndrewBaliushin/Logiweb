@@ -29,6 +29,7 @@ import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
+import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 import com.tsystems.javaschool.logiweb.utils.DateUtils;
 
@@ -75,6 +76,20 @@ public class DriverServiceImpl implements DriverService {
     public Driver findDriverById(int id) throws LogiwebServiceException {
         try {
             return driverDao.find(id);
+        } catch (DaoException e) {
+            LOG.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public Driver findDriverByEmployeeId(int employeeId) throws LogiwebServiceException {
+        try {
+            return driverDao.findByEmployeeId(employeeId);
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
@@ -381,5 +396,38 @@ public class DriverServiceImpl implements DriverService {
             throw new LogiwebServiceException(e);
         }
     }
+
+    @Override
+    @Transactional
+    public void setDriverStatusToDriving(int driverEmployeeId)
+            throws com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException,
+            LogiwebServiceException {
+        changeDriverStatus(driverEmployeeId, DriverStatus.DRIVING);
+        
+    }
+
+    @Override
+    @Transactional
+    public void setDriverStatusToResting(int driverEmployeeId)
+            throws RecordNotFoundServiceException,
+            LogiwebServiceException {
+        changeDriverStatus(driverEmployeeId, DriverStatus.RESTING_EN_ROUT);
+    }
     
+    private void changeDriverStatus(int driverEmployeeId, DriverStatus newStatus) throws RecordNotFoundServiceException, LogiwebServiceException {
+        try {
+            Driver driver = driverDao.findByEmployeeId(driverEmployeeId);
+            if (driver == null) {
+                throw new RecordNotFoundServiceException();
+            }
+            driver.setStatus(newStatus);
+            driverDao.update(driver);            
+        } catch (DaoException e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        } catch (Exception e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        }
+    }
 }

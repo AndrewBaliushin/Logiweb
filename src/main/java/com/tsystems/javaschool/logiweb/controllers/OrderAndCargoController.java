@@ -219,7 +219,7 @@ public class OrderAndCargoController {
             DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
             Truck truck = order.getAssignedTruck();
             if(truck != null) {
-                truckService.removeAssignedOrderAndDriversFromTruck(truck);  
+                truckService.removeAssignedOrderAndDriversFromTruck(truck.getId());  
             }
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

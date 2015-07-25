@@ -24,6 +24,7 @@ import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
+import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
 /**
@@ -242,34 +243,82 @@ public class OrdersAndCargoServiceImpl implements OrdersAndCargoService {
     @Transactional
     public void setReadyStatusForOrder(DeliveryOrder order)
             throws ServiceValidationException, LogiwebServiceException {
-        if(order == null) {
-            throw new ServiceValidationException("Order does not exist.");
-        }
-        
-        if (order.getAssignedCargoes() == null
-                || order.getAssignedCargoes().isEmpty()) {
-            throw new ServiceValidationException(
-                    "Order must contain at least 1 cargo.");
-        } else if (order.getAssignedTruck() == null) {
-            throw new ServiceValidationException(
-                    "Order must have assigned truck.");
-        } else if (order.getAssignedTruck().getDrivers() == null
-                || order.getAssignedTruck().getDrivers().size() < order
-                        .getAssignedTruck().getCrewSize()) {
-            throw new ServiceValidationException(
-                    "Truck must have full crew. Assign drivers.");
-        } else if (order.getStatus() != OrderStatus.NOT_READY) {
-            throw new ServiceValidationException(
-                    "Order must be in NOT READY STATE.");
-        }
-        
         try {
+            order = deliveryOrderDao.find(order.getId()); 
+            
+            if (order == null) {
+                throw new ServiceValidationException("Order does not exist.");
+            }
+            
+            if (order.getAssignedCargoes() == null
+                    || order.getAssignedCargoes().isEmpty()) {
+                throw new ServiceValidationException(
+                        "Order must contain at least 1 cargo.");
+            } else if (order.getAssignedTruck() == null) {
+                throw new ServiceValidationException(
+                        "Order must have assigned truck.");
+            } else if (order.getAssignedTruck().getDrivers() == null
+                    || order.getAssignedTruck().getDrivers().size() < order
+                            .getAssignedTruck().getCrewSize()) {
+                throw new ServiceValidationException(
+                        "Truck must have full crew. Assign drivers.");
+            } else if (order.getStatus() != OrderStatus.NOT_READY) {
+                throw new ServiceValidationException(
+                        "Order must be in NOT READY STATE.");
+            }
+            
             order.setStatus(OrderStatus.READY_TO_GO);
+            deliveryOrderDao.update(order);
             LOG.info("Order id#" + order.getId() + " changed status to " + OrderStatus.READY_TO_GO);
         } catch (Exception e) {
             LOG.warn("Something unexpected happened.", e);
             throw new LogiwebServiceException(e);
         }
     }
-    
+
+    @Override
+    @Transactional
+    public boolean isOrderComplete(int orderId)
+            throws RecordNotFoundServiceException, LogiwebServiceException {
+        try {
+            DeliveryOrder order = deliveryOrderDao.find(orderId);
+            if (order == null) {
+                throw new RecordNotFoundServiceException();
+            }
+            
+            Set<Cargo> cargoes = order.getAssignedCargoes();
+            for (Cargo cargo : cargoes) {
+                if (cargo.getStatus() != CargoStatus.DELIVERED) return false;
+            }
+            return true;
+        } catch (DaoException e) {
+            LOG.warn("Something unexpected happened.", e);
+            throw new LogiwebServiceException(e);
+        }    
+    }
+
+    @Override
+    @Transactional
+    public void setStatusDelivered(int orderId)
+            throws ServiceValidationException, LogiwebServiceException {
+        try {
+            DeliveryOrder order = deliveryOrderDao.find(orderId);
+            if(order == null) {
+                throw new ServiceValidationException("Order does not exist.");
+            }
+            
+            if (isOrderComplete(orderId)) {
+                order.setStatus(OrderStatus.DELIVERED);
+                deliveryOrderDao.update(order);
+                LOG.info("Order id#" + order.getId() + " changed status to "
+                        + OrderStatus.DELIVERED);
+            } else {
+                throw new ServiceValidationException(
+                        "Order have undelivered cargo.");
+            }
+        } catch (DaoException e) {
+            LOG.warn("Something unexpected happened.", e);
+            throw new LogiwebServiceException(e);
+        }    
+    }
 }

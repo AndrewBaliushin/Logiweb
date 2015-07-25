@@ -88,10 +88,10 @@ public interface TrucksService {
     /**
      * Remove assignment to order and drivers for this truck.
      * 
-     * @param truck
+     * @param truckid
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault)
      * @throws ServiceValidationException if truck is assigned to READY TO GO ORDER
      */
-    void removeAssignedOrderAndDriversFromTruck(Truck truck) throws ServiceValidationException, LogiwebServiceException;
+    void removeAssignedOrderAndDriversFromTruck(int truckId) throws ServiceValidationException, LogiwebServiceException;
     
 }

@@ -243,14 +243,20 @@ public class TrucksSeviceimpl implements TrucksService {
      */
     @Override
     @Transactional
-    public void removeAssignedOrderAndDriversFromTruck(Truck truck)
+    public void removeAssignedOrderAndDriversFromTruck(int truckId)
             throws ServiceValidationException, LogiwebServiceException {
-        if (truck.getAssignedDeliveryOrder().getStatus() == OrderStatus.READY_TO_GO) {
-            throw new ServiceValidationException(
-                    "Can't remove truck from READY TO GO order.");
-        }
-
         try {
+            Truck truck = truckDao.find(truckId);
+            
+            if (truck == null) {
+                throw new ServiceValidationException("Truck not found.");
+            }
+            
+            if (truck.getAssignedDeliveryOrder().getStatus() == OrderStatus.READY_TO_GO) {
+                throw new ServiceValidationException(
+                        "Can't remove truck from READY TO GO order.");
+            }
+            
             DeliveryOrder order = truck.getAssignedDeliveryOrder();
             Set<Driver> drivers = truck.getDrivers();
             
@@ -264,7 +270,6 @@ public class TrucksSeviceimpl implements TrucksService {
             if(order != null) {
                 order.setAssignedTruck(null);
             }
-            
             
             LOG.info("Truck id#" + truck.getId() + " and its drivers removed from order.");
         } catch (Exception e) {

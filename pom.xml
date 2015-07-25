@@ -22,6 +22,7 @@
 		<slf4j.version>1.7.12</slf4j.version>
 		<gson.version>2.3.1</gson.version>
 		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+		<cxf.version>3.1.1</cxf.version>
 
 	</properties>
 
@@ -190,6 +191,32 @@
 			<version>4.0</version>
 		</dependency>
 
+		<!-- CXF -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-service-description</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		
+
+		<!-- WS RS -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+
+        
 
 	</dependencies>
 

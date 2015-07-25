@@ -30,20 +30,12 @@ public class DriverModel {
     @NotNull
     private int currentCityId;
 
-    private Truck currentTruck;
+    private String currentTruckLicensePlate;
     
-    private DeliveryOrder order;
+    private Integer orderId;
     
     private RouteInformation routeInfo;
     
-    public DeliveryOrder getOrder() {
-        return order;
-    }
-
-    public void setOrder(DeliveryOrder order) {
-        this.order = order;
-    }
-
     public RouteInformation getRouteInfo() {
         return routeInfo;
     }
@@ -113,11 +105,20 @@ public class DriverModel {
         this.currentCityId = currentCityId;
     }
 
-    public Truck getCurrentTruck() {
-        return currentTruck;
+    public Integer getOrderId() {
+        return orderId;
     }
 
-    public void setCurrentTruck(Truck currentTruck) {
-        this.currentTruck = currentTruck;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
+
+    public String getCurrentTruckLicensePlate() {
+        return currentTruckLicensePlate;
+    }
+
+    public void setCurrentTruckLicensePlate(String currentTruckLicensePlate) {
+        this.currentTruckLicensePlate = currentTruckLicensePlate;
+    }
+
 }

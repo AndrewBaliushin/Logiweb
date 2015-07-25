@@ -15,67 +15,108 @@ import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationExcep
  * @author Andrey Baliushin
  */
 public interface OrdersAndCargoService {
-    
+
     /**
      * Find all orders.
      * 
      * @return orders set or empty set.
-     * @throws LogiwebServiceException if something unexpected happens
+     * @throws LogiwebServiceException
+     *             if something unexpected happens
      */
     Set<DeliveryOrder> findAllOrders() throws LogiwebServiceException;
-    
+
     /**
      * Find all cargoes.
      * 
      * @return cargoes set or empty set.
-     * @throws LogiwebServiceException if something unexpected happens
+     * @throws LogiwebServiceException
+     *             if something unexpected happens
      */
     Set<Cargo> findAllCargoes() throws LogiwebServiceException;
-    
+
     /**
-     * Add new order. 
+     * Add new order.
+     * 
      * @param newOrder
      * @return same order
-     * @throws LogiwebServiceException if something unexpected happens
+     * @throws LogiwebServiceException
+     *             if something unexpected happens
      */
-    DeliveryOrder addNewOrder(DeliveryOrder newOrder) throws LogiwebServiceException;
-    
+    DeliveryOrder addNewOrder(DeliveryOrder newOrder)
+            throws LogiwebServiceException;
+
     /**
      * Find ofrder by id.
      * 
      * @param id
-     * @return order or null if not found 
-     * @throws LogiwebServiceException if something unexpected happens
+     * @return order or null if not found
+     * @throws LogiwebServiceException
+     *             if something unexpected happens
      */
     DeliveryOrder findOrderById(int id) throws LogiwebServiceException;
-    
+
     /**
-     * Add new cargo. 
-     * Cargo must contain title, origin and delivery cities, weight and order, to which it must be assigned.
+     * Add new cargo. Cargo must contain title, origin and delivery cities,
+     * weight and order, to which it must be assigned.
+     * 
      * @param newCargo
-     * @throws LogiwebServiceException -- if unexpected happened
-     * @throws ServiceValidationException -- if new cargo doesn't fit requirements
+     * @throws LogiwebServiceException
+     *             -- if unexpected happened
+     * @throws ServiceValidationException
+     *             -- if new cargo doesn't fit requirements
      */
-    void addCargo(Cargo newCargo) throws ServiceValidationException, LogiwebServiceException;
-    
+    void addCargo(Cargo newCargo) throws ServiceValidationException,
+            LogiwebServiceException;
+
     /**
-     * Assign truck to order.
-     * Truck must by managed entity.
+     * Assign truck to order. Truck must by managed entity.
      * 
      * @param truck
      * @param orderId
-     * @throws ServiceValidationException if truck is not Free or broken.
-     * @throws LogiwebServiceException if unexpected happened
+     * @throws ServiceValidationException
+     *             if truck is not Free or broken.
+     * @throws LogiwebServiceException
+     *             if unexpected happened
      */
-    void assignTruckToOrder(Truck truck, int orderId) throws ServiceValidationException, LogiwebServiceException;
+    void assignTruckToOrder(Truck truck, int orderId)
+            throws ServiceValidationException, LogiwebServiceException;
 
     /**
-     * Sets 'READY' status for order if order have at least one cargo and assign truck with full crew.
+     * Sets 'READY' status for order if order have at least one cargo and assign
+     * truck with full crew.
      * 
      * @param order
-     * @throws LogiwebServiceException if unexpected happened
-     * @throws ServiceValidationException if validation failed. Description in message.
+     * @throws LogiwebServiceException
+     *             if unexpected happened
+     * @throws ServiceValidationException
+     *             if validation failed. Description in message.
      */
     void setReadyStatusForOrder(DeliveryOrder order)
             throws ServiceValidationException, LogiwebServiceException;
+
+    /**
+     * Sets 'DELIVERED' status for order if all cargoes for this order were
+     * delivered.
+     * Unassign truck and drivers from order.
+     * 
+     * @param order
+     * @throws LogiwebServiceException
+     *             if unexpected happened
+     * @throws ServiceValidationException
+     *             if validation failed. Description in message.
+     *             Thrown if order have undelivered cargo.
+     */
+    void setStatusDelivered(int orderId)
+            throws ServiceValidationException, LogiwebServiceException;
+
+    /**
+     * Check if all cargoes were delivered and order can be set to Delivered.
+     * 
+     * @param orderId
+     * @return true if order complete and false if there are undelivered cargoes
+     *         inside order.
+     * @throws LogiwebServiceException
+     *             if validation failed. Description in message.
+     */
+    boolean isOrderComplete(int orderId) throws LogiwebServiceException;
 }

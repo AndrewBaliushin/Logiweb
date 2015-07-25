@@ -13,6 +13,9 @@
  
     <http  use-expressions="true">
         <csrf disabled="true"/>
+        
+        <intercept-url pattern="/services**" access="permitAll" />
+        <intercept-url pattern="/services/**" access="permitAll" />
     
         <intercept-url pattern="/css/**" access="permitAll" />
         <intercept-url pattern="/js/**" access="permitAll" />
