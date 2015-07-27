@@ -15,7 +15,7 @@ import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.CargoService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
-import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
+import com.tsystems.javaschool.logiweb.service.OrderService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
@@ -34,7 +34,7 @@ public class DriverWebServiceImpl implements DriverWebService {
     @Autowired
     private CargoService cargoService;
     @Autowired
-    private OrdersAndCargoService ordersAndCargoService;
+    private OrderService ordersAndCargoService;
     @Autowired
     private TrucksService truckService;
     
@@ -93,8 +93,8 @@ public class DriverWebServiceImpl implements DriverWebService {
                     .getOrderForThisCargo();
             Truck assignedToTruck = order.getAssignedTruck();
             int orderId = order.getId();
-            if (ordersAndCargoService.isOrderComplete(orderId)) {
-                ordersAndCargoService.setStatusDelivered(orderId);
+            if (ordersAndCargoService.isAllCargoesInOrderDelivered(orderId)) {
+                ordersAndCargoService.setStatusDeliveredForOrder(orderId);
                 truckService.removeAssignedOrderAndDriversFromTruck(assignedToTruck.getId());
             }       
         } catch (RecordNotFoundServiceException e) {

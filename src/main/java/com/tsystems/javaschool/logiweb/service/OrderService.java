@@ -14,7 +14,7 @@ import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationExcep
  * 
  * @author Andrey Baliushin
  */
-public interface OrdersAndCargoService {
+public interface OrderService {
 
     /**
      * Find all orders.
@@ -25,14 +25,7 @@ public interface OrdersAndCargoService {
      */
     Set<DeliveryOrder> findAllOrders() throws LogiwebServiceException;
 
-    /**
-     * Find all cargoes.
-     * 
-     * @return cargoes set or empty set.
-     * @throws LogiwebServiceException
-     *             if something unexpected happens
-     */
-    Set<Cargo> findAllCargoes() throws LogiwebServiceException;
+    
 
     /**
      * Add new order.
@@ -54,19 +47,6 @@ public interface OrdersAndCargoService {
      *             if something unexpected happens
      */
     DeliveryOrder findOrderById(int id) throws LogiwebServiceException;
-
-    /**
-     * Add new cargo. Cargo must contain title, origin and delivery cities,
-     * weight and order, to which it must be assigned.
-     * 
-     * @param newCargo
-     * @throws LogiwebServiceException
-     *             -- if unexpected happened
-     * @throws ServiceValidationException
-     *             -- if new cargo doesn't fit requirements
-     */
-    void addCargo(Cargo newCargo) throws ServiceValidationException,
-            LogiwebServiceException;
 
     /**
      * Assign truck to order. Truck must by managed entity.
@@ -106,7 +86,7 @@ public interface OrdersAndCargoService {
      *             if validation failed. Description in message.
      *             Thrown if order have undelivered cargo.
      */
-    void setStatusDelivered(int orderId)
+    void setStatusDeliveredForOrder(int orderId)
             throws ServiceValidationException, LogiwebServiceException;
 
     /**
@@ -118,5 +98,5 @@ public interface OrdersAndCargoService {
      * @throws LogiwebServiceException
      *             if validation failed. Description in message.
      */
-    boolean isOrderComplete(int orderId) throws LogiwebServiceException;
+    boolean isAllCargoesInOrderDelivered(int orderId) throws LogiwebServiceException;
 }

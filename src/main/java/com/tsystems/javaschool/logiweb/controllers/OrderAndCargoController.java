@@ -26,9 +26,10 @@ import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.service.CargoService;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
-import com.tsystems.javaschool.logiweb.service.OrdersAndCargoService;
+import com.tsystems.javaschool.logiweb.service.OrderService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
@@ -48,16 +49,12 @@ public class OrderAndCargoController {
     
     private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
 
-    @Autowired
-    private CityService cityService;
-    @Autowired
-    private OrdersAndCargoService orderAndCaroService;
-    @Autowired
-    private RouteService routeService;
-    @Autowired
-    private TrucksService truckService;
-    @Autowired
-    private DriverService driverService;
+    private @Autowired CityService cityService;
+    private @Autowired OrderService orderAndCaroService;
+    private @Autowired RouteService routeService;
+    private @Autowired TrucksService truckService;
+    private @Autowired DriverService driverService;
+    private @Autowired CargoService cargoService;
 
     @RequestMapping(value = {"order/{orderId}/edit", "order/{orderId}"}, method = RequestMethod.GET)
     public ModelAndView editOrder(@PathVariable("orderId") int orderId) {
@@ -140,7 +137,7 @@ public class OrderAndCargoController {
     public String addCargoToOrder(@PathVariable("orderId") int orderId, HttpServletRequest request, HttpServletResponse response) {
         try {
             Cargo newCargo = createDetachedCargoEntityFromRequestParams(request);
-            orderAndCaroService.addCargo(newCargo);
+            cargoService.addCargo(newCargo);
             return "Cargo added";
         } catch (FormParamaterParsingException  | ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -275,7 +272,7 @@ public class OrderAndCargoController {
         mav.setViewName("manager/CargoesList");
         
         try {
-            mav.addObject("cargoes", orderAndCaroService.findAllCargoes());
+            mav.addObject("cargoes", cargoService.findAllCargoes());
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexpected exception.", e);
             throw new RuntimeException("Unrecoverable server exception.", e);
