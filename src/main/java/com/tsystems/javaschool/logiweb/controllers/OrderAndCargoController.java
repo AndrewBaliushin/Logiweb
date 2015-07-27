@@ -38,7 +38,7 @@ import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 @Controller
 public class OrderAndCargoController {
     
-    @Value("#{T(java.lang.Float).parseFloat('176')}") 
+    @Value("#{T(java.lang.Float).parseFloat('${bussines.maxWorkingHours}')}") 
     private Float driverMonthlyWorkingHoursLimit;
     
     private @Value("${views.orderList}") String orderListViewPath;
@@ -133,29 +133,21 @@ public class OrderAndCargoController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/order/{orderId}/addCargo", method = RequestMethod.POST)
+    @RequestMapping(value = "/order/{orderId}/addCargo", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
     public String addCargoToOrder(@PathVariable("orderId") int orderId, HttpServletRequest request, HttpServletResponse response) {
-        Gson gson = new Gson();
-        Map<String, String> jsonResponseMap = new HashMap<String, String>();
-        
         try {
             Cargo newCargo = createDetachedCargoEntityFromRequestParams(request);
-
             orderAndCaroService.addCargo(newCargo);
-        } catch (FormParamaterParsingException e) {
+            return "Cargo added";
+        } catch (FormParamaterParsingException  | ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", e.getMessage());
-        } catch (ServiceValidationException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", e.getMessage());
+            return e.getMessage();
         } catch (LogiwebServiceException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
-            jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
+            return "Unexcpected server error. Check logs.";
         }
-        
-        return gson.toJson(jsonResponseMap);
     }
     
 
@@ -165,34 +157,30 @@ public class OrderAndCargoController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/order/{orderId}/assignTruck", method = RequestMethod.POST)
+    @RequestMapping(value = "/order/{orderId}/edit/assignTruck", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
     public String assignTruckToOrder(@PathVariable("orderId") int orderId, HttpServletRequest request, HttpServletResponse response) {
-        Gson gson = new Gson();
-        Map<String, String> jsonResponseMap = new HashMap<String, String>();
-        
         int truckId = 0;        
         try {
             truckId = Integer.parseInt(request.getParameter("truckId"));
         } catch (NumberFormatException | NullPointerException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", "Order and truck id must be equal or more than 0.");
+            return "Order and truck id must be equal or more than 0.";
         }
         
         try {
             Truck truck = new Truck();
             truck.setId(truckId);
-            orderAndCaroService.assignTruckToOrder(truck, orderId);            
+            orderAndCaroService.assignTruckToOrder(truck, orderId);  
+            return "Truck assigned";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", e.getMessage());
+            return e.getMessage();
         } catch (LogiwebServiceException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
-            jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
+            return "Unexcpected server error. Check logs.";
         }
-        
-        return gson.toJson(jsonResponseMap);
     }
     
     /**
@@ -201,36 +189,28 @@ public class OrderAndCargoController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "manager/removeDriversAndTruckFromOrder", method = RequestMethod.POST)
+    @RequestMapping(value = "order/{orderId}/edit/removeDriversAndTruck", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String removeDriversAndTruckFromOrder(HttpServletRequest request, HttpServletResponse response) {
-        Gson gson = new Gson();
-        Map<String, String> jsonResponseMap = new HashMap<String, String>();
-        
-        int orderId = 0;     
-        try {
-            orderId = Integer.parseInt(request.getParameter("orderId"));
-        } catch (NumberFormatException | NullPointerException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", "Order ID must be equal or more than 0.");
-        }
-        
-        try {
+    public String removeDriversAndTruckFromOrder(@PathVariable("orderId") int orderId, HttpServletResponse response) {
+       try {
             DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
             Truck truck = order.getAssignedTruck();
             if(truck != null) {
                 truckService.removeAssignedOrderAndDriversFromTruck(truck.getId());  
+                return "Drivers and Truck relieved from order.";
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "Truck is not assigned";
             }
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", e.getMessage());
+            return e.getMessage();
         } catch (LogiwebServiceException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
-            jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
+            return "Unexcpected server error. Check logs.";
         }
         
-        return gson.toJson(jsonResponseMap);
     }
     
     /**
@@ -239,33 +219,21 @@ public class OrderAndCargoController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "manager/changeOrderStatus", method = RequestMethod.POST)
+    @RequestMapping(value = "order/{orderId}/edit/setStatusReady", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String changeOrderStatus(HttpServletRequest request, HttpServletResponse response) {
-        Gson gson = new Gson();
-        Map<String, String> jsonResponseMap = new HashMap<String, String>();
-        
-        int orderId = 0;  
-        try {
-            orderId = Integer.parseInt(request.getParameter("orderId"));
-        } catch (IllegalArgumentException | NullPointerException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", "Order id is in wrong format.");
-        }
-        
-        try {
+    public String setStatusReady(@PathVariable("orderId") int orderId, HttpServletResponse response) {
+       try {
             DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
-            orderAndCaroService.setReadyStatusForOrder(order);            
+            orderAndCaroService.setReadyStatusForOrder(order);  
+            return "Status 'READY' is set";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonResponseMap.put("msg", e.getMessage());
+            return e.getMessage();
         } catch (LogiwebServiceException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOG.warn("Unexpected exception.", e);
-            jsonResponseMap.put("msg", "Unexcpected server error. Check logs.");
+            return "Unexcpected server error. Check logs.";
         }
-        
-        return gson.toJson(jsonResponseMap);
     }
     
     @RequestMapping(value = {"/order/new"})
