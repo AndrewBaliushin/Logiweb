@@ -132,7 +132,7 @@ public class OrderAndCargoController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/order/{orderId}/addCargo", method = RequestMethod.POST, produces = "text/plain")
+    @RequestMapping(value = "/order/{orderId}/edit/addCargo", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
     public String addCargoToOrder(@PathVariable("orderId") int orderId, HttpServletRequest request, HttpServletResponse response) {
         try {
