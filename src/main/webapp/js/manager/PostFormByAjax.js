@@ -8,14 +8,14 @@
 function postFormByAjax(formId) {
 	$.ajax({
 		type : "POST",
-		url : $(formId).attr('action'),
-		dataType : "json",
+		url : window.location.pathname + "/" + $(formId).attr('action'),
+		dataType : "text",
 		data : $(formId).serialize(),
 		success : function(data) {
 			location.reload(true);
 		},
-		error : function(data) {
-			bootbox.alert(data.responseJSON.msg);
+		error : function(result) {
+			bootbox.alert(result.responseText);
 		}
 	});
 }

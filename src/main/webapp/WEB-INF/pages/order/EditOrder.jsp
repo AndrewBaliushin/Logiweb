@@ -9,7 +9,7 @@
 	<jsp:param name="title" value="Edit order # ${orderId}" />
 	<jsp:param value="common/common.css" name="css" />
 	<jsp:param
-		value="manager/PostFormByAjax.js,manager/RemoveTruckAndDriversFromOrder.js,manager/ChangeOrderStatus.js,manager/LimitCheckboxesForDriverAssignment.js"
+		value="manager/PostFormByAjax.js,order/RemoveTruckAndDriversFromOrder.js,manager/ChangeOrderStatus.js,manager/LimitCheckboxesForDriverAssignment.js"
 		name="js" />
 
 </jsp:include>

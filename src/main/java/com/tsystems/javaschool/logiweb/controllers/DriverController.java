@@ -226,7 +226,7 @@ public class DriverController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "manager/addDriverToTruck", method = RequestMethod.POST)
+    @RequestMapping(value = "order/{orderId}/edit/addDriverToTruck", method = RequestMethod.POST)
     @ResponseBody
     public String addDriverToTruck(HttpServletRequest request, HttpServletResponse response) {
         Gson gson = new Gson();

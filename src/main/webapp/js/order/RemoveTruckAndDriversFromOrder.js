@@ -6,14 +6,13 @@
 function removeTruckAndDriverFromOrder(orderId) {
 	$.ajax({
 		type : "POST",
-		url : "removeDriversAndTruckFromOrder",
-		dataType : "json",
-		data : {"orderId" : orderId},
+		url : window.location.pathname + "/removeDriversAndTruck",
+		dataType : "text",
 		success : function(data) {
 			location.reload(true);
 		},
-		error : function(data) {
-			bootbox.alert(data.responseJSON.msg);
+		error : function(result) {
+			bootbox.alert(result.responseText);
 		}
 	});
 }

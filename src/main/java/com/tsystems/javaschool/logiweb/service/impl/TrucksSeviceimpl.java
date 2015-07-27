@@ -16,6 +16,7 @@ import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.model.TruckModel;
@@ -265,6 +266,7 @@ public class TrucksSeviceimpl implements TrucksService {
             
             for (Driver driver : drivers) {
                 driver.setCurrentTruck(null);
+                driver.setStatus(DriverStatus.FREE);
             }
             
             if(order != null) {
