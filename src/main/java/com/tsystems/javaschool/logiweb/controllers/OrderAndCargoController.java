@@ -38,7 +38,9 @@ import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 @Controller
 public class OrderAndCargoController {
     
-    @Value("#{T(java.lang.Float).parseFloat('${bussines.maxWorkingHours}')}") 
+    //FIXME parsing from props
+    //${bussines.maxWorkingHours}
+    @Value("#{T(java.lang.Float).parseFloat('176')}") 
     private Float driverMonthlyWorkingHoursLimit;
     
     private @Value("${views.orderList}") String orderListViewPath;
