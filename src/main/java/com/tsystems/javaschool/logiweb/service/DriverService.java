@@ -67,6 +67,21 @@ public interface DriverService {
     int addDriver(DriverModel newDriver) throws ServiceValidationException, LogiwebServiceException;
     
     /**
+     * Add driver and account for him.
+     * 
+     * @param new Driver as model
+     * @return id in db of created driver
+     * @throws ServiceValidationException
+     *             if driver don't have all required fields or have not unique
+     *             employee ID or account name is occupied
+     * @throws LogiwebServiceException
+     *             if unexpected exception occurred on lower level (not user
+     *             fault)
+     */
+    int addDriverWithAccount(DriverModel newDriver, String accountName, String pass)
+            throws ServiceValidationException, LogiwebServiceException;
+    
+    /**
      * Remove driver.
      * 
      * @param driver
@@ -130,5 +145,7 @@ public interface DriverService {
     Set<DriverShiftJournal> findDriverJournalsForThisMonth(Driver driver) throws LogiwebServiceException;
 
     void setDriverStatusToDriving(int driverEpmloyeeId) throws RecordNotFoundServiceException, LogiwebServiceException;
+    
     void setDriverStatusToResting(int driverEmployeeId) throws RecordNotFoundServiceException, LogiwebServiceException;
+    
 }

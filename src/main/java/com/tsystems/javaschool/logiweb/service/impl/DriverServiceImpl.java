@@ -26,8 +26,10 @@ import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
+import com.tsystems.javaschool.logiweb.entities.status.UserRole;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.service.DriverService;
+import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -46,12 +48,15 @@ public class DriverServiceImpl implements DriverService {
     private DriverDao driverDao;
     private TruckDao truckDao;
     private DriverShiftJournaDao driverShiftJournalDao;
+    private UserService userService;
       
     @Autowired
-    public DriverServiceImpl(DriverDao driverDao, TruckDao truckDao,DriverShiftJournaDao shiftDao) {
-	this.driverDao = driverDao;
-	this.truckDao = truckDao;
-	this.driverShiftJournalDao = shiftDao;
+    public DriverServiceImpl(DriverDao driverDao, TruckDao truckDao,
+            DriverShiftJournaDao shiftDao, UserService userService) {
+        this.driverDao = driverDao;
+        this.truckDao = truckDao;
+        this.driverShiftJournalDao = shiftDao;
+	this.userService = userService;
     }
     
     /**
@@ -187,6 +192,18 @@ public class DriverServiceImpl implements DriverService {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public int addDriverWithAccount(DriverModel newDriver, String accountName, String pass)
+            throws ServiceValidationException, LogiwebServiceException {
+        int driverId = addDriver(newDriver); //all necessary validations are inside this method
+        userService.createNewUser(accountName, pass, UserRole.ROLE_DRIVER);
+        return driverId;
     }
 
     /**

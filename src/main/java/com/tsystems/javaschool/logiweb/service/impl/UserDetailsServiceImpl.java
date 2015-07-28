@@ -1,5 +1,7 @@
 package com.tsystems.javaschool.logiweb.service.impl;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +18,14 @@ import org.springframework.stereotype.Service;
 import com.tsystems.javaschool.logiweb.dao.UserDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.entities.LogiwebUser;
+import com.tsystems.javaschool.logiweb.entities.status.UserRole;
 import com.tsystems.javaschool.logiweb.model.UserModel;
+import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService{
+public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     
     private static final Logger LOG = Logger.getLogger(UserDetailsServiceImpl.class);
 
@@ -48,29 +52,33 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         }
     }
     
-//    public User createNewUser(String userName, String pass) throws LogiwebServiceException {
-//        if (userName == null || userName.isEmpty()) {
-//            throw new ServiceValidationException(
-//                    "Username can't be empty.");
-//        }
-//        
-//        try {
-//            LogiwebUser userWithSameMail = userDao.findByEmail(userName);
-//            if (userWithSameMail != null) {
-//                throw new ServiceValidationException(
-//                        "User with username: " + userName + " already exist.");
-//            }
-//            
-//            LogiwebUser newUser = new LogiwebUser();
-//            newUser.setMail(userName);
-//            newUser.setPassMd5(passMd5);
-//            
-//            userDao.create(new LogiwebUser())
-//        } catch (DaoException e) {
-//            LOG.warn("Something unexpected happend.", e);
-//            throw new LogiwebServiceException(e);
-//        }
-//    }
+    public int createNewUser(String userName, String pass, UserRole role) throws ServiceValidationException, LogiwebServiceException {
+        if (userName == null || userName.isEmpty()) {
+            throw new ServiceValidationException(
+                    "Username can't be empty.");
+        }
+        
+        try {
+            LogiwebUser userWithSameMail = userDao.findByEmail(userName);
+            if (userWithSameMail != null) {
+                throw new ServiceValidationException(
+                        "User with username: " + userName + " already exist.");
+            }
+            
+            LogiwebUser newUser = new LogiwebUser();
+            newUser.setMail(userName);
+            newUser.setPassMd5(getMD5Hash(pass));
+            newUser.setRole(role);
+            
+            userDao.create(newUser);
+            
+            LOG.info("User #" + newUser.getId() + " " + userName + " created");
+            return newUser.getId();
+        } catch (DaoException e) {
+            LOG.warn("Something unexpected happend.", e);
+            throw new LogiwebServiceException(e);
+        }
+    }
     
     private User buildSecurityUserFromUserEntity(LogiwebUser userEntity) {
         String username = userEntity.getMail();
@@ -83,5 +91,27 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         
         return new UserModel(username, password, authorities);
     }
+    
+    private String getMD5Hash(String pass) throws LogiwebServiceException {
+        try {
+             MessageDigest md = MessageDigest.getInstance("MD5");
+             md.reset();
+             byte[] array = md.digest(pass.getBytes());
+             StringBuffer sb = new StringBuffer();
+             for (int i = 0; i < array.length; ++i) {
+               sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+            }
+             return sb.toString();
+         } catch (NoSuchAlgorithmException e) {
+             LOG.warn("MD5 hashing failed", e);
+             throw new LogiwebServiceException("MD5 hashing failed", e);
+         }
+     }
 
+    @Override
+    public void changeUsername(int userId, String newUsername)
+            throws ServiceValidationException, LogiwebServiceException {
+        // TODO Auto-generated method stub
+        
+    }
 }

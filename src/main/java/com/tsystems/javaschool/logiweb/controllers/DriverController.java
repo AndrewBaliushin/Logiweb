@@ -43,6 +43,9 @@ public class DriverController {
     private @Value("${views.addOrEditDriver}") String addOrUpdateDriverViewPath;
     private @Value("${views.driverList}") String driverListViewPath;
     private @Value("${views.driverInfo}") String driverInfoViewPath;
+    
+    private @Value("${bussines.defaultDriverPass}") String defaultDriverPass;
+    private @Value("${bussines.driverAccountTemplate}") String driverAccountTemplate;
 
     @Autowired
     private DriverService driverService;
@@ -115,7 +118,7 @@ public class DriverController {
     }
     
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.POST)
-    public String addDriver(
+    public String addDriverAndDriverAccount(
             @ModelAttribute("driverModel") @Valid DriverModel driverModel,
             BindingResult result, Model model) {
         
@@ -127,7 +130,9 @@ public class DriverController {
         }
         
         try {
-            int newDriverId = driverService.addDriver(driverModel);
+            int newDriverId = driverService.addDriverWithAccount(driverModel,
+                    convertDriverEmpIdToAccountNameByTemplate(driverModel
+                            .getEmployeeId()), defaultDriverPass);
             return "redirect:/driver/" + newDriverId;
         } catch (ServiceValidationException e) {
             model.addAttribute("error", e.getMessage());
@@ -138,6 +143,12 @@ public class DriverController {
             LOG.warn("Unexcpected error happened.");
             throw new RuntimeException(e);
         }        
+    }
+    
+    private String convertDriverEmpIdToAccountNameByTemplate(int driverEmployeeId) {
+        String idAsString = String.valueOf(driverEmployeeId);
+        String result = driverAccountTemplate.replace("{}", idAsString);
+        return result;
     }
     
     @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.GET)
