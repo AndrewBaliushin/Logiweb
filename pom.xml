@@ -9,6 +9,8 @@
 	<url>https://github.com/AndrewBaliushin/Logiweb</url>
 
 	<properties>
+	
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<spring.version>4.1.6.RELEASE</spring.version>
 		<spring.security.version>4.0.1.RELEASE</spring.security.version>
@@ -24,6 +26,7 @@
 		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
 		<cxf.version>3.1.1</cxf.version>
 		<version.wildfly.maven.plugin>1.0.1.Final</version.wildfly.maven.plugin>
+		<liquibase.version>3.4.0</liquibase.version>
 
 	</properties>
 
@@ -222,30 +225,20 @@
 	</dependencies>
 
 	<build>
-		<finalName>logiweb</finalName>
+	<finalName>logiweb</finalName>
 
-		<pluginManagement>
-			<plugins>
-
-				<!-- Compiler plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.3</version>
-				</plugin>
-
-			</plugins>
-		</pluginManagement>
-
+	<pluginManagement>
 		<plugins>
 
-			<!-- Java version -->
+			<!-- Compiler plugin: Java version -->
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
 			</plugin>
 
 			<!-- Tomcat -->
@@ -259,15 +252,37 @@
 					<path>/logiweb</path>
 				</configuration>
 			</plugin>
-			
+
 			<!-- WildFly -->
 			<plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>${version.wildfly.maven.plugin}</version>
-            </plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>${version.wildfly.maven.plugin}</version>
+			</plugin>
 
+			<!-- liquibase -->
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>${liquibase.version}</version>
+				<configuration>
+					<changeLogFile>src/main/resources/liquibase/db.changelog-master.xml</changeLogFile>
+					<driver>com.mysql.jdbc.Driver</driver>
+					<url>jdbc:mysql://localhost:3306/logiweb</url>
+					<username>javaschool</username>
+					<password>12345</password>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>update</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
-	</build>
+	</pluginManagement>
+</build>
 
 </project>
