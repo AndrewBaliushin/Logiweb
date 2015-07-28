@@ -51,21 +51,11 @@ public interface DriverService {
      * @param editedDriver as model
      * @throws ServiceValidationException
      *             if after edit driver don't have all required fields or have
-     *             not unique employee ID
+     *             not unique employee ID or account name
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
-    void editDriver(DriverModel editedDriver) throws ServiceValidationException, LogiwebServiceException;
+    void editDriverAndAccountName(DriverModel editedDriver, String newAccountName) throws ServiceValidationException, LogiwebServiceException;
 
-    /**
-     * Add Driver.
-     * 
-     * @param new Driver as model
-     * @return id in db of created driver
-     * @throws ServiceValidationException if driver don't have all required fields or have not unique employee ID
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
-     */
-    int addDriver(DriverModel newDriver) throws ServiceValidationException, LogiwebServiceException;
-    
     /**
      * Add driver and account for him.
      * 
@@ -88,7 +78,7 @@ public interface DriverService {
      * @throws ServiceValidationException if driver is attached to truck.
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault)
      */
-    void removeDriver(Driver driverToRemove) throws LogiwebServiceException;
+    void removeDriverAndAccount(Driver driverToRemove) throws LogiwebServiceException;
     
     /**
      * Find drivers that are not assign to trucks.

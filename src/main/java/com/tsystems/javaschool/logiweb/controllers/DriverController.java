@@ -183,7 +183,9 @@ public class DriverController {
         }
         
         try {
-            driverService.editDriver(driverModel);
+            driverService.editDriverAndAccountName(driverModel,
+                    convertDriverEmpIdToAccountNameByTemplate(driverModel
+                            .getEmployeeId()));
             return "redirect:/driver/" + driverModel.getId();
         } catch (ServiceValidationException e) {
             model.addAttribute("error", e.getMessage());
@@ -218,7 +220,7 @@ public class DriverController {
         try {
             Driver driverToRemove = new Driver();
             driverToRemove.setId(driverId);
-            driverService.removeDriver(driverToRemove);
+            driverService.removeDriverAndAccount(driverToRemove);
             
             return "Driver deleted";
         } catch (ServiceValidationException e) {

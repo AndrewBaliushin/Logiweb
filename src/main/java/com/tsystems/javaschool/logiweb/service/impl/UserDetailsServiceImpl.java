@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -109,9 +111,22 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
      }
 
     @Override
-    public void changeUsername(int userId, String newUsername)
+    public void changeUsername(String oldUsername, String newUsername)
             throws ServiceValidationException, LogiwebServiceException {
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    @Transactional
+    public LogiwebUser findUserById(int id) throws LogiwebServiceException {
+        try {
+            return userDao.find(id);
+        } catch (DaoException e) {
+            LOG.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
+        }
+    }
+    
+    
 }

@@ -31,6 +31,7 @@ import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.service.DriverService;
+import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 
 public class DriverServiceImplTest {
@@ -38,6 +39,7 @@ public class DriverServiceImplTest {
     private DriverDao driverDaoMock;
     private TruckDao truckDaoMock;
     private DriverShiftJournaDao shiftDaoMock;
+    private UserService userServiceMock;
     private EntityManager emMock;
     private EntityTransaction transMock;
     
@@ -48,6 +50,7 @@ public class DriverServiceImplTest {
         shiftDaoMock = mock(DriverShiftJournaDao.class);
         emMock = mock(EntityManager.class);
         transMock = mock(EntityTransaction.class);
+        userServiceMock = mock(UserService.class);
         
         when(emMock.getTransaction()).thenReturn(transMock);
     }
@@ -63,7 +66,7 @@ public class DriverServiceImplTest {
      */
     @Test
     public void testFindUnassignedToTrucksDriversByMaxWorkingHoursAndCity() throws DaoException, LogiwebServiceException {
-        DriverService driverService = new DriverServiceImpl(driverDaoMock, truckDaoMock, shiftDaoMock);
+        DriverService driverService = new DriverServiceImpl(driverDaoMock, truckDaoMock, shiftDaoMock, userServiceMock);
         
         Set<Driver> freeDrivers = new HashSet<Driver>();
         Driver d1 = new Driver(); //have 15 working hours in two shifts

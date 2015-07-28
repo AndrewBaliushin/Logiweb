@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -37,7 +38,12 @@ public class Driver {
     @NotNull
     @Column(name = "driver_employee_id_UQ", unique = true, nullable = false)
     private int employeeId;
-
+    
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "driver_logiweb_account_id")
+    private LogiwebUser logiwebAccount;
+    
     @NotNull
     @Column(name = "driver_name", nullable = false)
     private String name;
@@ -140,5 +146,15 @@ public class Driver {
     public void setDeletedRecord(boolean deletedRecord) {
         this.deletedRecord = deletedRecord;
     }
+
+    public LogiwebUser getLogiwebAccount() {
+        return logiwebAccount;
+    }
+
+    public void setLogiwebAccount(LogiwebUser logiwebAccount) {
+        this.logiwebAccount = logiwebAccount;
+    }
+    
+    
     
 }

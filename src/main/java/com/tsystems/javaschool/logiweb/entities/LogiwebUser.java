@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -37,8 +38,19 @@ public class LogiwebUser {
     
     @Column(name = "md5_pass", nullable = false)
     private String passMd5;
+    
+    @OneToOne(mappedBy = "logiwebAccount")
+    private Driver attachedDriver;
 
     public LogiwebUser() {
+    }
+
+    public Driver getAttachedDriver() {
+        return attachedDriver;
+    }
+
+    public void setAttachedDriver(Driver attachedDriver) {
+        this.attachedDriver = attachedDriver;
     }
 
     public int getId() {

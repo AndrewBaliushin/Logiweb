@@ -20,10 +20,12 @@ import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundExce
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
+import com.tsystems.javaschool.logiweb.dao.UserDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
+import com.tsystems.javaschool.logiweb.entities.LogiwebUser;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.entities.status.UserRole;
@@ -49,14 +51,16 @@ public class DriverServiceImpl implements DriverService {
     private TruckDao truckDao;
     private DriverShiftJournaDao driverShiftJournalDao;
     private UserService userService;
+    private UserDao userDao;
       
     @Autowired
     public DriverServiceImpl(DriverDao driverDao, TruckDao truckDao,
-            DriverShiftJournaDao shiftDao, UserService userService) {
+            DriverShiftJournaDao shiftDao, UserService userService, UserDao userDao) {
         this.driverDao = driverDao;
         this.truckDao = truckDao;
         this.driverShiftJournalDao = shiftDao;
 	this.userService = userService;
+	this.userDao = userDao;
     }
     
     /**
@@ -107,7 +111,7 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public void editDriver(DriverModel editedDriver) throws ServiceValidationException, LogiwebServiceException {
+    public void editDriverAndAccountName(DriverModel editedDriver, String newAccountName) throws ServiceValidationException, LogiwebServiceException {
         if(editedDriver.getId() == null || editedDriver.getId() <= 0) {
             throw new ServiceValidationException("Driver id isn't provided.");
         }
@@ -130,6 +134,8 @@ public class DriverServiceImpl implements DriverService {
                     editedDriver);
             
             driverDao.update(driverEnitytyToEdit);
+            LogiwebUser account = driverEnitytyToEdit.getLogiwebAccount();
+            account.setMail(newAccountName);
 
             LOG.info("Driver edited. " + driverEnitytyToEdit.getName() + " "
                     + driverEnitytyToEdit.getSurname() + " ID#" + driverEnitytyToEdit.getId());
@@ -160,11 +166,15 @@ public class DriverServiceImpl implements DriverService {
     }
     
     /**
-     * {@inheritDoc}
+     * Add Driver.
+     * 
+     * @param new Driver as model
+     * @return id in db of created driver
+     * @throws ServiceValidationException if driver don't have all required fields or have not unique employee ID
+     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
-    @Override
     @Transactional
-    public int addDriver(DriverModel newDriverAsModel) throws ServiceValidationException,
+    private int addDriver(DriverModel newDriverAsModel, LogiwebUser accountForDriver) throws ServiceValidationException,
             LogiwebServiceException {
         newDriverAsModel.setStatus(DriverStatus.FREE); //default status
         
@@ -180,6 +190,7 @@ public class DriverServiceImpl implements DriverService {
             Driver newDriverEnity = new Driver();
             
             populateAllowedDriverFieldsFromModel(newDriverEnity, newDriverAsModel);
+            newDriverEnity.setLogiwebAccount(accountForDriver);
             
             driverDao.create(newDriverEnity);
 
@@ -201,8 +212,10 @@ public class DriverServiceImpl implements DriverService {
     @Transactional
     public int addDriverWithAccount(DriverModel newDriver, String accountName, String pass)
             throws ServiceValidationException, LogiwebServiceException {
-        int driverId = addDriver(newDriver); //all necessary validations are inside this method
-        userService.createNewUser(accountName, pass, UserRole.ROLE_DRIVER);
+        int newUserId = userService.createNewUser(accountName, pass, UserRole.ROLE_DRIVER);
+        LogiwebUser accountForDriver = userService.findUserById(newUserId); 
+        int driverId = addDriver(newDriver, accountForDriver); //all necessary validations are inside this method
+        
         return driverId;
     }
 
@@ -211,7 +224,7 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public void removeDriver(Driver driverToRemove) throws ServiceValidationException, LogiwebServiceException {
+    public void removeDriverAndAccount(Driver driverToRemove) throws ServiceValidationException, LogiwebServiceException {
         try {
             Driver managedDriverToRemove = driverDao.find(driverToRemove
                     .getId());
@@ -225,12 +238,14 @@ public class DriverServiceImpl implements DriverService {
                 throw new ServiceValidationException(
                         "Driver is assigned to Truck. Removal is forbiden.");
             }
+            
 
+            LogiwebUser account = managedDriverToRemove.getLogiwebAccount();
             driverDao.delete(managedDriverToRemove);
-            LOG.info("Driver removed. Employee ID#" + managedDriverToRemove.getEmployeeId()
+            userDao.delete(account);
+            
+            LOG.info("Driver removed with account. Employee ID#" + managedDriverToRemove.getEmployeeId()
                     + " " + managedDriverToRemove.getName() + " " + managedDriverToRemove.getSurname());
-        } catch (ServiceValidationException e) {
-            throw e;        
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
