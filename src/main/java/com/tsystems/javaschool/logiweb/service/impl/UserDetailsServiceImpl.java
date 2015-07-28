@@ -21,6 +21,7 @@ import com.tsystems.javaschool.logiweb.dao.UserDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.entities.LogiwebUser;
 import com.tsystems.javaschool.logiweb.entities.status.UserRole;
+import com.tsystems.javaschool.logiweb.model.DriverUserModel;
 import com.tsystems.javaschool.logiweb.model.UserModel;
 import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
@@ -85,13 +86,18 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     private User buildSecurityUserFromUserEntity(LogiwebUser userEntity) {
         String username = userEntity.getMail();
         String password = userEntity.getPassMd5();
-        GrantedAuthority userRole = new SimpleGrantedAuthority(userEntity.getRole()
-                .name());
+        GrantedAuthority userRole = new SimpleGrantedAuthority(userEntity
+                .getRole().name());
 
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         authorities.add(userRole);
-        
-        return new UserModel(username, password, authorities);
+
+        if (userEntity.getRole() == UserRole.ROLE_DRIVER) {
+            return new DriverUserModel(username, password, authorities,
+                    userEntity.getAttachedDriver().getId());
+        } else {
+            return new UserModel(username, password, authorities);
+        }
     }
     
     private String getMD5Hash(String pass) throws LogiwebServiceException {

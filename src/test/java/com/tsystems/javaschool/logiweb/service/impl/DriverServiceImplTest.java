@@ -66,7 +66,7 @@ public class DriverServiceImplTest {
      */
     @Test
     public void testFindUnassignedToTrucksDriversByMaxWorkingHoursAndCity() throws DaoException, LogiwebServiceException {
-        DriverService driverService = new DriverServiceImpl(driverDaoMock, truckDaoMock, shiftDaoMock, userServiceMock);
+        DriverService driverService = new DriverServiceImpl(driverDaoMock, truckDaoMock, shiftDaoMock, userServiceMock, null);
         
         Set<Driver> freeDrivers = new HashSet<Driver>();
         Driver d1 = new Driver(); //have 15 working hours in two shifts

@@ -1,6 +1,8 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,7 +13,8 @@ import javax.validation.Valid;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +30,8 @@ import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundExce
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
+import com.tsystems.javaschool.logiweb.model.DriverUserModel;
+import com.tsystems.javaschool.logiweb.model.UserModel;
 import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
@@ -82,6 +87,8 @@ public class DriverController {
         mav.setViewName(driverInfoViewPath);
         
         try {
+            authorizeAccesToDriverInfo(driverId);
+            
             Driver driver = driverService.findDriverById(driverId);
             if (driver == null) {
                 throw new RecordNotFoundException();
@@ -109,6 +116,31 @@ public class DriverController {
         return mav;
     }
     
+    private void authorizeAccesToDriverInfo(int driverId) throws LogiwebServiceException {
+        UserModel user = (UserModel) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        
+        //grant full access to everyone except drivers
+        if (!(user instanceof DriverUserModel)) return;
+        
+        int currentDriverId = ((DriverUserModel) user).getDriverLogiwebId();
+        if (driverId == currentDriverId) return;
+        
+        Driver driver = driverService.findDriverById(currentDriverId);
+        if (driver.getCurrentTruck() != null) {
+            Set<Driver> coDrivers = driver.getCurrentTruck().getDrivers();
+            List<Integer> coDriversIds = new ArrayList<Integer>();
+            for (Driver d : coDrivers) {
+                coDriversIds.add(d.getId());
+            }
+            
+            //allow to get info on co-drivers
+            if(coDriversIds.contains(Integer.valueOf(driverId))) return;
+        }
+    
+        throw new AccessDeniedException("Only managers and co-drivers have access to info.");
+    }
+
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.GET)
     public String showFormForNewDriver (Model model) {
         model.addAttribute("formAction", "new");
