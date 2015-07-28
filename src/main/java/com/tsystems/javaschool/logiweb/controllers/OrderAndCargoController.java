@@ -50,7 +50,7 @@ public class OrderAndCargoController {
     private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
 
     private @Autowired CityService cityService;
-    private @Autowired OrderService orderAndCaroService;
+    private @Autowired OrderService orderService;
     private @Autowired RouteService routeService;
     private @Autowired TrucksService truckService;
     private @Autowired DriverService driverService;
@@ -64,7 +64,7 @@ public class OrderAndCargoController {
         RouteInformation routeInfo = null;
         DeliveryOrder order = null;
         try {
-            order = orderAndCaroService.findOrderById(orderId);
+            order = orderService.findOrderById(orderId);
             if (order == null) throw new RecordNotFoundException("Order #" + orderId + " not exist.");
 
             routeInfo = routeService
@@ -170,7 +170,7 @@ public class OrderAndCargoController {
         try {
             Truck truck = new Truck();
             truck.setId(truckId);
-            orderAndCaroService.assignTruckToOrder(truck, orderId);  
+            orderService.assignTruckToOrder(truck, orderId);  
             return "Truck assigned";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -192,7 +192,7 @@ public class OrderAndCargoController {
     @ResponseBody
     public String removeDriversAndTruckFromOrder(@PathVariable("orderId") int orderId, HttpServletResponse response) {
        try {
-            DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
+            DeliveryOrder order = orderService.findOrderById(orderId);
             Truck truck = order.getAssignedTruck();
             if(truck != null) {
                 truckService.removeAssignedOrderAndDriversFromTruck(truck.getId());  
@@ -222,8 +222,8 @@ public class OrderAndCargoController {
     @ResponseBody
     public String setStatusReady(@PathVariable("orderId") int orderId, HttpServletResponse response) {
        try {
-            DeliveryOrder order = orderAndCaroService.findOrderById(orderId);
-            orderAndCaroService.setReadyStatusForOrder(order);  
+            DeliveryOrder order = orderService.findOrderById(orderId);
+            orderService.setReadyStatusForOrder(order);  
             return "Status 'READY' is set";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -236,19 +236,17 @@ public class OrderAndCargoController {
     }
     
     @RequestMapping(value = {"/order/new"})
-    public ModelAndView addOrder() {
-        DeliveryOrder newOrder = new DeliveryOrder();
-        newOrder.setStatus(OrderStatus.NOT_READY);
+    public String addOrder() {
         try {
-            orderAndCaroService.addNewOrder(newOrder);
+            DeliveryOrder newOrder = new DeliveryOrder();
+            newOrder.setStatus(OrderStatus.NOT_READY);
+            orderService.addNewOrder(newOrder);
+            return "redirect:/order/"
+            + newOrder.getId() + "/edit";
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexpected exception.", e);
             throw new RuntimeException("Unrecoverable server exception.", e);
         }
-        
-        ModelAndView mav = new ModelAndView("redirect:/manager/editOrder");
-        mav.addObject("orderId", newOrder.getId());
-        return mav;
     }
     
     @RequestMapping(value = {"/order"})
@@ -257,7 +255,7 @@ public class OrderAndCargoController {
         mav.setViewName(orderListViewPath);
         
         try {
-            mav.addObject("orders", orderAndCaroService.findAllOrders());
+            mav.addObject("orders", orderService.findAllOrders());
         } catch (LogiwebServiceException e) {
             LOG.warn("Unexpected exception.", e);
             throw new RuntimeException("Unrecoverable server exception.", e);

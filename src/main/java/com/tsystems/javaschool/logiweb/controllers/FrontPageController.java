@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.tsystems.javaschool.logiweb.entities.status.UserRole;
+import com.tsystems.javaschool.logiweb.model.DriverUserModel;
+import com.tsystems.javaschool.logiweb.model.UserModel;
 
 @Controller
 public class FrontPageController {
@@ -20,15 +22,18 @@ public class FrontPageController {
         Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) SecurityContextHolder
                 .getContext().getAuthentication().getAuthorities();
 
-        GrantedAuthority manager = new SimpleGrantedAuthority(
+        GrantedAuthority managerRole = new SimpleGrantedAuthority(
                 UserRole.ROLE_MANAGER.name());
-        GrantedAuthority driver = new SimpleGrantedAuthority(
+        GrantedAuthority driverRole = new SimpleGrantedAuthority(
                 UserRole.ROLE_DRIVER.name());
 
-        if (authorities.contains(manager)) {
+        if (authorities.contains(managerRole)) {
             return "forward:/manager";
-        } else if (authorities.contains(driver)) {
-            return "forward:/driver";
+        } else if (authorities.contains(driverRole)) {
+            DriverUserModel logedInDriver = (DriverUserModel) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal();
+            int driverId = logedInDriver.getDriverLogiwebId();
+            return "forward:/driver/" + driverId;
         } 
         
         throw new AccessDeniedException("User role is unknown.");

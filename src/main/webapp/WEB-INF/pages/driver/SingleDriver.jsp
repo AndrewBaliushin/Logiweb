@@ -8,13 +8,10 @@
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
-    <jsp:param name="homeLink" value="/manager" />
-    <jsp:param name="userRoleForTitle" value="Manager" />
+    <jsp:param name="homeLink" value="/" />
 </jsp:include>
 
-<jsp:include page="ext/SingleDriverInfoSnippet.jsp">
-    <jsp:param name="privelege" value="edit" />
-</jsp:include>
+<jsp:include page="ext/SingleDriverInfoSnippet.jsp"/>
 
 <c:if test="${!empty routeInfo}">
 	<!-- Print waypoints-->
