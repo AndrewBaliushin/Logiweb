@@ -11,8 +11,6 @@ import com.tsystems.javaschool.logiweb.controllers.DriverController;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.Truck;
-import com.tsystems.javaschool.logiweb.model.DriverModel;
-import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.CargoService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.OrderService;
@@ -20,7 +18,6 @@ import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
-import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 
 @WebService(endpointInterface = "com.tsystems.javaschool.logiweb.webservices.DriverWebService")
 public class DriverWebServiceImpl implements DriverWebService {
@@ -106,32 +103,60 @@ public class DriverWebServiceImpl implements DriverWebService {
     }
 
     @Override
-    public DriverModel getDriverInfo(int driverEmployeeId) {
+    public String getDriverInfo(int driverEmployeeId) {
         try {
-            Driver driver = driverService
-                    .findDriverByEmployeeId(driverEmployeeId);
-            if (driver == null) {
-                throw new NotFoundException("Driver employee id#"
-                        + driverEmployeeId + "not found.");
-            }
+          Driver driver = driverService
+                  .findDriverByEmployeeId(driverEmployeeId);
+          
+          if (driver == null) {
+              throw new NotFoundException("Driver employee id#"
+                      + driverEmployeeId + "not found.");
+          }
+          
+          StringBuilder sb = new StringBuilder();
+          sb.append(driver.getEmployeeId() + "# ");
+          sb.append(driver.getName() + " " + driver.getSurname());
 
-            DriverModel driverModel = ModelToEntityConverter
-                    .convertToModel(driver);
-
-            driverModel.setWorkingHoursThisMonth(driverService.calculateWorkingHoursForDriver(driver));
-            
-            if (driver.getCurrentTruck() != null
-                    && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
-                RouteInformation routeInfo = routeService
-                        .getRouteInformationForOrder(driver.getCurrentTruck()
-                                .getAssignedDeliveryOrder());
-                driverModel.setRouteInfo(routeInfo);
-            }
-            
-            return driverModel;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Something unexpected happen", e);
-            throw new ServerErrorException(500);
-        }
+          sb.append(" worked in this month: " + driverService.calculateWorkingHoursForDriver(driver));
+          sb.append(" hours.");
+          
+          return sb.toString();
+      } catch (LogiwebServiceException e) {
+          LOG.warn("Something unexpected happen", e);
+          throw new ServerErrorException(500);
+      }
     }
+    
+    
+
+
+//    @Override
+//    public DriverModel getDriverInfo(int driverEmployeeId) {
+//        try {
+//            Driver driver = driverService
+//                    .findDriverByEmployeeId(driverEmployeeId);
+//            if (driver == null) {
+//                throw new NotFoundException("Driver employee id#"
+//                        + driverEmployeeId + "not found.");
+//            }
+//
+//            DriverModel driverModel = ModelToEntityConverter
+//                    .convertToModel(driver);
+//
+//            driverModel.setWorkingHoursThisMonth(driverService.calculateWorkingHoursForDriver(driver));
+//            
+//            if (driver.getCurrentTruck() != null
+//                    && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
+//                RouteInformation routeInfo = routeService
+//                        .getRouteInformationForOrder(driver.getCurrentTruck()
+//                                .getAssignedDeliveryOrder());
+//                driverModel.setRouteInfo(routeInfo);
+//            }
+//            
+//            return driverModel;
+//        } catch (LogiwebServiceException e) {
+//            LOG.warn("Something unexpected happen", e);
+//            throw new ServerErrorException(500);
+//        }
+//    }
 }
