@@ -34,6 +34,7 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 	<mvc:resources location="/fonts/" mapping="/fonts/**" />
 	<mvc:annotation-driven validator="validator"/>
 	
-    <context:property-placeholder location="classpath:logiweb.properties" />
+	 <context:property-placeholder location="classpath:logiweb.properties" />
+    
 
 </beans>

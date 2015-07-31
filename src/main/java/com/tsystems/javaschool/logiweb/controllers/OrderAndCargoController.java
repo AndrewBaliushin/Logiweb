@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
 import com.tsystems.javaschool.logiweb.entities.Cargo;
@@ -39,10 +38,8 @@ import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 @Controller
 public class OrderAndCargoController {
     
-    //FIXME parsing from props
-    //${bussines.maxWorkingHours}
-    @Value("#{T(java.lang.Float).parseFloat('176')}") 
-    private Float driverMonthlyWorkingHoursLimit;
+    @Value("${bussines.maxWorkingHours}")
+    private float driverMonthlyWorkingHoursLimit;
     
     private @Value("${views.orderList}") String orderListViewPath;
     private @Value("${views.editOrder}") String editOrderViewPath;

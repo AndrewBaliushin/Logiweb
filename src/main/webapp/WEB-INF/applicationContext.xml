@@ -32,6 +32,8 @@
 
 	<jaxws:endpoint id="driverWebService" implementor="com.tsystems.javaschool.logiweb.webservices.DriverWebServiceImpl"
 		address="/driver" />
+		
+    <context:property-placeholder location="classpath:logiweb.properties" />
     
     
 </beans>
