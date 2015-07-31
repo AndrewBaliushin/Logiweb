@@ -19,8 +19,8 @@ import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
 
-@WebService(endpointInterface = "com.tsystems.javaschool.logiweb.webservices.DriverWebService")
-public class DriverWebServiceImpl implements DriverWebService {
+@WebService(endpointInterface = "com.tsystems.javaschool.logiweb.webservices.WsDriver")
+public class WsDriverImpl implements WsDriver {
 
     private final static Logger LOG = Logger.getLogger(DriverController.class);
     

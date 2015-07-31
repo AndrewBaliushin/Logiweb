@@ -4,7 +4,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 @WebService
-public interface DriverWebService {
+public interface WsDriver {
 
     void shiftBegginedForDriver(
             @WebParam(name = "DriverEmployeeId") int driverEmployeeId,

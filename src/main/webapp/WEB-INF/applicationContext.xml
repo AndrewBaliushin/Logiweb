@@ -30,7 +30,7 @@
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-	<jaxws:endpoint id="driverWebService" implementor="com.tsystems.javaschool.logiweb.webservices.DriverWebServiceImpl"
+	<jaxws:endpoint id="wsDriver" implementor="com.tsystems.javaschool.logiweb.webservices.WsDriverImpl"
 		address="/driver" />
 		
     <context:property-placeholder location="classpath:logiweb.properties" />
