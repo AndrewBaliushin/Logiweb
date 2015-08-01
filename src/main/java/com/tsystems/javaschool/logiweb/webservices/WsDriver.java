@@ -25,6 +25,6 @@ public interface WsDriver {
      */
     void setStatusDeliveredForCargoAndFinilizeOrderIfPossible(@WebParam(name = "CargoId") int cargoId);
 
-    String getDriverInfo(
+    DriverInfo getDriverInfo(
             @WebParam(name = "DriverEmployeeId") int driverEmployeeId);
 }

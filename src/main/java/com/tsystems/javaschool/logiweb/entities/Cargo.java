@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
 
@@ -84,6 +85,7 @@ public class Cargo {
         this.status = status;
     }
 
+    @XmlTransient
     public DeliveryOrder getOrderForThisCargo() {
         return orderForThisCargo;
     }

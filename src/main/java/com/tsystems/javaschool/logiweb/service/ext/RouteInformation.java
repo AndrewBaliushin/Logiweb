@@ -54,7 +54,19 @@ public class RouteInformation {
         
         public Cargo getCargo() {
             return cargo;
-        }        
+        }
+
+        public void setOperation(OperationWithCargo operation) {
+            this.operation = operation;
+        }
+
+        public void setCity(City city) {
+            this.city = city;
+        }
+
+        public void setCargo(Cargo cargo) {
+            this.cargo = cargo;
+        }    
     }
     
     private float estimatedTime;
@@ -96,4 +108,18 @@ public class RouteInformation {
 
     public RouteInformation() {
     }
+
+    public void setEstimatedTime(float estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
+
+    public void setMaxWeightOnCourse(float maxWeightOnCourse) {
+        this.maxWeightOnCourse = maxWeightOnCourse;
+    }
+
+    public void setBestOrderOfDelivery(List<Waypoint> bestOrderOfDelivery) {
+        this.bestOrderOfDelivery = bestOrderOfDelivery;
+    }
+    
+    
 }
