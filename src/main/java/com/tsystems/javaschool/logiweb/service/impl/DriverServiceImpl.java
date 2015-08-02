@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -276,10 +277,7 @@ public class DriverServiceImpl implements DriverService {
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
-        } catch (Exception e) {
-            LOG.warn(e);
-            throw new LogiwebServiceException(e);
-        }
+        } 
     }
     
     /**
@@ -296,10 +294,7 @@ public class DriverServiceImpl implements DriverService {
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
-        } catch (Exception e) {
-            LOG.warn(e);
-            throw new LogiwebServiceException(e);
-        }
+        } 
     }
     
     /**
@@ -321,9 +316,6 @@ public class DriverServiceImpl implements DriverService {
             
             return workingHours.get(driver);
         } catch (DaoException e) {
-            LOG.warn(e);
-            throw new LogiwebServiceException(e);
-        } catch (Exception e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
         }
@@ -423,9 +415,6 @@ public class DriverServiceImpl implements DriverService {
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
-        } catch (Exception e) {
-            LOG.warn(e);
-            throw new LogiwebServiceException(e);
         }
     }
 
@@ -457,7 +446,59 @@ public class DriverServiceImpl implements DriverService {
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
-        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    @Transactional
+    public void startShiftForDriver(int driverEmloyeeId)
+            throws ServiceValidationException, LogiwebServiceException {
+        try {
+            Driver driver = driverDao.findByEmployeeId(driverEmloyeeId);
+            if (driver == null) {
+                throw new ServiceValidationException(
+                        "Provide valid driver employee id.");
+            }
+            DriverShiftJournal unfinishedShift = driverShiftJournalDao
+                    .findUnfinishedShiftForDriver(driver);
+
+            if (unfinishedShift != null) {
+                throw new ServiceValidationException(
+                        "Finish existing shift before creating new one.");
+            }
+
+            DriverShiftJournal newShift = new DriverShiftJournal();
+            newShift.setDriverForThisRecord(driver);
+            newShift.setShiftBeggined(new Date()); // now
+
+            driverShiftJournalDao.create(newShift);
+        } catch (DaoException e) {
+            LOG.warn(e);
+            throw new LogiwebServiceException(e);
+        } 
+    }
+
+    @Override
+    @Transactional
+    public void endShiftForDriver(int driverEmloyeeId)
+            throws ServiceValidationException, LogiwebServiceException {
+        try {
+            Driver driver = driverDao.findByEmployeeId(driverEmloyeeId);
+            if (driver == null) {
+                throw new ServiceValidationException(
+                        "Provide valid driver employee id.");
+            }
+            DriverShiftJournal unfinishedShift = driverShiftJournalDao
+                    .findUnfinishedShiftForDriver(driver);
+
+            if (unfinishedShift == null) {
+                throw new ServiceValidationException(
+                        "There is no active shift for this driver.");
+            }
+            
+            unfinishedShift.setShiftEnded(new Date());
+            driverShiftJournalDao.update(unfinishedShift);   
+        } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
         }

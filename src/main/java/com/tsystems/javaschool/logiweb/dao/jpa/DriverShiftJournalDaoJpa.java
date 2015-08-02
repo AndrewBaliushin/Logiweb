@@ -85,4 +85,41 @@ public class DriverShiftJournalDaoJpa extends GenericDaoJpa<DriverShiftJournal>
         drivers.add(driver);
         return findThisMonthJournalsForDrivers(drivers);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DriverShiftJournal findUnfinishedShiftForDriver(Driver driver)
+            throws DaoException {
+        
+        try {
+            EntityManager em = getEntityManager();
+            String journalEntityName = DriverShiftJournal.class.getSimpleName();
+            
+            String queryString = "SELECT j FROM " + journalEntityName + " j"
+                    + " WHERE driverForThisRecord = :driver AND shiftEnded IS NULL";
+    
+            Query query = em.createQuery(queryString, DriverShiftJournal.class);
+            query.setParameter("driver", driver);
+        
+            /*
+             * type List needs unchecked conversion to conform to
+             * List<DriverShiftJournal>
+             */
+            @SuppressWarnings("unchecked")
+            List<DriverShiftJournal> result = query.getResultList();
+            
+            if (result.isEmpty()) {
+                return null;
+            } else {
+                return result.get(0);
+            }
+        } catch (Exception e) {
+            LOG.warn(e);
+            throw new DaoException(e);
+        }
+    }
+    
+    
 }

@@ -39,4 +39,7 @@ public interface DriverShiftJournaDao extends GenericDao<DriverShiftJournal> {
      * @throws DaoException if something unexpected happened
      */
     Set<DriverShiftJournal> findThisMonthJournalsForDrivers(Driver driver) throws DaoException;
+
+    DriverShiftJournal findUnfinishedShiftForDriver(Driver driver) throws DaoException;
 }
+

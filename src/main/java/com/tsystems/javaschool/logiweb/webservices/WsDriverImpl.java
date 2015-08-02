@@ -1,7 +1,6 @@
 package com.tsystems.javaschool.logiweb.webservices;
 
 import javax.jws.WebService;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ServerErrorException;
 
 import org.jboss.logging.Logger;
@@ -18,13 +17,16 @@ import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
+import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
+import com.tsystems.javaschool.logiweb.webservices.exceptions.InvalidRequestException;
+import com.tsystems.javaschool.logiweb.webservices.exceptions.NotFoundException;
 
 @WebService(endpointInterface = "com.tsystems.javaschool.logiweb.webservices.WsDriver")
 public class WsDriverImpl implements WsDriver {
 
     private final static Logger LOG = Logger.getLogger(DriverController.class);
-    
+
     @Autowired
     private DriverService driverService;
     @Autowired
@@ -35,12 +37,32 @@ public class WsDriverImpl implements WsDriver {
     private OrderService ordersAndCargoService;
     @Autowired
     private TrucksService truckService;
-    
+
     @Override
-    public void shiftBegginedForDriver(int driverEmployeeId,
-            boolean isBehindWheel) {
-        System.out.println(driverEmployeeId);
-        System.out.println(isBehindWheel);
+    public void shiftBegginedForDriver(int driverEmployeeId)
+            throws InvalidRequestException {
+        try {
+            driverService.startShiftForDriver(driverEmployeeId);
+        } catch (ServiceValidationException e) {
+            throw new InvalidRequestException(e);
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Something unexpected happen", e);
+            throw new ServerErrorException(500);
+        }
+
+    }
+
+    @Override
+    public void shiftEndedForDriver(int driverEmployeeId)
+            throws InvalidRequestException {
+        try {
+            driverService.endShiftForDriver(driverEmployeeId);
+        } catch (ServiceValidationException e) {
+            throw new InvalidRequestException(e);
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Something unexpected happen", e);
+            throw new ServerErrorException(500);
+        }
     }
 
     @Override
@@ -86,35 +108,38 @@ public class WsDriverImpl implements WsDriver {
     public void setStatusDeliveredForCargoAndFinilizeOrderIfPossible(int cargoId) {
         try {
             cargoService.setDeliveredStatus(cargoId);
-            
+
             DeliveryOrder order = cargoService.findById(cargoId)
                     .getOrderForThisCargo();
             Truck assignedToTruck = order.getAssignedTruck();
             int orderId = order.getId();
             if (ordersAndCargoService.isAllCargoesInOrderDelivered(orderId)) {
                 ordersAndCargoService.setStatusDeliveredForOrder(orderId);
-                truckService.removeAssignedOrderAndDriversFromTruck(assignedToTruck.getId());
-            }       
+                truckService
+                        .removeAssignedOrderAndDriversFromTruck(assignedToTruck
+                                .getId());
+            }
         } catch (RecordNotFoundServiceException e) {
             throw new NotFoundException();
         } catch (LogiwebServiceException e) {
             LOG.warn("Something unexpected happen", e);
             throw new ServerErrorException(500);
-        }        
+        }
     }
 
     @Override
-    public DriverInfo getDriverInfo(int driverEmployeeId) {
+    public DriverInfo getDriverInfo(int driverEmployeeId)
+            throws NotFoundException {
         try {
-          Driver driver = driverService
-                  .findDriverByEmployeeId(driverEmployeeId);
-          
-          if (driver == null) {
-              throw new NotFoundException("Driver employee id#"
-                      + driverEmployeeId + "not found.");
-          }
-          
-          DriverInfo info = new DriverInfo();
+            Driver driver = driverService
+                    .findDriverByEmployeeId(driverEmployeeId);
+
+            if (driver == null) {
+                throw new NotFoundException("Driver employee id#"
+                        + driverEmployeeId + "not found.");
+            }
+
+            DriverInfo info = new DriverInfo();
 
             info.setEmployeeId(driver.getEmployeeId());
             info.setCutrrentStatus(driver.getStatus());
@@ -122,20 +147,20 @@ public class WsDriverImpl implements WsDriver {
             info.setSurname(driver.getSurname());
             info.setWorkingHoursInThisMonth(driverService
                     .calculateWorkingHoursForDriver(driver));
-            
+
             if (driver.getCurrentTruck() != null
-                  && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
-              RouteInformation routeInfo = routeService
-                      .getRouteInformationForOrder(driver.getCurrentTruck()
-                              .getAssignedDeliveryOrder());
-              info.setRouteInformation(routeInfo);
-          }
-          
-          return info;
-      } catch (LogiwebServiceException e) {
-          LOG.warn("Something unexpected happen", e);
-          throw new ServerErrorException(500);
-      }
+                    && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
+                RouteInformation routeInfo = routeService
+                        .getRouteInformationForOrder(driver.getCurrentTruck()
+                                .getAssignedDeliveryOrder());
+                info.setRouteInformation(routeInfo);
+            }
+
+            return info;
+        } catch (LogiwebServiceException e) {
+            LOG.warn("Something unexpected happen", e);
+            throw new ServerErrorException(500);
+        }
     }
-    
+
 }
