@@ -117,6 +117,7 @@ public class WsDriverImpl implements WsDriver {
           DriverInfo info = new DriverInfo();
 
             info.setEmployeeId(driver.getEmployeeId());
+            info.setCutrrentStatus(driver.getStatus());
             info.setName(driver.getName());
             info.setSurname(driver.getSurname());
             info.setWorkingHoursInThisMonth(driverService
