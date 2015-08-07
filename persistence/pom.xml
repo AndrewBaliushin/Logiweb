@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.tsystems.javaschool</groupId>
+		<artifactId>logiweb</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>persistence</artifactId>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.tsystems.javaschool</groupId>
+			<artifactId>common</artifactId>
+		</dependency>
+
+		<!-- Validation api -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+
+		<!-- Hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
+		<!-- MySQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Compiler plugin: Java version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+
+				<!-- liquibase -->
+				<plugin>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-maven-plugin</artifactId>
+					<configuration>
+						<skip>false</skip>
+					</configuration>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

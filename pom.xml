@@ -1,16 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tsystems.javaschool</groupId>
 	<artifactId>logiweb</artifactId>
-	<packaging>war</packaging>
-	<version>2.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>Baliushin JavaSchool Logiweb project</name>
 	<url>https://github.com/AndrewBaliushin/Logiweb</url>
 
+
+	<modules>
+		<module>common</module>
+		<module>persistence</module>
+		<module>service</module>
+		<module>webservice</module>
+		<module>presentation</module>
+	</modules>
+
 	<properties>
-	
-	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<spring.version>4.1.7.RELEASE</spring.version>
 		<spring.security.version>4.0.1.RELEASE</spring.security.version>
@@ -30,265 +38,291 @@
 
 	</properties>
 
-	<dependencies>
+	<dependencyManagement>
+		<dependencies>
 
-		<!-- JUnit -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
+			<dependency>
+				<groupId>com.tsystems.javaschool</groupId>
+				<artifactId>common</artifactId>
+				<version>3.0.0-SNAPSHOT</version>
+			</dependency>
 
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<version>1.3</version>
-			<scope>compile</scope>
-		</dependency>
+			<dependency>
+				<groupId>com.tsystems.javaschool</groupId>
+				<artifactId>persistence</artifactId>
+				<version>3.0.0-SNAPSHOT</version>
+			</dependency>
 
-		<!-- Mockito -->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-		</dependency>
+			<dependency>
+				<groupId>com.tsystems.javaschool</groupId>
+				<artifactId>service</artifactId>
+				<version>3.0.0-SNAPSHOT</version>
+			</dependency>
+			
+			<dependency>
+                <groupId>com.tsystems.javaschool</groupId>
+                <artifactId>webservice</artifactId>
+                <version>3.0.0-SNAPSHOT</version>
+            </dependency>
 
+			<!-- JUnit -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
 
-		<!-- Spring -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-all</artifactId>
+				<version>1.3</version>
+				<scope>compile</scope>
+			</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-
-		<!-- Spring security -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
-		
-		
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
-
-		<!-- Validation api -->
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
-		</dependency>
-
-		<!-- Hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>4.3.2.Final</version>
-		</dependency>
+			<!-- Mockito -->
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-all</artifactId>
+				<version>${mockito.version}</version>
+			</dependency>
 
 
-		<!-- Logging -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+			<!-- Spring -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 
-		<!-- MySQL -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.connector.version}</version>
-		</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 
-		<!-- JSTL -->
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-			<version>${jstl.version}</version>
-		</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 
-		<!-- Sonar -->
-		<dependency>
-			<groupId>org.codehaus.sonar</groupId>
-			<artifactId>sonar-maven-plugin</artifactId>
-			<version>${sonar.version}</version>
-		</dependency>
+			<!-- Spring security -->
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>${spring.security.version}</version>
+			</dependency>
 
-		<!-- GSON -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
-		</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${spring.security.version}</version>
+			</dependency>
 
-		<!-- Servlet API -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet-api.version}</version>
-			<scope>provided</scope>
-		</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-taglibs</artifactId>
+				<version>${spring.security.version}</version>
+			</dependency>
 
-		<!-- Apache commons -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-collections4</artifactId>
-			<version>4.0</version>
-		</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${spring.security.version}</version>
+			</dependency>
 
-		<!-- CXF -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.apache.cxf</groupId> -->
-<!-- 			<artifactId>cxf-api</artifactId> -->
-<!-- 			<version>2.7.13</version> -->
-<!-- 		</dependency> -->
-		
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-rs-service-description</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		
+			<!-- Validation api -->
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.0.0.GA</version>
+			</dependency>
 
-		<!-- WS RS -->
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0.1</version>
-		</dependency>
+			<!-- Hibernate -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-core</artifactId>
+				<version>${hibernate.version}</version>
+			</dependency>
 
-        
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+				<version>${hibernate.version}</version>
+			</dependency>
 
-	</dependencies>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>4.3.2.Final</version>
+			</dependency>
+
+
+			<!-- Logging -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<!-- MySQL -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql.connector.version}</version>
+			</dependency>
+
+			<!-- JSTL -->
+			<dependency>
+				<groupId>jstl</groupId>
+				<artifactId>jstl</artifactId>
+				<version>${jstl.version}</version>
+			</dependency>
+
+			<!-- Sonar -->
+			<dependency>
+				<groupId>org.codehaus.sonar</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar.version}</version>
+			</dependency>
+
+			<!-- GSON -->
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>${gson.version}</version>
+			</dependency>
+
+			<!-- Servlet API -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${javax.servlet-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<!-- Apache commons -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.4</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>4.0</version>
+			</dependency>
+
+			<!-- CXF -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.cxf</groupId> -->
+			<!-- <artifactId>cxf-api</artifactId> -->
+			<!-- <version>2.7.13</version> -->
+			<!-- </dependency> -->
+
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-frontend-jaxws</artifactId>
+				<version>${cxf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-transports-http</artifactId>
+				<version>${cxf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-rs-service-description</artifactId>
+				<version>${cxf.version}</version>
+			</dependency>
+
+			<!-- WS RS -->
+			<dependency>
+				<groupId>javax.ws.rs</groupId>
+				<artifactId>javax.ws.rs-api</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
-	<finalName>logiweb</finalName>
+		<pluginManagement>
+			<plugins>
 
-	<pluginManagement>
-		<plugins>
+				<!-- Compiler plugin: Java version -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
 
-			<!-- Compiler plugin: Java version -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-			</plugin>
+				<!-- Tomcat -->
+				<plugin>
+					<groupId>org.apache.tomcat.maven</groupId>
+					<artifactId>tomcat7-maven-plugin</artifactId>
+					<version>2.2</version>
+					<configuration>
+						<url>http://localhost:8080/manager/text</url>
+						<server>TomcatServer</server>
+						<path>/logiweb</path>
+					</configuration>
+				</plugin>
 
-			<!-- Tomcat -->
-			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<url>http://localhost:8080/manager/text</url>
-					<server>TomcatServer</server>
-					<path>/logiweb</path>
-				</configuration>
-			</plugin>
+				<!-- WildFly -->
+				<plugin>
+					<groupId>org.wildfly.plugins</groupId>
+					<artifactId>wildfly-maven-plugin</artifactId>
+					<version>${version.wildfly.maven.plugin}</version>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
 
-			<!-- WildFly -->
-			<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>${version.wildfly.maven.plugin}</version>
-			</plugin>
-
-			<!-- liquibase -->
-			<plugin>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-maven-plugin</artifactId>
-				<version>${liquibase.version}</version>
-				<configuration>
-					<changeLogFile>src/main/resources/liquibase/db.changelog-master.xml</changeLogFile>
-					<driver>com.mysql.jdbc.Driver</driver>
-					<url>jdbc:mysql://localhost:3306/logiweb</url>
-					<username>javaschool</username>
-					<password>12345</password>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>update</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</pluginManagement>
-</build>
+				<!-- liquibase -->
+				<plugin>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-maven-plugin</artifactId>
+					<version>${liquibase.version}</version>
+					<configuration>
+						<changeLogFile>src/main/resources/liquibase/db.changelog-master.xml</changeLogFile>
+						<driver>com.mysql.jdbc.Driver</driver>
+						<url>jdbc:mysql://localhost:3306/logiweb</url>
+						<username>javaschool</username>
+						<password>12345</password>
+						
+						<skip>true</skip>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>update</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 </project>
