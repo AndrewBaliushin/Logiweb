@@ -2,10 +2,8 @@ package com.tsystems.javaschool.logiweb.service;
 
 import java.util.Set;
 
-import com.tsystems.javaschool.logiweb.entities.Cargo;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Truck;
-import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
@@ -51,27 +49,27 @@ public interface OrderService {
     /**
      * Assign truck to order. Truck must by managed entity.
      * 
-     * @param truck
+     * @param truckId
      * @param orderId
      * @throws ServiceValidationException
      *             if truck is not Free or broken.
      * @throws LogiwebServiceException
      *             if unexpected happened
      */
-    void assignTruckToOrder(Truck truck, int orderId)
+    void assignTruckToOrder(int truckId, int orderId)
             throws ServiceValidationException, LogiwebServiceException;
 
     /**
      * Sets 'READY' status for order if order have at least one cargo and assign
      * truck with full crew.
      * 
-     * @param order
+     * @param orderId
      * @throws LogiwebServiceException
      *             if unexpected happened
      * @throws ServiceValidationException
      *             if validation failed. Description in message.
      */
-    void setReadyStatusForOrder(DeliveryOrder order)
+    void setReadyStatusForOrder(int orderId)
             throws ServiceValidationException, LogiwebServiceException;
 
     /**

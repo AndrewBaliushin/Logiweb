@@ -117,13 +117,6 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
      }
 
     @Override
-    public void changeUsername(String oldUsername, String newUsername)
-            throws ServiceValidationException, LogiwebServiceException {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     @Transactional
     public LogiwebUser findUserById(int id) throws LogiwebServiceException {
         try {

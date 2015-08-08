@@ -19,7 +19,6 @@ import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.CargoService;
-import com.tsystems.javaschool.logiweb.service.OrderService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -28,7 +27,7 @@ import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationExcep
 public class CargoServiceImpl implements CargoService {
 
     private static final Logger LOG = Logger
-            .getLogger(OrderServiceImpl.class);
+            .getLogger(CargoServiceImpl.class);
 
     private CargoDao cargoDao;
     private CityDao cityDao;
@@ -102,11 +101,7 @@ public class CargoServiceImpl implements CargoService {
     @Override
     @Transactional
     public void addCargo(Cargo newCargo) throws ServiceValidationException, LogiwebServiceException {
-        try {
-            validateNewCargoForEmptyFields(newCargo);
-        } catch (ServiceValidationException e) {
-            throw e;
-        }
+        validateNewCargoForEmptyFields(newCargo); //throws e
         
         try {
             City originCity = cityDao.find(newCargo.getOriginCity().getId());
@@ -114,7 +109,6 @@ public class CargoServiceImpl implements CargoService {
                     .getId());
             DeliveryOrder orderForCargo = deliveryOrderDao.find(newCargo
                     .getOrderForThisCargo().getId());
-            
             
             //switch detached entities in cargo to managed ones
             newCargo.setOriginCity(originCity);
@@ -178,7 +172,7 @@ public class CargoServiceImpl implements CargoService {
                      "Order must be in NOT READY status to add new cargo.");
          } else if (c.getOrderForThisCargo().getAssignedTruck() != null) {
              throw new ServiceValidationException(
-                     "Order can't be assigned to Truck.");
+                     "Can't add cargo to Order which already have assigned Truck.");
          }
      }
      

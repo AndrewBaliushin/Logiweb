@@ -29,17 +29,14 @@ import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
        @UniqueConstraint(columnNames = "driver_employee_id_UQ"))
 public class Driver {
 
-    @NotNull
     @Id
     @GeneratedValue
     @Column(name = "driver_id", unique = true, nullable = false)
     private int id;
 
-    @NotNull
     @Column(name = "driver_employee_id_UQ", unique = true, nullable = false)
     private int employeeId;
     
-    @NotNull
     @OneToOne
     @JoinColumn(name = "driver_logiweb_account_id")
     private LogiwebUser logiwebAccount;
@@ -48,16 +45,13 @@ public class Driver {
     @Column(name = "driver_name", nullable = false)
     private String name;
 
-    @NotNull
     @Column(name = "driver_surname", nullable = false)
     private String surname;
 
-    @NotNull
     @Column(name = "driver_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private DriverStatus status;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_current_location_city_FK", nullable = false)
     private City currentCity;

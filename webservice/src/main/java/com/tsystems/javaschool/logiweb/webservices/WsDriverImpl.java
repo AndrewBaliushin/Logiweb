@@ -147,7 +147,7 @@ public class WsDriverImpl implements WsDriver {
             info.setName(driver.getName());
             info.setSurname(driver.getSurname());
             info.setWorkingHoursInThisMonth(driverService
-                    .calculateWorkingHoursForDriver(driver));
+                    .calculateWorkingHoursForDriver(driver.getId()));
 
             if (driver.getCurrentTruck() != null
                     && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {

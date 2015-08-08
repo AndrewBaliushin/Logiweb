@@ -109,7 +109,7 @@ public class OrderAndCargoController {
                 
                 Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
                 for (Driver driver : suggestedDrivers) {
-                    workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver));
+                    workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver.getId()));
                 }
                 mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
             }
@@ -165,9 +165,7 @@ public class OrderAndCargoController {
         }
         
         try {
-            Truck truck = new Truck();
-            truck.setId(truckId);
-            orderService.assignTruckToOrder(truck, orderId);  
+            orderService.assignTruckToOrder(truckId, orderId);  
             return "Truck assigned";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -219,8 +217,7 @@ public class OrderAndCargoController {
     @ResponseBody
     public String setStatusReady(@PathVariable("orderId") int orderId, HttpServletResponse response) {
        try {
-            DeliveryOrder order = orderService.findOrderById(orderId);
-            orderService.setReadyStatusForOrder(order);  
+            orderService.setReadyStatusForOrder(orderId);  
             return "Status 'READY' is set";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

@@ -74,11 +74,11 @@ public interface DriverService {
     /**
      * Remove driver.
      * 
-     * @param driver
+     * @param driverId
      * @throws ServiceValidationException if driver is attached to truck.
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault)
      */
-    void removeDriverAndAccount(Driver driverToRemove) throws LogiwebServiceException;
+    void removeDriverAndAccount(int driverId) throws LogiwebServiceException;
     
     /**
      * Find drivers that are not assign to trucks.
@@ -100,12 +100,12 @@ public interface DriverService {
      * Records that don't have ending date (meaning that driver is currently on shift)
      * are also counted. End time for them is current time. 
      * 
-     * @param driver
+     * @param driverId
      * @return
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    float calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException;
+    float calculateWorkingHoursForDriver(int driverId) throws LogiwebServiceException;
 
     /**
      * Assign driver to truck.

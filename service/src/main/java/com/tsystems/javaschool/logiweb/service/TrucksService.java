@@ -64,14 +64,14 @@ public interface TrucksService {
     /**
      * Remove truck.
      * 
-     * @param truckToRemove
+     * @param trickId to remove
      * @throws ServiceValidationException
      *             if truck is attached to order or have attached drivers.
      * @throws LogiwebServiceException
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    void removeTruck(Truck truckToRemove) throws ServiceValidationException, LogiwebServiceException;
+    void removeTruck(int truckId) throws ServiceValidationException, LogiwebServiceException;
     
     /**
      * Find trucks that have Status 'OK' and not busy by order, and have cargo

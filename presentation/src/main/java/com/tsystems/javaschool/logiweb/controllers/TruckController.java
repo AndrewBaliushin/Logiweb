@@ -157,9 +157,7 @@ public class TruckController {
     @ResponseBody
     public String deleteDriver(@PathVariable("truckId") int truckId, HttpServletResponse response) {
         try {
-            Truck truckToRemove = new Truck();
-            truckToRemove.setId(truckId);
-            truckService.removeTruck(truckToRemove);
+            truckService.removeTruck(truckId);
             
             return "Driver deleted";
         } catch (ServiceValidationException e) {

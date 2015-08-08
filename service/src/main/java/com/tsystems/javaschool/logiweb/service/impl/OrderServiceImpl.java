@@ -2,21 +2,16 @@ package com.tsystems.javaschool.logiweb.service.impl;
 
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tsystems.javaschool.logiweb.dao.CargoDao;
-import com.tsystems.javaschool.logiweb.dao.CityDao;
 import com.tsystems.javaschool.logiweb.dao.DeliveryOrderDao;
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.entities.Cargo;
-import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
@@ -39,16 +34,11 @@ public class OrderServiceImpl implements OrderService {
     private static final Logger LOG = Logger.getLogger(OrderServiceImpl.class);
         
     private DeliveryOrderDao deliveryOrderDao;
-    private CargoDao cargoDao;
-    private CityDao cityDao;
     private TruckDao truckDao;
 
     @Autowired
-    public OrderServiceImpl(DeliveryOrderDao deliveryOrderDao,
-            CargoDao cargoDao, CityDao cityDao, TruckDao truckDao) {
+    public OrderServiceImpl(DeliveryOrderDao deliveryOrderDao, TruckDao truckDao) {
         this.deliveryOrderDao = deliveryOrderDao;
-        this.cargoDao = cargoDao;
-        this.cityDao = cityDao;
         this.truckDao = truckDao;
     }
 
@@ -64,8 +54,6 @@ public class OrderServiceImpl implements OrderService {
             throw new LogiwebServiceException(e);
         }
     }
-    
-    
     
     /**
      * {@inheritDoc}
@@ -96,22 +84,16 @@ public class OrderServiceImpl implements OrderService {
             throw new LogiwebServiceException(e);
         }
     }
-    
-   
-    
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-    public void assignTruckToOrder(Truck truck, int orderId)
+    public void assignTruckToOrder(int truckId, int orderId)
             throws ServiceValidationException, LogiwebServiceException {
         try {
-            if(truck == null) {
-                throw new ServiceValidationException("Truck does not exist.");
-            } 
-            truck = truckDao.find(truck.getId());       //switch to managed entity
+            Truck truck = truckDao.find(truckId); 
             if(truck == null) {
                 throw new ServiceValidationException("Truck does not exist.");
             } 
@@ -128,12 +110,17 @@ public class OrderServiceImpl implements OrderService {
                 throw new ServiceValidationException("Order " + orderId + " does not exist.");
             } else if (order.getAssignedTruck() != null) {
                 throw new ServiceValidationException("Order " + orderId + " must not be assigned to another truck.");
-            } else if (order.getAssignedCargoes() == null || order.getAssignedCargoes().isEmpty()) {
-                throw new ServiceValidationException("Order " + orderId + " must have cargo.");
+            } else if (order.getAssignedCargoes() == null
+                    || order.getAssignedCargoes().isEmpty()) {
+                throw new ServiceValidationException("Order " + orderId
+                        + " must have cargo.");
             }
             
             truck.setAssignedDeliveryOrder(order);
             order.setAssignedTruck(truck);
+            
+            deliveryOrderDao.update(order);
+            truckDao.update(truck);
             LOG.info("Truck id#" + truck.getId() + " assign to order id#" + order.getId());
         } catch (DaoException e) {
             LOG.warn("Something unexpected happened.", e);
@@ -146,10 +133,10 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional
-    public void setReadyStatusForOrder(DeliveryOrder order)
+    public void setReadyStatusForOrder(int orderId)
             throws ServiceValidationException, LogiwebServiceException {
         try {
-            order = deliveryOrderDao.find(order.getId()); 
+            DeliveryOrder order = deliveryOrderDao.find(orderId); 
             
             if (order == null) {
                 throw new ServiceValidationException("Order does not exist.");
@@ -175,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
             order.setStatus(OrderStatus.READY_TO_GO);
             deliveryOrderDao.update(order);
             LOG.info("Order id#" + order.getId() + " changed status to " + OrderStatus.READY_TO_GO);
-        } catch (Exception e) {
+        } catch (DaoException e) {
             LOG.warn("Something unexpected happened.", e);
             throw new LogiwebServiceException(e);
         }

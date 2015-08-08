@@ -70,7 +70,7 @@ public class DriverController {
             
             Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
             for (Driver driver : drivers) {
-                workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver));
+                workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver.getId()));
             }
             mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
         } catch (LogiwebServiceException e) {
@@ -96,7 +96,7 @@ public class DriverController {
             
             mav.addObject("driver", driver);
             mav.addObject("workingHours",
-                    driverService.calculateWorkingHoursForDriver(driver));
+                    driverService.calculateWorkingHoursForDriver(driver.getId()));
             
             if (driver.getCurrentTruck() != null
                     && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
@@ -250,9 +250,7 @@ public class DriverController {
     @ResponseBody
     public String deleteDriver(@PathVariable("driverId") int driverId, HttpServletResponse response) {
         try {
-            Driver driverToRemove = new Driver();
-            driverToRemove.setId(driverId);
-            driverService.removeDriverAndAccount(driverToRemove);
+            driverService.removeDriverAndAccount(driverId);
             
             return "Driver deleted";
         } catch (ServiceValidationException e) {

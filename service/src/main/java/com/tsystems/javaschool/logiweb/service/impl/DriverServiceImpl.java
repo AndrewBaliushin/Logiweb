@@ -2,7 +2,9 @@ package com.tsystems.javaschool.logiweb.service.impl;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -122,20 +124,20 @@ public class DriverServiceImpl implements DriverService {
                         + editedDriver.getEmployeeId() + " is already in use.");
             }
             
-            Driver driverEnitytyToEdit = driverDao.find(editedDriver.getId());
-            if(driverEnitytyToEdit == null) {
+            Driver driverEntityToEdit = driverDao.find(editedDriver.getId());
+            if(driverEntityToEdit == null) {
                 throw new ServiceValidationException("Driver record not found.");
             }
             
-            populateAllowedDriverFieldsFromModel(driverEnitytyToEdit,
+            populateAllowedDriverFieldsFromModel(driverEntityToEdit,
                     editedDriver);
             
-            driverDao.update(driverEnitytyToEdit);
-            LogiwebUser account = driverEnitytyToEdit.getLogiwebAccount();
+            driverDao.update(driverEntityToEdit);
+            LogiwebUser account = driverEntityToEdit.getLogiwebAccount();
             account.setMail(newAccountName);
 
-            LOG.info("Driver edited. " + driverEnitytyToEdit.getName() + " "
-                    + driverEnitytyToEdit.getSurname() + " ID#" + driverEnitytyToEdit.getId());
+            LOG.info("Driver edited. " + driverEntityToEdit.getName() + " "
+                    + driverEntityToEdit.getSurname() + " ID#" + driverEntityToEdit.getId());
         } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
@@ -163,15 +165,16 @@ public class DriverServiceImpl implements DriverService {
     }
     
     /**
-     * Add Driver.
+     * Add Driver and link new driver to provided driver account.
      * 
      * @param new Driver as model
+     * @param existing account
      * @return id in db of created driver
      * @throws ServiceValidationException if driver don't have all required fields or have not unique employee ID
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
     @Transactional
-    private int addDriver(DriverModel newDriverAsModel, LogiwebUser accountForDriver) throws ServiceValidationException,
+    private int addDriverAndLinkHimToAccount(DriverModel newDriverAsModel, LogiwebUser accountForDriver) throws ServiceValidationException,
             LogiwebServiceException {
         newDriverAsModel.setStatus(DriverStatus.FREE); //default status
         
@@ -211,7 +214,7 @@ public class DriverServiceImpl implements DriverService {
             throws ServiceValidationException, LogiwebServiceException {
         int newUserId = userService.createNewUser(accountName, pass, UserRole.ROLE_DRIVER);
         LogiwebUser accountForDriver = userService.findUserById(newUserId); 
-        int driverId = addDriver(newDriver, accountForDriver); //all necessary validations are inside this method
+        int driverId = addDriverAndLinkHimToAccount(newDriver, accountForDriver); //all necessary validations are inside this method
         
         return driverId;
     }
@@ -221,28 +224,26 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public void removeDriverAndAccount(Driver driverToRemove) throws ServiceValidationException, LogiwebServiceException {
+    public void removeDriverAndAccount(int driverId) throws ServiceValidationException, LogiwebServiceException {
         try {
-            Driver managedDriverToRemove = driverDao.find(driverToRemove
-                    .getId());
+            Driver driverToRemove = driverDao.find(driverId);
 
-            if (managedDriverToRemove == null) {
+            if (driverToRemove == null) {
                 throw new ServiceValidationException("Driver with id="
-                        + driverToRemove.getId() + " not found.");
+                        + driverId + " not found.");
             }
 
-            if (managedDriverToRemove.getCurrentTruck() != null) {
+            if (driverToRemove.getCurrentTruck() != null) {
                 throw new ServiceValidationException(
                         "Driver is assigned to Truck. Removal is forbiden.");
             }
-            
 
-            LogiwebUser account = managedDriverToRemove.getLogiwebAccount();
-            driverDao.delete(managedDriverToRemove);
+            LogiwebUser account = driverToRemove.getLogiwebAccount();
+            driverDao.delete(driverToRemove);
             userDao.delete(account);
             
-            LOG.info("Driver removed with account. Employee ID#" + managedDriverToRemove.getEmployeeId()
-                    + " " + managedDriverToRemove.getName() + " " + managedDriverToRemove.getSurname());
+            LOG.info("Driver removed with account. Employee ID#" + driverToRemove.getEmployeeId()
+                    + " " + driverToRemove.getName() + " " + driverToRemove.getSurname());
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
@@ -299,9 +300,9 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public float calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException {
+    public float calculateWorkingHoursForDriver(int driverId) throws LogiwebServiceException {
         try {
-            driver = driverDao.find(driver.getId()); //get managed entity
+            Driver driver = driverDao.find(driverId); //get managed entity
             
             Set<DriverShiftJournal> journals = driverShiftJournalDao
                     .findThisMonthJournalsForDrivers(driver);
@@ -326,7 +327,7 @@ public class DriverServiceImpl implements DriverService {
     private Map<Driver, Float> sumWorkingHoursForThisMonth(
             Collection<DriverShiftJournal> journal) {
     
-        Map<Driver, Float> workingHoursForDrivers = new ConcurrentHashMap<Driver, Float>();
+        Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
         
         Date firstDayOfCurrentMonth = DateUtils.getFirstDateOfCurrentMonth();
         Date firstDayOfNextMonth = DateUtils.getFirstDayOfNextMonth();
@@ -374,9 +375,13 @@ public class DriverServiceImpl implements DriverService {
      */
     private void filterDriversByMaxWorkingHours(
             Map<Driver, Float> workingHoursToFilter, float maxWorkingHours) {
-        for (Entry<Driver, Float> e : workingHoursToFilter.entrySet()) {
+        Iterator<Entry<Driver, Float>> it = workingHoursToFilter.entrySet()
+                .iterator();
+        
+        while (it.hasNext()) {
+            Entry<Driver, Float> e = it.next();
             if (e.getValue() > maxWorkingHours) {
-                workingHoursToFilter.remove(e.getKey());
+                it.remove();
             }
         }
     }
@@ -398,6 +403,7 @@ public class DriverServiceImpl implements DriverService {
             Set<Driver> truckCrew = truck.getDrivers();
             if(truckCrew == null) {
                 truckCrew = new HashSet<Driver>();
+                truck.setDrivers(truckCrew);
             }
         
             if(truckCrew.size() < truck.getCrewSize()) {
@@ -406,8 +412,6 @@ public class DriverServiceImpl implements DriverService {
             } else {
                 throw new ServiceValidationException("All crew positions are occupied. Can't add Driver to crew.");
             }
-        } catch (ServiceValidationException e) {
-            throw e;
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);

@@ -3,7 +3,6 @@ package com.tsystems.javaschool.logiweb.service.impl;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
@@ -37,9 +36,12 @@ public class TrucksSeviceimpl implements TrucksService {
     
     private TruckDao truckDao;
     
+    private LicensePlateValidator licenserPlateValidator;
+    
     @Autowired
-    public TrucksSeviceimpl(TruckDao truckDao) {
+    public TrucksSeviceimpl(TruckDao truckDao, LicensePlateValidator licenserPlateValidator) {
 	this.truckDao = truckDao;
+	this.licenserPlateValidator = licenserPlateValidator;
     }
     
     /**
@@ -81,7 +83,7 @@ public class TrucksSeviceimpl implements TrucksService {
             throw new ServiceValidationException("Truck id is not provided or incorrect.");
         }
         
-        if (!LicensePlateValidator.validateLicensePlate(editedTruckModel
+        if (!licenserPlateValidator.validateLicensePlate(editedTruckModel
                 .getLicencePlate())) {
             throw new ServiceValidationException("License plate "
                     + editedTruckModel.getLicencePlate() + " is not valid.");
@@ -90,7 +92,7 @@ public class TrucksSeviceimpl implements TrucksService {
         try {
             Truck truckWithSamePlate = truckDao.findByLicensePlate(editedTruckModel.getLicencePlate());
             
-            if (truckWithSamePlate != null && truckWithSamePlate.getId() != truckWithSamePlate.getId()) {
+            if (truckWithSamePlate != null && truckWithSamePlate.getId() != editedTruckModel.getId()) {
                 throw new ServiceValidationException("License plate "
                         + editedTruckModel.getLicencePlate() + " is already in use.");
             }
@@ -139,7 +141,7 @@ public class TrucksSeviceimpl implements TrucksService {
             LogiwebServiceException {
         newTruckModel.setStatus(TruckStatus.OK); //default status
         
-        if (!LicensePlateValidator.validateLicensePlate(newTruckModel
+        if (!licenserPlateValidator.validateLicensePlate(newTruckModel
                 .getLicencePlate())) {
             throw new ServiceValidationException("License plate "
                     + newTruckModel.getLicencePlate() + " is not valid.");
@@ -195,14 +197,13 @@ public class TrucksSeviceimpl implements TrucksService {
      */
     @Override
     @Transactional
-    public void removeTruck(Truck truckToRemove)
+    public void removeTruck(int truckId)
             throws ServiceValidationException, LogiwebServiceException {
-        int truckToRemoveId = truckToRemove.getId();
         try {
-            truckToRemove = truckDao.find(truckToRemove.getId());
+            Truck truckToRemove = truckDao.find(truckId);
             if (truckToRemove == null) {
                 throw new ServiceValidationException("Truck "
-                        + truckToRemoveId
+                        + truckId
                         + " not exist. Deletion forbiden.");
             } else if (truckToRemove.getAssignedDeliveryOrder() != null) {
                 throw new ServiceValidationException(
@@ -210,7 +211,7 @@ public class TrucksSeviceimpl implements TrucksService {
             } else if (!truckToRemove.getDrivers().isEmpty()) {
                 throw new ServiceValidationException(
                         "Truck is assigned to one or more drivers. "
-                        + "Deletion forbiden.");
+                                + "Deletion forbiden.");
             }
             
             truckDao.delete(truckToRemove);
@@ -253,6 +254,10 @@ public class TrucksSeviceimpl implements TrucksService {
                 throw new ServiceValidationException("Truck not found.");
             }
             
+            if (truck.getAssignedDeliveryOrder() == null) {
+                throw new ServiceValidationException("Order is not assigned.");
+            }
+            
             if (truck.getAssignedDeliveryOrder().getStatus() == OrderStatus.READY_TO_GO) {
                 throw new ServiceValidationException(
                         "Can't remove truck from READY TO GO order.");
@@ -273,8 +278,9 @@ public class TrucksSeviceimpl implements TrucksService {
                 order.setAssignedTruck(null);
             }
             
+            truckDao.update(truck);            
             LOG.info("Truck id#" + truck.getId() + " and its drivers removed from order.");
-        } catch (Exception e) {
+        } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
         }
