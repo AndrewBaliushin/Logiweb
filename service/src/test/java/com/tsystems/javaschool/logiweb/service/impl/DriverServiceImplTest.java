@@ -157,55 +157,6 @@ public class DriverServiceImplTest {
     }
 
     /**
-     * Test uses mock dao to check algorithm of choosing drivers by working
-     * hours from Shift Journals. Drivers and shift journals are created by
-     * test.
-     * 
-     * @throws DaoException
-     *             "thrown" from mock method. Can't happen.
-     * @throws LogiwebServiceException
-     *             "thrown" from mock method. Can't happen.
-     */
-    @Test
-    public void testFindUnassignedToTrucksDriversByMaxWorkingHoursAndCity()
-            throws DaoException, LogiwebServiceException {
-        setupMocks();
-        List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-
-        City anyCity = new City();
-
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
-
-        // 0 hours test. Expected: drv.test2 (0 hours)
-        Set<Driver> result = driverService
-                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(anyCity,
-                        0);
-        assertThat(result, hasItem(freeDrivers.get(2)));
-
-        // 13 hours test. Expected: drv.test1 (12h), drv.test2 (0 hours) and
-        // drv.test3(5 hours)
-        result = driverService
-                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(anyCity,
-                        13);
-        assertThat(
-                result,
-                hasItems(freeDrivers.get(1), freeDrivers.get(2),
-                        freeDrivers.get(3)));
-
-        // 16 hours test. Expected: drv.test0 (15h), drv.test1 (12h), drv.test2
-        // (0h) and drv.test3(5h)
-        result = driverService
-                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(anyCity,
-                        16);
-        assertThat(
-                result,
-                hasItems(freeDrivers.get(0), freeDrivers.get(1),
-                        freeDrivers.get(2), freeDrivers.get(3)));
-
-    }
-
-    /**
      * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
      * Case: Driver shift started in last month, ended in this.
      */
