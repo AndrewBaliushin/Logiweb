@@ -34,10 +34,8 @@
 			<li class="list-group-item">Current order: 
 			   
 			   <sec:authorize access="hasRole('ROLE_MANAGER')">
-						<a href="
-						  <c:url value="editOrder">
-                              <c:param name="orderId" value="${driver.currentTruck.assignedDeliveryOrder.id}" />
-                          </c:url>">${driver.currentTruck.assignedDeliveryOrder.id}</a>
+				     <a href="${pageContext.request.contextPath}/order/${driver.currentTruck.assignedDeliveryOrder.id}">
+				     ${driver.currentTruck.assignedDeliveryOrder.id}</a>
 				</sec:authorize>
                 <sec:authorize access="hasRole('ROLE_DRIVER')">
 					   ${driver.currentTruck.assignedDeliveryOrder.id}
