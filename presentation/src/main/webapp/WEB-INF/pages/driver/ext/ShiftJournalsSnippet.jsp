@@ -23,5 +23,7 @@
 		</c:forEach>
 
 	</table>
+	
+	<div id="cal-heatmap"></div>
 
 </div>

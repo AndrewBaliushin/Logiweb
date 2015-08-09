@@ -43,6 +43,7 @@ public class OrderAndCargoController {
     
     private @Value("${views.orderList}") String orderListViewPath;
     private @Value("${views.editOrder}") String editOrderViewPath;
+    private @Value("${views.cargoesList}") String cargoesListViewPath;
     
     private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
 
@@ -261,7 +262,7 @@ public class OrderAndCargoController {
     @RequestMapping(value = {"/cargo"})
     public ModelAndView showCargoes() {
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("manager/CargoesList");
+        mav.setViewName(cargoesListViewPath);
         
         try {
             mav.addObject("cargoes", cargoService.findAllCargoes());
