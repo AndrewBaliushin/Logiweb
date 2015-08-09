@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.gson.Gson;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
 import com.tsystems.javaschool.logiweb.entities.Driver;
+import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.model.DriverUserModel;
@@ -39,6 +40,7 @@ import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
+import com.tsystems.javaschool.logiweb.utils.DateUtils;
 
 @Controller
 public class DriverController {
@@ -308,5 +310,43 @@ public class DriverController {
         }
         
         return gson.toJson(jsonMap);
+    }
+    
+    /**
+     * Produce JSON in specific for cal-heatmap format. Method returns data on
+     * driver working hours separated by 1 hour intervals.
+     * 
+     * Example: {"1420070400" : 1} 
+     * "1420070400" -- is unix timestamp
+     * 1 -- intensity in this time point     * 
+     * 
+     * @see https://kamisama.github.io/cal-heatmap/
+     * 
+     * @param driverId
+     * @return
+     */
+    @RequestMapping(value = {"driver/{driverId}/calendarHeatMapData"}, method = RequestMethod.GET)
+    public @ResponseBody Map<String, Integer> makeCalendarHeatMapJsonData(@PathVariable("driverId") int driverId) {
+        try {
+            Map<String, Integer> calendarHeatData = new HashMap<String, Integer>();
+            
+            Driver driver = driverService.findDriverById(driverId);
+            if (driver == null) {
+                throw new RecordNotFoundException();
+            }
+            Set<DriverShiftJournal> journals = driverService
+                    .findDriverJournalsForThisMonth(driver);
+            
+            for (DriverShiftJournal j : journals) {
+                Map<String, Integer> counter = DateUtils
+                        .convertIntervalToCalHeatmapFormat(j.getShiftBeggined(),
+                                j.getShiftEnded());
+                calendarHeatData.putAll(counter);
+            }
+            
+            return calendarHeatData;
+        } catch (LogiwebServiceException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

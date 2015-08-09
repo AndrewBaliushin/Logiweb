@@ -3,8 +3,8 @@
 
 <jsp:include page="../GlobalHeader.jsp">
     <jsp:param name="title" value="Driver info" />
-    <jsp:param value="common/common.css" name="css" />
-    <jsp:param value="manager/RemoveDriver.js" name="js" />
+    <jsp:param value="common/common.css,driver/cal-heatmap.css" name="css" />
+    <jsp:param value="common/RemoveRecord.js,driver/d3.min.js,driver/cal-heatmap.min.js,driver/showCalHeatMap.js" name="js" />
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
