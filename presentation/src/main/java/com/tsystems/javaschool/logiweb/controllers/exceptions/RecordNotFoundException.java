@@ -1,7 +1,7 @@
 package com.tsystems.javaschool.logiweb.controllers.exceptions;
 
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Throw if requested record not exist in data storage.

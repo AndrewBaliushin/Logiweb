@@ -1,7 +1,5 @@
 package com.tsystems.javaschool.logiweb.dao;
 
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.entities.LogiwebUser;
 

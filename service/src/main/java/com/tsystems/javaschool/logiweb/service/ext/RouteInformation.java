@@ -1,11 +1,6 @@
 package com.tsystems.javaschool.logiweb.service.ext;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.persistence.Entity;
-
-import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.entities.Cargo;
 import com.tsystems.javaschool.logiweb.entities.City;

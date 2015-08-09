@@ -1,7 +1,5 @@
 package com.tsystems.javaschool.logiweb.dao.jpa;
 
-import javax.persistence.EntityManager;
-
 import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.dao.DeliveryOrderDao;

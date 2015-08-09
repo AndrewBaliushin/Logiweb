@@ -3,7 +3,6 @@ package com.tsystems.javaschool.logiweb.controllers;
 import java.util.Collection;
 
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.tsystems.javaschool.logiweb.entities.status.UserRole;
 import com.tsystems.javaschool.logiweb.model.DriverUserModel;
-import com.tsystems.javaschool.logiweb.model.UserModel;
 
 @Controller
 public class FrontPageController {

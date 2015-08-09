@@ -2,7 +2,6 @@ package com.tsystems.javaschool.logiweb.service.impl;
 
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
