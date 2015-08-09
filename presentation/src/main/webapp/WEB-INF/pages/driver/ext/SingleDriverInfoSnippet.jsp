@@ -1,6 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!-- Driver info -->
 <div class="panel panel-default">
@@ -45,7 +46,8 @@
 			</li>
 		</c:if>
     
-    <li class="list-group-item">Working hours in this month: <span class="label label-info">${workingHours}</span></li>
+    <li class="list-group-item">Working hours in this month: <span class="label label-info">
+        <fmt:formatNumber type="number" value="${workingHours}" pattern=".#" /></span></li>
         
     </ul>
   

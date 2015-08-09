@@ -356,7 +356,7 @@
 										name="driversIds" id="driver-checkbox-${driver.id}" value="${driver.id}">
 										${driver.name} ${driver.surname} | Currnet city:
 										${driver.currentCity.name} | This month working hours:
-										${workingHoursForDrivers[driver]}
+										<fmt:formatNumber type="number" value="${workingHoursForDrivers[driver]}" pattern=".#" />
 									</label>
 								</c:forEach>
                                     
