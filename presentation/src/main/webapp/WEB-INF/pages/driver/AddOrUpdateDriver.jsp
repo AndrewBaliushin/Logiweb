@@ -88,20 +88,6 @@
           </div>
         </spring:bind>
 
-		<c:if test="${formAction == 'edit'}">
-			<spring:bind path="status">
-				<div class="form-group ${status.error ? 'has-error' : ''}">
-					<label class="col-md-4 control-label">Status</label>
-					<div class="col-md-4">
-						<form:select path="status" class="form-control">
-							<form:options items="${driverStatuses}"/>
-						</form:select>
-						<form:errors path="status" class="control-label" />
-					</div>
-				</div>
-			</spring:bind>
-		</c:if>
-
 		<!-- Submit -->
 		<div class="form-group">
 			<label class="col-md-4 control-label"></label>
