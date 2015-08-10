@@ -12,6 +12,8 @@
   http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
   http://cxf.apache.org/jaxws
   http://cxf.apache.org/schemas/jaxws.xsd">
+  
+    <import resource="classpath*:context-*.xml"/>
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
@@ -30,13 +32,10 @@
     <import resource="classpath*:META-INF/cxf/cxf.xml" />
     <import resource="classpath*:META-INF/cxf/cxf-servlet.xml" />
     
-    <import resource="classpath*:context-webservices.xml"/>
-    
     <jaxws:endpoint id="wsDriver"
         implementor="#wsDriverImpl"
         address="/driver" />
 		
     <context:property-placeholder location="classpath:logiweb.properties" />
-    
     
 </beans>
