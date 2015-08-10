@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
@@ -248,32 +249,32 @@ public class DriverServiceImpl implements DriverService {
             throw new LogiwebServiceException(e);
         }
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
     public Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
-            City city, float maxWorkingHours) throws LogiwebServiceException {
+            City city, float workingHoursMaxLimit) throws LogiwebServiceException {
         try {
             Set<Driver> freeDriversInCity = driverDao
                     .findByCityWhereNotAssignedToTruck(city);
             Set<DriverShiftJournal> journals = driverShiftJournalDao
                     .findThisMonthJournalsForDrivers(freeDriversInCity);
             
-            Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(journals);
+            Map<Driver, Float> workingHoursData = sumWorkingHoursForThisMonth(journals);
             for (Driver driver : freeDriversInCity) {   //add drivers that don't yet have journals
-                if(workingHours.get(driver) == null) workingHours.put(driver, 0f);
+                if(workingHoursData.get(driver) == null) workingHoursData.put(driver, 0f);
             }
             
-            filterDriversByMaxWorkingHours(workingHours, maxWorkingHours);
+            filterDriversByMaxWorkingHours(workingHoursData, workingHoursMaxLimit);
             
-            return workingHours.keySet();
+            return workingHoursData.keySet();
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
-        } 
+        }
     }
     
     /**

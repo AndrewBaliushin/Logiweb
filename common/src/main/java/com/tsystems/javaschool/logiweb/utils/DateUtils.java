@@ -1,6 +1,5 @@
 package com.tsystems.javaschool.logiweb.utils;
 
-import java.awt.datatransfer.StringSelection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,6 +44,15 @@ public class DateUtils {
      */
     public static Date getFirstDayOfNextMonth() {
         return getFirstDayOfCurrentOrNextMonth(true);
+    }
+    
+    /**
+     * Calculate difference between current time and first second of next month.
+     * 
+     * @return hours in float
+     */
+    public static float getHoursUntilEndOfMonth() {
+        return diffInHours(new Date(), getFirstDayOfNextMonth());
     }
 
     private static Date getFirstDayOfCurrentOrNextMonth(boolean nextMonth) {

@@ -34,6 +34,7 @@ import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
+import com.tsystems.javaschool.logiweb.utils.DateUtils;
 
 @Controller
 public class OrderAndCargoController {
@@ -100,7 +101,9 @@ public class OrderAndCargoController {
         //suggest drivers
         try {
             if (order.getAssignedTruck() != null) {
-                float workingHoursLimit = driverMonthlyWorkingHoursLimit - routeInfo.getEstimatedTime();
+                
+                float workingHoursLimit = 
+                        calcMaxWorkingHoursThatDriverCanHave(routeInfo.getEstimatedTime());
                 
                 Set<Driver> suggestedDrivers = driverService
                         .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
@@ -122,6 +125,25 @@ public class OrderAndCargoController {
         mav.addObject("statuses", OrderStatus.values());
         
         return mav;
+    }
+    
+    /**
+     * Account for possibility that order delivery can take all time in this 
+     * month and some in next. 
+     * 
+     * If there is not enough time in this month to finish order 
+     * and if it wont take more hours in next month than allowed by 
+     * business rules then we limit hours to what is left in this month.
+     * @return limited to this month hours value or original value
+     */
+    private float calcMaxWorkingHoursThatDriverCanHave(float hoursToDeliver) {
+        float diff = DateUtils.getHoursUntilEndOfMonth() - hoursToDeliver;
+        if (diff < 0 && driverMonthlyWorkingHoursLimit + diff > 0) {
+            return DateUtils.getHoursUntilEndOfMonth();
+        } else {
+            return driverMonthlyWorkingHoursLimit
+                    - hoursToDeliver;
+        }
     }
     
     /**

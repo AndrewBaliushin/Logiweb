@@ -81,14 +81,19 @@ public interface DriverService {
     
     /**
      * Find drivers that are not assign to trucks.
-     * find them by city and max working hours that they have in this month.
+     * find them by city. Filter out drivers who don't have 
+     * enough working time to complete this order.
+     * 
+     * If there is not enough time in this month to finish order 
+     * and if it wont take more hours in next month than allowed by 
+     * business rules for driver then we limit hours to what is left in this month.
      * 
      * @param city
-     * @param maxWorkingHours -- limit max amount of working hours that driver had in this month
+     * @param deliveryTime -- time to deliver
      * @return drivers or empty set
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault)
      */
-    Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(City city, float maxWorkingHours) throws LogiwebServiceException;
+    Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(City city, float deliveryTime) throws LogiwebServiceException;
     
     /**
      * Calculate working hours for driver for this month.
