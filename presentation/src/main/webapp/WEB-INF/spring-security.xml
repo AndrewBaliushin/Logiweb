@@ -27,8 +27,10 @@
         <intercept-url pattern="/logout" access="permitAll" />
         
         <intercept-url pattern="/driver/new" access="hasRole('ROLE_MANAGER')" />
+        <intercept-url pattern="/driver/*/" access="hasAnyRole('ROLE_MANAGER', 'ROLE_DRIVER')" />
         <intercept-url pattern="/driver/*" access="hasAnyRole('ROLE_MANAGER', 'ROLE_DRIVER')" />
         <intercept-url pattern="/driver" access="hasRole('ROLE_MANAGER')" />
+        <intercept-url pattern="/driver/*/calendarHeatMapData" access="hasAnyRole('ROLE_MANAGER', 'ROLE_DRIVER')" />
         
         <intercept-url pattern="/" access="isAuthenticated()" />
         <intercept-url pattern="/**" access="hasRole('ROLE_MANAGER')" />

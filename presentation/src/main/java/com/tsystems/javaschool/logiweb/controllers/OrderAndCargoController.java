@@ -56,70 +56,49 @@ public class OrderAndCargoController {
     private @Autowired CargoService cargoService;
 
     @RequestMapping(value = {"order/{orderId}/edit", "order/{orderId}"}, method = RequestMethod.GET)
-    public ModelAndView editOrder(@PathVariable("orderId") int orderId) {
+    public ModelAndView editOrder(@PathVariable("orderId") int orderId) throws LogiwebServiceException {
         ModelAndView mav = new ModelAndView();
         mav.setViewName(editOrderViewPath);
-        
-        RouteInformation routeInfo = null;
-        DeliveryOrder order = null;
-        try {
-            order = orderService.findOrderById(orderId);
-            if (order == null) throw new RecordNotFoundException("Order #" + orderId + " not exist.");
 
-            routeInfo = routeService
-                    .getRouteInformationForOrder(order);
+        DeliveryOrder order = orderService.findOrderById(orderId);
+        if (order == null)
+            throw new RecordNotFoundException("Order #" + orderId
+                    + " not exist.");
 
-            mav.addObject("orderId", orderId);
-            mav.addObject("order", order);
-            mav.addObject("routeInfo", routeInfo);
-            mav.addObject("maxWorkingHoursLimit", driverMonthlyWorkingHoursLimit);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("The 'orderId' parameter must not be null, empty or anything other than integer");
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
-        }
+        RouteInformation routeInfo = routeService.getRouteInformationForOrder(order);
+
+        mav.addObject("orderId", orderId);
+        mav.addObject("order", order);
+        mav.addObject("routeInfo", routeInfo);
+        mav.addObject("maxWorkingHoursLimit", driverMonthlyWorkingHoursLimit);
         
-        try {
-            mav.addObject("cities", cityService.findAllCities());
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-        }
+        mav.addObject("cities", cityService.findAllCities());
         
         //suggest trucks
-        try {
-            if (order.getAssignedTruck() == null) {
-                Set<Truck> suggestedTrucks = truckService
-                        .findFreeAndUnbrokenByCargoCapacity(routeInfo
-                                .getMaxWeightOnCourse());
-                mav.addObject("suggestedTrucks", suggestedTrucks);
-            }
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-        }
+        if (order.getAssignedTruck() == null) {
+            Set<Truck> suggestedTrucks = truckService
+                    .findFreeAndUnbrokenByCargoCapacity(routeInfo
+                            .getMaxWeightOnCourse());
+            mav.addObject("suggestedTrucks", suggestedTrucks);
+        }        
         
         //suggest drivers
-        try {
-            if (order.getAssignedTruck() != null) {
-                
-                float workingHoursLimit = 
-                        calcMaxWorkingHoursThatDriverCanHave(routeInfo.getEstimatedTime());
-                
-                Set<Driver> suggestedDrivers = driverService
-                        .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
-                                order.getAssignedTruck().getCurrentCity(),
-                                workingHoursLimit);
-                mav.addObject("suggestedDrivers", suggestedDrivers);
-                
-                Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
-                for (Driver driver : suggestedDrivers) {
-                    workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver.getId()));
-                }
-                mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
+        if (order.getAssignedTruck() != null) {
+            float workingHoursLimit = calcMaxWorkingHoursThatDriverCanHave(routeInfo
+                    .getEstimatedTime());
+
+            Set<Driver> suggestedDrivers = driverService
+                    .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
+                            order.getAssignedTruck().getCurrentCity(),
+                            workingHoursLimit);
+            mav.addObject("suggestedDrivers", suggestedDrivers);
+
+            Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
+            for (Driver driver : suggestedDrivers) {
+                workingHoursForDrivers.put(driver, driverService
+                        .calculateWorkingHoursForDriver(driver.getId()));
             }
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
+            mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
         }
         
         mav.addObject("statuses", OrderStatus.values());
@@ -151,10 +130,13 @@ public class OrderAndCargoController {
      * 
      * @param request
      * @return
+     * @throws LogiwebServiceException 
      */
     @RequestMapping(value = "/order/{orderId}/edit/addCargo", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String addCargoToOrder(@PathVariable("orderId") int orderId, HttpServletRequest request, HttpServletResponse response) {
+    public String addCargoToOrder(@PathVariable("orderId") int orderId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws LogiwebServiceException {
         try {
             Cargo newCargo = createDetachedCargoEntityFromRequestParams(request);
             cargoService.addCargo(newCargo);
@@ -162,10 +144,6 @@ public class OrderAndCargoController {
         } catch (FormParamaterParsingException  | ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
-        } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            LOG.warn("Unexpected exception.", e);
-            return "Unexcpected server error. Check logs.";
         }
     }
     
@@ -175,10 +153,13 @@ public class OrderAndCargoController {
      * 
      * @param request
      * @return
+     * @throws LogiwebServiceException 
      */
     @RequestMapping(value = "/order/{orderId}/edit/assignTruck", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String assignTruckToOrder(@PathVariable("orderId") int orderId, HttpServletRequest request, HttpServletResponse response) {
+    public String assignTruckToOrder(@PathVariable("orderId") int orderId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws LogiwebServiceException {
         int truckId = 0;        
         try {
             truckId = Integer.parseInt(request.getParameter("truckId"));
@@ -193,10 +174,6 @@ public class OrderAndCargoController {
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
-        } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            LOG.warn("Unexpected exception.", e);
-            return "Unexcpected server error. Check logs.";
         }
     }
     
@@ -205,11 +182,14 @@ public class OrderAndCargoController {
      * 
      * @param request
      * @return
+     * @throws LogiwebServiceException 
      */
     @RequestMapping(value = "order/{orderId}/edit/removeDriversAndTruck", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String removeDriversAndTruckFromOrder(@PathVariable("orderId") int orderId, HttpServletResponse response) {
-       try {
+    public String removeDriversAndTruckFromOrder(
+            @PathVariable("orderId") int orderId, HttpServletResponse response)
+            throws LogiwebServiceException {
+        try {
             DeliveryOrder order = orderService.findOrderById(orderId);
             Truck truck = order.getAssignedTruck();
             if(truck != null) {
@@ -222,12 +202,7 @@ public class OrderAndCargoController {
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
-        } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            LOG.warn("Unexpected exception.", e);
-            return "Unexcpected server error. Check logs.";
         }
-        
     }
     
     /**
@@ -235,64 +210,41 @@ public class OrderAndCargoController {
      * 
      * @param request
      * @return
+     * @throws LogiwebServiceException 
      */
     @RequestMapping(value = "order/{orderId}/edit/setStatusReady", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String setStatusReady(@PathVariable("orderId") int orderId, HttpServletResponse response) {
+    public String setStatusReady(@PathVariable("orderId") int orderId, HttpServletResponse response) throws LogiwebServiceException {
        try {
             orderService.setReadyStatusForOrder(orderId);  
             return "Status 'READY' is set";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
-        } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            LOG.warn("Unexpected exception.", e);
-            return "Unexcpected server error. Check logs.";
         }
     }
     
     @RequestMapping(value = {"/order/new"})
-    public String addOrder() {
-        try {
-            DeliveryOrder newOrder = new DeliveryOrder();
-            newOrder.setStatus(OrderStatus.NOT_READY);
-            orderService.addNewOrder(newOrder);
-            return "redirect:/order/"
-            + newOrder.getId() + "/edit";
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
-        }
+    public String addOrder() throws LogiwebServiceException {
+        DeliveryOrder newOrder = new DeliveryOrder();
+        newOrder.setStatus(OrderStatus.NOT_READY);
+        orderService.addNewOrder(newOrder);
+        return "redirect:/order/" + newOrder.getId() + "/edit";
     }
     
-    @RequestMapping(value = {"/order"})
-    public ModelAndView showOrders() {
+    @RequestMapping(value = { "/order" })
+    public ModelAndView showOrders() throws LogiwebServiceException {
         ModelAndView mav = new ModelAndView();
         mav.setViewName(orderListViewPath);
-        
-        try {
-            mav.addObject("orders", orderService.findAllOrders());
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
-        }
-        
+        mav.addObject("orders", orderService.findAllOrders());
         return mav;
     }
     
-    @RequestMapping(value = {"/cargo"})
-    public ModelAndView showCargoes() {
+    @RequestMapping(value = { "/cargo" })
+    public ModelAndView showCargoes() throws LogiwebServiceException {
         ModelAndView mav = new ModelAndView();
         mav.setViewName(cargoesListViewPath);
-        
-        try {
-            mav.addObject("cargoes", cargoService.findAllCargoes());
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
-        }
-        
+        mav.addObject("cargoes", cargoService.findAllCargoes());
         return mav;
     }
     

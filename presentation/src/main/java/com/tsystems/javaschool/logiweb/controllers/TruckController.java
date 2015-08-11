@@ -60,7 +60,7 @@ public class TruckController {
     }
     
     @RequestMapping(value = {"truck/new"}, method = RequestMethod.GET)
-    public String showFormForNewTruck (Model model) {
+    public String showFormForNewTruck (Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "new");
         model.addAttribute("truckModel", new TruckModel());
         addCitiesToModel(model);
@@ -69,7 +69,7 @@ public class TruckController {
     
     @RequestMapping(value = {"truck/new"}, method = RequestMethod.POST)
     public String addTruck(@ModelAttribute("truckModel") @Valid TruckModel newTruckModel,
-            BindingResult result, Model model) {
+            BindingResult result, Model model) throws LogiwebServiceException {
         
         if (result.hasErrors()) {
             model.addAttribute("truckModel", newTruckModel);
@@ -86,45 +86,33 @@ public class TruckController {
             addCitiesToModel(model);
             model.addAttribute("formAction", "new");
             return addOrUpdateTruckViewPath;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexcpected error happened.");
-            throw new RuntimeException(e);
-        }        
+        }   
     }
     
-    private Model addCitiesToModel(Model model) {
-        try {
-            model.addAttribute("cities", cityService.findAllCities());
-            return model;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
-        }
+    private Model addCitiesToModel(Model model) throws LogiwebServiceException {
+        model.addAttribute("cities", cityService.findAllCities());
+        return model;
     }
     
     @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.GET)
-    public String showFormForEditDriver (@PathVariable("truckId") int truckId, Model model) {
+    public String showFormForEditDriver (@PathVariable("truckId") int truckId, Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "edit");
-        
-        try {
-            Truck truck = truckService.findTruckById(truckId);
-            if(truck == null) {
-                throw new RecordNotFoundException();
-            }
-            model.addAttribute("truckModel", ModelToEntityConverter.convertToModel(truck));
-            addCitiesToModel(model);
-            model.addAttribute("truckStatuses", TruckStatus.values());
-            return addOrUpdateTruckViewPath;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexcpected error happened.");
-            throw new RuntimeException(e);
+
+        Truck truck = truckService.findTruckById(truckId);
+        if (truck == null) {
+            throw new RecordNotFoundException();
         }
+        model.addAttribute("truckModel",
+                ModelToEntityConverter.convertToModel(truck));
+        addCitiesToModel(model);
+        model.addAttribute("truckStatuses", TruckStatus.values());
+        return addOrUpdateTruckViewPath;
     }
     
     @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.POST)
     public String editTruck(@PathVariable("truckId") int truckId,
             @ModelAttribute("truckModel") @Valid TruckModel truckModel,
-            BindingResult result, Model model) {
+            BindingResult result, Model model) throws LogiwebServiceException {
         
         if (result.hasErrors()) {
             model.addAttribute("driverModel", truckModel);
@@ -141,10 +129,7 @@ public class TruckController {
             addCitiesToModel(model);
             model.addAttribute("formAction", "edit");
             return addOrUpdateTruckViewPath;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexcpected error happened.");
-            throw new RuntimeException(e);
-        }        
+        }     
     }
     
     /**
@@ -152,21 +137,17 @@ public class TruckController {
      * 
      * @param request
      * @return
+     * @throws LogiwebServiceException 
      */
     @RequestMapping(value = "truck/{truckId}/remove", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String deleteDriver(@PathVariable("truckId") int truckId, HttpServletResponse response) {
+    public String deleteDriver(@PathVariable("truckId") int truckId, HttpServletResponse response) throws LogiwebServiceException {
         try {
             truckService.removeTruck(truckId);
-            
             return "Driver deleted";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
-        } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            LOG.warn("Unexpected exception.", e);
-            return "Unexcpected server error. Check logs.";
         }
     }
 

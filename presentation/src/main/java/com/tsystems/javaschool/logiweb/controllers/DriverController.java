@@ -62,59 +62,49 @@ public class DriverController {
     private RouteService routeService;
 
     @RequestMapping("driver")
-    public ModelAndView showDrivers() {  
+    public ModelAndView showDrivers() throws LogiwebServiceException {  
         ModelAndView mav = new ModelAndView();
         mav.setViewName(driverListViewPath);
         
-        try {
-            Set<Driver> drivers = driverService.findAllDrivers();
-            mav.addObject("drivers", drivers);
-            
-            Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
-            for (Driver driver : drivers) {
-                workingHoursForDrivers.put(driver, driverService.calculateWorkingHoursForDriver(driver.getId()));
-            }
-            mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
-        } catch (LogiwebServiceException e) {
-            LOG.warn(e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
+        Set<Driver> drivers = driverService.findAllDrivers();
+        mav.addObject("drivers", drivers);
+
+        Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
+        for (Driver driver : drivers) {
+            workingHoursForDrivers.put(driver, driverService
+                    .calculateWorkingHoursForDriver(driver.getId()));
         }
+        mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
         
         return mav;
     }    
     
     @RequestMapping(value = "/driver/{driverId}")
-    public ModelAndView showSingleDriver(@PathVariable("driverId") int driverId) {  
+    public ModelAndView showSingleDriver(@PathVariable("driverId") int driverId) throws LogiwebServiceException {  
         ModelAndView mav = new ModelAndView();
         mav.setViewName(driverInfoViewPath);
-        
-        try {
-            authorizeAccesToDriverInfo(driverId);
-            
-            Driver driver = driverService.findDriverById(driverId);
-            if (driver == null) {
-                throw new RecordNotFoundException();
-            }
-            
-            mav.addObject("driver", driver);
-            mav.addObject("workingHours",
-                    driverService.calculateWorkingHoursForDriver(driver.getId()));
-            
-            if (driver.getCurrentTruck() != null
-                    && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
-                RouteInformation routeInfo = routeService
-                        .getRouteInformationForOrder(driver.getCurrentTruck()
-                                .getAssignedDeliveryOrder());
-                mav.addObject("routeInfo", routeInfo);
-            }
 
-            mav.addObject("journals",
-                    driverService.findDriverJournalsForThisMonth(driver));
-        } catch (LogiwebServiceException e) {
-            LOG.warn(e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
+        authorizeAccesToDriverInfo(driverId);
+
+        Driver driver = driverService.findDriverById(driverId);
+        if (driver == null) {
+            throw new RecordNotFoundException();
         }
-        
+
+        mav.addObject("driver", driver);
+        mav.addObject("workingHours",
+                driverService.calculateWorkingHoursForDriver(driver.getId()));
+
+        if (driver.getCurrentTruck() != null
+                && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
+            RouteInformation routeInfo = routeService
+                    .getRouteInformationForOrder(driver.getCurrentTruck()
+                            .getAssignedDeliveryOrder());
+            mav.addObject("routeInfo", routeInfo);
+        }
+
+        mav.addObject("journals",
+                driverService.findDriverJournalsForThisMonth(driver));
         return mav;
     }
     
@@ -144,7 +134,7 @@ public class DriverController {
     }
 
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.GET)
-    public String showFormForNewDriver (Model model) {
+    public String showFormForNewDriver (Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "new");
         model.addAttribute("driverModel", new DriverModel());
         addCitiesToModel(model);
@@ -154,7 +144,7 @@ public class DriverController {
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.POST)
     public String addDriverAndDriverAccount(
             @ModelAttribute("driverModel") @Valid DriverModel driverModel,
-            BindingResult result, Model model) {
+            BindingResult result, Model model) throws LogiwebServiceException {
         
         if (result.hasErrors()) {
             model.addAttribute("driverModel", driverModel);
@@ -173,10 +163,7 @@ public class DriverController {
             addCitiesToModel(model);
             model.addAttribute("formAction", "new");
             return addOrUpdateDriverViewPath;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexcpected error happened.");
-            throw new RuntimeException(e);
-        }        
+        }     
     }
     
     private String convertDriverEmpIdToAccountNameByTemplate(int driverEmployeeId) {
@@ -186,28 +173,26 @@ public class DriverController {
     }
     
     @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.GET)
-    public String showFormForEditDriver (@PathVariable("driverId") int driverId, Model model) {
+    public String showFormForEditDriver(@PathVariable("driverId") int driverId,
+            Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "edit");
-        
-        try {
-            Driver driver = driverService.findDriverById(driverId);
-            if(driver == null) {
-                throw new RecordNotFoundException();
-            }
-            model.addAttribute("driverModel", ModelToEntityConverter.convertToModel(driver));
-            addCitiesToModel(model);
-            model.addAttribute("driverStatuses", DriverStatus.values());
-            return addOrUpdateDriverViewPath;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexcpected error happened.");
-            throw new RuntimeException(e);
+
+        Driver driver = driverService.findDriverById(driverId);
+        if (driver == null) {
+            throw new RecordNotFoundException();
         }
+        model.addAttribute("driverModel",
+                ModelToEntityConverter.convertToModel(driver));
+        addCitiesToModel(model);
+        model.addAttribute("driverStatuses", DriverStatus.values());
+        return addOrUpdateDriverViewPath;
+        
     }
     
     @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.POST)
     public String editDriver(@PathVariable("driverId") int driverId,
             @ModelAttribute("driverModel") @Valid DriverModel driverModel,
-            BindingResult result, Model model) {
+            BindingResult result, Model model) throws LogiwebServiceException {
         
         if (result.hasErrors()) {
             model.addAttribute("driverModel", driverModel);
@@ -226,20 +211,12 @@ public class DriverController {
             addCitiesToModel(model);
             model.addAttribute("formAction", "edit");
             return addOrUpdateDriverViewPath;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexcpected error happened.");
-            throw new RuntimeException(e);
-        }        
+        }     
     }
 
-    private Model addCitiesToModel(Model model) {
-        try {
-            model.addAttribute("cities", cityService.findAllCities());
-            return model;
-        } catch (LogiwebServiceException e) {
-            LOG.warn("Unexpected exception.", e);
-            throw new RuntimeException("Unrecoverable server exception.", e);
-        }
+    private Model addCitiesToModel(Model model) throws LogiwebServiceException {
+        model.addAttribute("cities", cityService.findAllCities());
+        return model;
     }
     
     /**
@@ -247,21 +224,18 @@ public class DriverController {
      * 
      * @param request
      * @return
+     * @throws LogiwebServiceException 
      */
     @RequestMapping(value = "driver/{driverId}/remove", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String deleteDriver(@PathVariable("driverId") int driverId, HttpServletResponse response) {
+    public String deleteDriver(@PathVariable("driverId") int driverId,
+            HttpServletResponse response) throws LogiwebServiceException {
         try {
             driverService.removeDriverAndAccount(driverId);
-            
             return "Driver deleted";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
-        } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            LOG.warn("Unexpected exception.", e);
-            return "Unexcpected server error. Check logs.";
         }
     }
 
@@ -316,37 +290,35 @@ public class DriverController {
      * Produce JSON in specific for cal-heatmap format. Method returns data on
      * driver working hours separated by 1 hour intervals.
      * 
-     * Example: {"1420070400" : 1} 
-     * "1420070400" -- is unix timestamp
-     * 1 -- intensity in this time point     * 
+     * Example: {"1420070400" : 1} "1420070400" -- is unix timestamp 1 --
+     * intensity in this time point *
      * 
      * @see https://kamisama.github.io/cal-heatmap/
      * 
      * @param driverId
      * @return
+     * @throws LogiwebServiceException
      */
-    @RequestMapping(value = {"driver/{driverId}/calendarHeatMapData"}, method = RequestMethod.GET)
-    public @ResponseBody Map<String, Integer> makeCalendarHeatMapJsonData(@PathVariable("driverId") int driverId) {
-        try {
-            Map<String, Integer> calendarHeatData = new HashMap<String, Integer>();
-            
-            Driver driver = driverService.findDriverById(driverId);
-            if (driver == null) {
-                throw new RecordNotFoundException();
-            }
-            Set<DriverShiftJournal> journals = driverService
-                    .findDriverJournalsForThisMonth(driver);
-            
-            for (DriverShiftJournal j : journals) {
-                Map<String, Integer> counter = DateUtils
-                        .convertIntervalToCalHeatmapFormat(j.getShiftBeggined(),
-                                j.getShiftEnded());
-                calendarHeatData.putAll(counter);
-            }
-            
-            return calendarHeatData;
-        } catch (LogiwebServiceException e) {
-            throw new RuntimeException(e);
+    @RequestMapping(value = { "driver/{driverId}/calendarHeatMapData" }, method = RequestMethod.GET)
+    public @ResponseBody Map<String, Integer> makeCalendarHeatMapJsonData(
+            @PathVariable("driverId") int driverId)
+            throws LogiwebServiceException {
+        Map<String, Integer> calendarHeatData = new HashMap<String, Integer>();
+
+        Driver driver = driverService.findDriverById(driverId);
+        if (driver == null) {
+            throw new RecordNotFoundException();
         }
+        Set<DriverShiftJournal> journals = driverService
+                .findDriverJournalsForThisMonth(driver);
+
+        for (DriverShiftJournal j : journals) {
+            Map<String, Integer> counter = DateUtils
+                    .convertIntervalToCalHeatmapFormat(j.getShiftBeggined(),
+                            j.getShiftEnded());
+            calendarHeatData.putAll(counter);
+        }
+
+        return calendarHeatData;
     }
 }
