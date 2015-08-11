@@ -14,6 +14,8 @@
     <http  use-expressions="true">
         <csrf disabled="true"/>
         
+        <intercept-url pattern="/error" access="permitAll" />
+        
         <intercept-url pattern="/services**" access="permitAll" />
         <intercept-url pattern="/services/**" access="permitAll" />
     
