@@ -57,6 +57,16 @@
         </filter>
     </appender>
     
+     <appender name="LOGIWEB-LOG-DEBUG-FILE-APPENDER" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/home/andrew/JavaSchool/logiweb/logs/logiweb-debug.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="DEBUG"/>
+        </filter>
+    </appender>
+    
      <appender name="SQL-LOG-ALL-FILE-APPENDER" class="org.apache.log4j.FileAppender">
         <param name="file" value="/home/andrew/JavaSchool/logiweb/logs/sql-all.log"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -71,6 +81,7 @@
 	<category name="com.tsystems.javaschool.logiweb">
 		<appender-ref ref="LOGIWEB-LOG-WARN-FILE-APPENDER" />
 		<appender-ref ref="LOGIWEB-LOG-INFO-FILE-APPENDER" />
+		<appender-ref ref="LOGIWEB-LOG-DEBUG-FILE-APPENDER" />
 	</category>
 	
 	

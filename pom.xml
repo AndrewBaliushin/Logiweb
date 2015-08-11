@@ -35,6 +35,7 @@
 		<cxf.version>3.1.1</cxf.version>
 		<version.wildfly.maven.plugin>1.0.1.Final</version.wildfly.maven.plugin>
 		<liquibase.version>3.4.0</liquibase.version>
+		<aspectj.version>1.7.3</aspectj.version>
 
 	</properties>
 
@@ -58,12 +59,12 @@
 				<artifactId>service</artifactId>
 				<version>3.0.0-SNAPSHOT</version>
 			</dependency>
-			
+
 			<dependency>
-                <groupId>com.tsystems.javaschool</groupId>
-                <artifactId>webservice</artifactId>
-                <version>3.0.0-SNAPSHOT</version>
-            </dependency>
+				<groupId>com.tsystems.javaschool</groupId>
+				<artifactId>webservice</artifactId>
+				<version>3.0.0-SNAPSHOT</version>
+			</dependency>
 
 			<!-- JUnit -->
 			<dependency>
@@ -85,6 +86,18 @@
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>${mockito.version}</version>
+			</dependency>
+
+			<!-- Aspect J -->
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjrt</artifactId>
+				<version>${aspectj.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+				<version>${aspectj.version}</version>
 			</dependency>
 
 
@@ -110,6 +123,18 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
 
@@ -285,8 +310,8 @@
 						<url>http://localhost:8080/manager/text</url>
 						<server>TomcatServer</server>
 						<path>/logiweb</path>
-						
-				        <skip>true</skip>
+
+						<skip>true</skip>
 					</configuration>
 				</plugin>
 
@@ -311,7 +336,7 @@
 						<url>jdbc:mysql://localhost:3306/logiweb</url>
 						<username>javaschool</username>
 						<password>12345</password>
-						
+
 						<skip>true</skip>
 					</configuration>
 					<executions>
