@@ -26,6 +26,13 @@
 		<div>
 			<ul class="nav navbar-nav">
 				<li><a href="<c:url value="${param.homeLink}"/>">Home</a></li>
+
+				<sec:authorize access="hasRole('ROLE_MANAGER')">
+					<li><a href="<c:url value="/driver"/>">Drivers</a></li>
+					<li><a href="<c:url value="/truck"/>">Trucks</a></li>
+					<li><a href="<c:url value="/order"/>">Orders</a></li>
+					<li><a href="<c:url value="/cargo"/>">Cargoes</a></li>
+				</sec:authorize>
 			</ul>
 
 			<ul class="nav navbar-nav navbar-right">
