@@ -8,6 +8,7 @@
 <title>${param.title}</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/gif" href="<c:url value="/img/favicon.ico"/>">
 <link rel="stylesheet"
     href="<c:url value="/css/bootstrap.min.css"/>">
 <!-- Custom styles for this template -->

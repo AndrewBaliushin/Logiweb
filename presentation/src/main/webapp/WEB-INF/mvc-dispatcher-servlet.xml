@@ -32,6 +32,7 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 	<mvc:resources location="/css/" mapping="/css/**" />
 	<mvc:resources location="/js/" mapping="/js/**" />
 	<mvc:resources location="/fonts/" mapping="/fonts/**" />
+	<mvc:resources location="/img/" mapping="/img/**" />
 	<mvc:annotation-driven validator="validator"/>
 	
 	<context:property-placeholder location="classpath:logiweb.properties" />
