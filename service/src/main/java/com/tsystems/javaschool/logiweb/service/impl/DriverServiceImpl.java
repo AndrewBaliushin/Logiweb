@@ -29,6 +29,7 @@ import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.entities.status.UserRole;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
+import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.UserService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
@@ -67,9 +68,9 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public Set<Driver> findAllDrivers() throws LogiwebServiceException {
+    public Set<DriverModel> findAllDrivers() throws LogiwebServiceException {
         try {
-            return driverDao.findAll();
+            return ModelToEntityConverter.convertToModel(driverDao.findAll());
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
@@ -81,9 +82,14 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public Driver findDriverById(int id) throws LogiwebServiceException {
+    public DriverModel findDriverById(int id) throws LogiwebServiceException {
         try {
-            return driverDao.find(id);
+            Driver d = driverDao.find(id);
+            if (d != null) {
+                return ModelToEntityConverter.convertToModel(d);
+            } else {
+                return null;
+            }
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
@@ -159,7 +165,6 @@ public class DriverServiceImpl implements DriverService {
         driverToPopulate.setEmployeeId(source.getEmployeeId());
         driverToPopulate.setSurname(source.getSurname());
         driverToPopulate.setName(source.getName());
-        driverToPopulate.setStatus(source.getStatus());
         
         return driverToPopulate;
     }
@@ -283,11 +288,16 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public Set<DriverShiftJournal> findDriverJournalsForThisMonth(Driver driver)
+    public Set<DriverShiftJournal> findDriverJournalsForThisMonth(int driverId)
             throws LogiwebServiceException {
         try {
-            return driverShiftJournalDao
-                    .findThisMonthJournalsForDrivers(driver);
+            Driver driver = driverDao.find(driverId);
+            if (driver == null) {
+                return new HashSet<DriverShiftJournal>();
+            } else {
+                return driverShiftJournalDao
+                        .findThisMonthJournalsForDrivers(driver);
+            }
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);

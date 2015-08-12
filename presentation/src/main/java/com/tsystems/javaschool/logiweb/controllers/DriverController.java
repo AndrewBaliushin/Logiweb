@@ -1,12 +1,9 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -22,24 +19,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
-import com.tsystems.javaschool.logiweb.entities.Driver;
+import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.model.DriverUserModel;
 import com.tsystems.javaschool.logiweb.model.UserModel;
-import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
-import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
+import com.tsystems.javaschool.logiweb.service.facades.DriverFacade;
 import com.tsystems.javaschool.logiweb.utils.DateUtils;
 
 @Controller
@@ -60,52 +55,46 @@ public class DriverController {
     private CityService cityService;
     @Autowired
     private RouteService routeService;
+    @Autowired
+    private DriverFacade driverFacade;
 
     @RequestMapping("driver")
-    public ModelAndView showDrivers() throws LogiwebServiceException {  
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName(driverListViewPath);
+    public String showDrivers(Model model) throws LogiwebServiceException {  
+        Set<DriverModel> drivers = driverService.findAllDrivers();
+        model.addAttribute("drivers", drivers);
         
-        Set<Driver> drivers = driverService.findAllDrivers();
-        mav.addObject("drivers", drivers);
-
-        Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
-        for (Driver driver : drivers) {
-            workingHoursForDrivers.put(driver, driverService
+        for (DriverModel driver : drivers) {
+            driver.setWorkingHoursThisMonth(driverService
                     .calculateWorkingHoursForDriver(driver.getId()));
         }
-        mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
+        addCitiesToModel(model);
         
-        return mav;
+        return driverListViewPath;
     }    
     
     @RequestMapping(value = "/driver/{driverId}")
-    public ModelAndView showSingleDriver(@PathVariable("driverId") int driverId) throws LogiwebServiceException {  
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName(driverInfoViewPath);
-
+    public String showSingleDriver(@PathVariable("driverId") int driverId,
+            Model model) throws LogiwebServiceException {
         authorizeAccesToDriverInfo(driverId);
 
-        Driver driver = driverService.findDriverById(driverId);
+        DriverModel driver = driverFacade
+                .getDriverModelWithFullInfo(driverId);
+        
         if (driver == null) {
             throw new RecordNotFoundException();
         }
-
-        mav.addObject("driver", driver);
-        mav.addObject("workingHours",
-                driverService.calculateWorkingHoursForDriver(driver.getId()));
-
-        if (driver.getCurrentTruck() != null
-                && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
-            RouteInformation routeInfo = routeService
-                    .getRouteInformationForOrder(driver.getCurrentTruck()
-                            .getAssignedDeliveryOrder());
-            mav.addObject("routeInfo", routeInfo);
+        
+        if (driver.getCoDriversIds() != null) {
+            Map<Integer, DriverModel> coDrivers = new HashMap<Integer, DriverModel>();
+            for (Integer coDriverId : driver.getCoDriversIds()) {
+                coDrivers.put(coDriverId, driverService.findDriverById(coDriverId));
+            }
+            model.addAttribute("coDrivers", coDrivers);
         }
-
-        mav.addObject("journals",
-                driverService.findDriverJournalsForThisMonth(driver));
-        return mav;
+        
+        model.addAttribute("driver", driver);
+        addCitiesToModel(model);
+        return driverInfoViewPath;
     }
     
     private void authorizeAccesToDriverInfo(int driverId) throws LogiwebServiceException {
@@ -115,19 +104,13 @@ public class DriverController {
         //grant full access to everyone except drivers
         if (!(user instanceof DriverUserModel)) return;
         
-        int currentDriverId = ((DriverUserModel) user).getDriverLogiwebId();
-        if (driverId == currentDriverId) return;
+        int loggedinDriverId = ((DriverUserModel) user).getDriverLogiwebId();
+        if (driverId == loggedinDriverId) return;
         
-        Driver driver = driverService.findDriverById(currentDriverId);
-        if (driver.getCurrentTruck() != null) {
-            Set<Driver> coDrivers = driver.getCurrentTruck().getDrivers();
-            List<Integer> coDriversIds = new ArrayList<Integer>();
-            for (Driver d : coDrivers) {
-                coDriversIds.add(d.getId());
-            }
-            
-            //allow to get info on co-drivers
-            if(coDriversIds.contains(Integer.valueOf(driverId))) return;
+        DriverModel driver = driverService.findDriverById(loggedinDriverId);
+        if (driver.getCoDriversIds() != null) {
+            Set<Integer> coDriversIds = driver.getCoDriversIds();
+            if (coDriversIds.contains(driverId)) return;
         }
     
         throw new AccessDeniedException("Only managers and co-drivers have access to info.");
@@ -177,12 +160,11 @@ public class DriverController {
             Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "edit");
 
-        Driver driver = driverService.findDriverById(driverId);
+        DriverModel driver = driverService.findDriverById(driverId);
         if (driver == null) {
             throw new RecordNotFoundException();
         }
-        model.addAttribute("driverModel",
-                ModelToEntityConverter.convertToModel(driver));
+        model.addAttribute("driverModel", driver);
         addCitiesToModel(model);
         model.addAttribute("driverStatuses", DriverStatus.values());
         return addOrUpdateDriverViewPath;
@@ -215,7 +197,11 @@ public class DriverController {
     }
 
     private Model addCitiesToModel(Model model) throws LogiwebServiceException {
-        model.addAttribute("cities", cityService.findAllCities());
+        Map<Integer, City> cities = new HashMap<Integer, City>();
+        for (City c : cityService.findAllCities()) {
+            cities.put(c.getId(), c);
+        }
+        model.addAttribute("cities", cities);
         return model;
     }
     
@@ -244,46 +230,23 @@ public class DriverController {
      * 
      * @param request
      * @return
+     * @throws LogiwebServiceException 
      */
     @RequestMapping(value = "order/{orderId}/edit/addDriverToTruck", method = RequestMethod.POST)
     @ResponseBody
-    public String addDriverToTruck(HttpServletRequest request, HttpServletResponse response) {
-        Gson gson = new Gson();
-        Map<String, String> jsonMap = new HashMap<String, String>();
-        
-        String[] driverIdsStrings = request.getParameterValues("driversIds");
-        if (driverIdsStrings == null || driverIdsStrings.length == 0) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonMap.put("msg", "Drivers are not specified.");
-            return gson.toJson(jsonMap);
-        }
-        
-        int[] driversIds = new int[driverIdsStrings.length]; 
+    public String addDriverToTruck(
+            @RequestParam("driversIds") int driversIds[],
+            @RequestParam("truckId") int truckId, HttpServletResponse response)
+            throws LogiwebServiceException {
         try {
-            for (int i = 0; i < driverIdsStrings.length; i++) {
-                driversIds[i] = Integer.parseInt(driverIdsStrings[i]);
-            }
-            
-            int truckId = Integer.parseInt(request.getParameter("truckId"));
-           
             for (int driverId : driversIds) {
                 driverService.assignDriverToTruck(driverId, truckId);
             }
-            
-            jsonMap.put("msg", "Drivers added to truck");
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonMap.put("msg", "Can't parse Driver id:" + request.getParameter("driverId") + " to integer.");
+            return "Drivers are added to truck";
         } catch (ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            jsonMap.put("msg", e.getMessage());
-        } catch (LogiwebServiceException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            LOG.warn("Unexpected exception.", e);
-            jsonMap.put("msg", "Unexcpected server error. Check logs.");
-        }
-        
-        return gson.toJson(jsonMap);
+            return e.getMessage();
+        } 
     }
     
     /**
@@ -305,12 +268,12 @@ public class DriverController {
             throws LogiwebServiceException {
         Map<String, Integer> calendarHeatData = new HashMap<String, Integer>();
 
-        Driver driver = driverService.findDriverById(driverId);
+        DriverModel driver = driverService.findDriverById(driverId);
         if (driver == null) {
             throw new RecordNotFoundException();
         }
         Set<DriverShiftJournal> journals = driverService
-                .findDriverJournalsForThisMonth(driver);
+                .findDriverJournalsForThisMonth(driver.getId());
 
         for (DriverShiftJournal j : journals) {
             Map<String, Integer> counter = DateUtils

@@ -13,39 +13,39 @@
     <li class="list-group-item">Employee ID: <span class="label label-info"> ${driver.employeeId}</span></li>
     <li class="list-group-item">${driver.name} ${driver.surname}</li>
     <li class="list-group-item">Status: <span class="label label-info">${driver.status}</span></li>
-    <li class="list-group-item">Location: ${driver.currentCity.name}</li>
+    <li class="list-group-item">Location: ${cities[driver.currentCityId].name}</li>
     
-    <c:if test="${!empty driver.currentTruck}">
-        <li class="list-group-item">Current truck: ${driver.currentTruck.licencePlate}</li>
+    <c:if test="${!empty driver.currentTruckLicensePlate}">
+        <li class="list-group-item">Current truck: ${driver.currentTruckLicensePlate}</li>
     </c:if>
     
-    <c:if test="${!empty driver.currentTruck && fn:length(driver.currentTruck.drivers) > 1}">
+    <c:if test="${!empty driver.coDriversIds}">
         <li class="list-group-item">Co-driver:
-            <c:forEach var="coDriver" items="${driver.currentTruck.drivers}">
-                <c:if test="${coDriver.id != driver.id}">
-                    <a href="${pageContext.request.contextPath}/driver/${coDriver.id}">
-                        ${coDriver.name} ${coDriver.surname}</a><span class="comma-separator">,</span>
+            <c:forEach var="coDriverId" items="${driver.coDriversIds}">
+                <c:if test="${coDriverId != driver.id}">
+                    <a href="${pageContext.request.contextPath}/driver/${coDriverId}">
+                        ${coDrivers[coDriverId].surname}</a><span class="comma-separator">,</span>
                 </c:if>
             </c:forEach>
         </li>
     </c:if>
 
-    <c:if test="${!empty driver.currentTruck || !empty driver.currentTruck.assignedOrder}">
+    <c:if test="${!empty driver.orderId}">
 			<li class="list-group-item">Current order: 
 			   
 			   <sec:authorize access="hasRole('ROLE_MANAGER')">
-				     <a href="${pageContext.request.contextPath}/order/${driver.currentTruck.assignedDeliveryOrder.id}">
-				     ${driver.currentTruck.assignedDeliveryOrder.id}</a>
+				     <a href="${pageContext.request.contextPath}/order/${driver.orderId}">
+				     ${driver.orderId}</a>
 				</sec:authorize>
                 <sec:authorize access="hasRole('ROLE_DRIVER')">
-					   ${driver.currentTruck.assignedDeliveryOrder.id}
+					   ${driver.orderId}
                 </sec:authorize>
 
 			</li>
 		</c:if>
     
     <li class="list-group-item">Working hours in this month: <span class="label label-info">
-        <fmt:formatNumber type="number" value="${workingHours}" pattern=".#" /></span></li>
+        <fmt:formatNumber type="number" value="${driver.workingHoursThisMonth}" pattern=".#" /></span></li>
         
     </ul>
   

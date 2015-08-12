@@ -1,5 +1,8 @@
 package com.tsystems.javaschool.logiweb.model.ext;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.Truck;
@@ -32,17 +35,42 @@ public class ModelToEntityConverter {
         model.setCurrentCityId(entity.getCurrentCity() == null ? 0 : entity
                 .getCurrentCity().getId());
 
-        model.setCurrentTruckLicensePlate(entity.getCurrentTruck() == null ? null : entity.getCurrentTruck().getLicencePlate());
+        model.setCurrentTruckLicensePlate(entity.getCurrentTruck() == null ? null
+                : entity.getCurrentTruck().getLicencePlate());
         model.setEmployeeId(entity.getEmployeeId());
         model.setId(entity.getId());
         model.setName(entity.getName());
-        model.setOrderId(null);
+        
+        if (model.getCurrentTruckLicensePlate() != null) {
+            model.setOrderId(entity.getCurrentTruck()
+                    .getAssignedDeliveryOrder().getId());
+        }
+
+        if (model.getCurrentTruckLicensePlate() != null
+                && entity.getCurrentTruck().getDrivers() != null) {
+            Set<Integer> coDriversIds = new HashSet<Integer>();
+            Set<Driver> drivers = entity.getCurrentTruck().getDrivers();
+            for (Driver driver : drivers) {
+                coDriversIds.add(driver.getId());
+            }
+            model.setCoDriversIds(coDriversIds);
+        }
+
         model.setRouteInfo(null);
+        
         model.setStatus(entity.getStatus());
         model.setSurname(entity.getSurname());
         model.setWorkingHoursThisMonth(0);
         
         return model;
+    }
+    
+    public static Set<DriverModel> convertToModel(Set<Driver> entities) {
+        Set<DriverModel> models = new HashSet<DriverModel>();
+        for (Driver e : entities) {
+            models.add(convertToModel(e));
+        }
+        return models;
     }
     
     public static Truck convertToEntity(TruckModel model) {

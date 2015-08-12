@@ -1,9 +1,13 @@
 package com.tsystems.javaschool.logiweb.model;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 
@@ -34,6 +38,12 @@ public class DriverModel {
     
     private RouteInformation routeInfo;
     
+    private float workingHoursThisMonth;
+    
+    private Set<DriverShiftJournal> thisMonthShiftJurnals;
+    
+    private Set<Integer> coDriversIds;
+
     public RouteInformation getRouteInfo() {
         return routeInfo;
     }
@@ -49,8 +59,6 @@ public class DriverModel {
     public void setWorkingHoursThisMonth(float workingHoursThisMonth) {
         this.workingHoursThisMonth = workingHoursThisMonth;
     }
-
-    private float workingHoursThisMonth;
 
     public DriverModel() {
     }
@@ -117,6 +125,22 @@ public class DriverModel {
 
     public void setCurrentTruckLicensePlate(String currentTruckLicensePlate) {
         this.currentTruckLicensePlate = currentTruckLicensePlate;
+    }
+
+    public Set<DriverShiftJournal> getThisMonthShiftJurnals() {
+        return thisMonthShiftJurnals;
+    }
+
+    public void setThisMonthShiftJurnals(Set<DriverShiftJournal> thisMonthShiftJurnals) {
+        this.thisMonthShiftJurnals = thisMonthShiftJurnals;
+    }
+
+    public Set<Integer> getCoDriversIds() {
+        return coDriversIds;
+    }
+
+    public void setCoDriversIds(Set<Integer> coDriversIds) {
+        this.coDriversIds = coDriversIds;
     }
 
 }

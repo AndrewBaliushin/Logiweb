@@ -350,17 +350,22 @@
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="driverId">Suggested drivers</label>
                             <div class="col-md-9">
-								
-                                <c:forEach items="${suggestedDrivers}" var="driver">
-									<label for="driver-checkbox-${driver.id}"> <input type="checkbox"
-										name="driversIds" id="driver-checkbox-${driver.id}" value="${driver.id}">
-										${driver.name} ${driver.surname} | Currnet city:
-										${driver.currentCity.name} | This month working hours:
-										<fmt:formatNumber type="number" value="${workingHoursForDrivers[driver]}" pattern=".#" />
-									</label>
+
+								<c:forEach items="${suggestedDrivers}" var="driver">
+									<div>
+										<label for="driver-checkbox-${driver.id}"> <input
+											type="checkbox" name="driversIds"
+											id="driver-checkbox-${driver.id}" value="${driver.id}">
+											${driver.name} ${driver.surname} | Currnet city:
+											${driver.currentCity.name} | This month working hours: <fmt:formatNumber
+												type="number" value="${workingHoursForDrivers[driver]}"
+												pattern=".#" />
+										</label>
+									</div>
 								</c:forEach>
-                                    
-                            </div>
+
+
+							</div>
                         </div>
                         
                     </fieldset>

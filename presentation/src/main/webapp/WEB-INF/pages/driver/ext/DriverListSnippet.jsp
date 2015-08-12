@@ -37,24 +37,28 @@
 						<td><c:out value="${driver.name}" /></td>
 						<td><c:out value="${driver.surname}" /></td>
 						<td><c:out value="${driver.status}" /></td>
-						<td><c:out value="${driver.currentCity.name}" /></td>
-						<td><c:if test="${empty driver.currentTruck.licencePlate}">Not assigned</c:if>
-							<c:out value="${driver.currentTruck.licencePlate}" /></td>
+						<td><c:out value="${cities[driver.currentCityId].name}" /></td>
+						<td>
+						    <c:choose>
+								<c:when test="${!empty driver.currentTruckLicensePlate}">${driver.currentTruckLicensePlate}</c:when>
+								<c:otherwise>Not assigned</c:otherwise>
+							</c:choose>
+						</td>
 
 						<td><c:if
-								test="${empty driver.currentTruck.assignedDeliveryOrder}">Not assigned</c:if>
+								test="${empty driver.orderId}">Not assigned</c:if>
 
 
 							<sec:authorize access="hasRole('ROLE_MANAGER')">
-								<a href="${pageContext.request.contextPath}/order/${driver.currentTruck.assignedDeliveryOrder.id}">
-								    ${driver.currentTruck.assignedDeliveryOrder.id}
+								<a href="${pageContext.request.contextPath}/order/${driver.orderId}">
+								    ${driver.orderId}
 								</a>
 							</sec:authorize> <sec:authorize access="hasRole('ROLE_DRIVER')">
-			                       ${driver.currentTruck.assignedDeliveryOrder.id}
+			                       ${driver.orderId}
 			                </sec:authorize></td>
 
 						<td>
-						  <fmt:formatNumber type="number" value="${workingHoursForDrivers[driver]}" pattern=".#" />
+						  <fmt:formatNumber type="number" value="${driver.workingHoursThisMonth}" pattern=".#" />
 						</td>
 
 						<td class="text-center"><a
