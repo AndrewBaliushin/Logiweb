@@ -3,7 +3,10 @@ package com.tsystems.javaschool.logiweb.service.impl;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,6 +18,7 @@ import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,6 +32,7 @@ import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.LogiwebUser;
 import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.UserService;
@@ -43,16 +48,21 @@ public class DriverServiceImplTest {
     private UserService userServiceMock;
     private UserDao userDaoMock;
     
+    private DriverService driverService;
 
     /**
-     * Run this method to populate mocks. (Should be first line in every test).
+     * Populate mocks.
      */
-    private void setupMocks() {
+    @Before
+    public void setupMocks() {
         driverDaoMock = mock(DriverDao.class);
         truckDaoMock = mock(TruckDao.class);
         shiftDaoMock = mock(DriverShiftJournaDao.class);
         userServiceMock = mock(UserService.class);
         userDaoMock = mock(UserDao.class);
+        
+        driverService = new DriverServiceImpl(driverDaoMock,
+                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);        
     }
 
     /**
@@ -163,10 +173,7 @@ public class DriverServiceImplTest {
     @Test
     public void testFindByWorkHoursWhenShiftStartedInLastMonth()
             throws DaoException, LogiwebServiceException {
-        setupMocks();
         List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         Set<Driver> result = driverService
                 .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(null, 10);
@@ -182,8 +189,6 @@ public class DriverServiceImplTest {
             LogiwebServiceException {
         setupMocks();
         List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         Set<Driver> result = driverService
                 .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(null, 10);
@@ -199,8 +204,6 @@ public class DriverServiceImplTest {
             throws DaoException, LogiwebServiceException {
         setupMocks();
         List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         Set<Driver> result = driverService
                 .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(null, 0);
@@ -216,8 +219,6 @@ public class DriverServiceImplTest {
             throws DaoException, LogiwebServiceException {
         setupMocks();
         setupDriverAndJournalsTestData();
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         Set<Driver> result = driverService
                 .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(null, -1);
@@ -233,8 +234,6 @@ public class DriverServiceImplTest {
             throws DaoException, LogiwebServiceException {
         setupMocks();
         List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         //Expected: drv.test1 (12h), drv.test2 (0 hours) and
         // drv.test3(5 hours)
@@ -256,8 +255,6 @@ public class DriverServiceImplTest {
             throws DaoException, LogiwebServiceException {
         setupMocks();
         List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         //Expected: drv.test1 (12h), drv.test2 (0 hours) and
         // drv.test3(5 hours), and not drv.test0 (15 hours)
@@ -278,8 +275,6 @@ public class DriverServiceImplTest {
             throws DaoException, LogiwebServiceException {
         setupMocks();
         List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         //Expected: drv.test1 (12h), drv.test2 (0 hours) and
         // drv.test3(5 hours), and not drv.test0 (15 hours)
@@ -301,8 +296,6 @@ public class DriverServiceImplTest {
             .thenReturn(null);
         when(truckDaoMock.find(1))
         .thenReturn(new Truck());
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
         
         driverService.assignDriverToTruck(1, 1);
     }
@@ -318,8 +311,6 @@ public class DriverServiceImplTest {
         .thenReturn(new Driver());
         when(truckDaoMock.find(1))
         .thenReturn(null);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
         
         driverService.assignDriverToTruck(1, 1);
     }
@@ -342,8 +333,6 @@ public class DriverServiceImplTest {
         .thenReturn(d);
         when(truckDaoMock.find(1))
         .thenReturn(t);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
         
         driverService.assignDriverToTruck(1, 1);
         
@@ -368,8 +357,6 @@ public class DriverServiceImplTest {
         .thenReturn(d);
         when(truckDaoMock.find(1))
         .thenReturn(t);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
         
         driverService.assignDriverToTruck(1, 1);
         
@@ -396,8 +383,6 @@ public class DriverServiceImplTest {
         .thenReturn(d);
         when(truckDaoMock.find(1))
         .thenReturn(t);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
         
         driverService.assignDriverToTruck(1, 1);
         
@@ -424,8 +409,6 @@ public class DriverServiceImplTest {
         .thenReturn(d);
         when(truckDaoMock.find(1))
         .thenReturn(t);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
         
         driverService.assignDriverToTruck(1, 1);
     }
@@ -441,9 +424,6 @@ public class DriverServiceImplTest {
         DriverModel driverModel = new DriverModel();
         driverModel.setEmployeeId(1);
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(new Driver());
-        
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         driverService.addDriverWithAccount(driverModel, "irrelevant",
                 "irrelevant");
@@ -460,9 +440,6 @@ public class DriverServiceImplTest {
         DriverModel driverModel = new DriverModel();
         driverModel.setEmployeeId(1);
         
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
-
         driverService.addDriverWithAccount(driverModel, "irrelevant",
                 "irrelevant");
         
@@ -480,9 +457,6 @@ public class DriverServiceImplTest {
         Driver d = new Driver();
         d.setCurrentTruck(new Truck());
         when(driverDaoMock.find(1)).thenReturn(null);
-        
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
 
         driverService.removeDriverAndAccount(1);
     }
@@ -500,9 +474,6 @@ public class DriverServiceImplTest {
         
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
         
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
-        
         driverService.removeDriverAndAccount(1);
     }
     
@@ -518,9 +489,6 @@ public class DriverServiceImplTest {
         d.setLogiwebAccount(new LogiwebUser());
         
         when(driverDaoMock.find(1)).thenReturn(d);
-        
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
         
         driverService.removeDriverAndAccount(1);
         
@@ -555,9 +523,6 @@ public class DriverServiceImplTest {
         when(shiftDaoMock.findThisMonthJournalsForDrivers(drivers.get(0)))
                 .thenReturn(journals);
 
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
-
         when(driverDaoMock.find(1)).thenReturn(drivers.get(0));
         float wHours = driverService.calculateWorkingHoursForDriver(1);
         Assert.assertEquals(15.0, wHours, 0.01);
@@ -571,9 +536,6 @@ public class DriverServiceImplTest {
     public void testCalculateWorkingHoursForDriverWithoutShifts()
             throws LogiwebServiceException, DaoException {
         setupMocks();
-
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
         when(driverDaoMock.find(1)).thenReturn(new Driver());
         float wHours = driverService.calculateWorkingHoursForDriver(1);
@@ -590,9 +552,6 @@ public class DriverServiceImplTest {
         setupMocks();
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(null);
         
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
-        
         driverService.setDriverStatusToResting(1);
     }
     
@@ -606,8 +565,6 @@ public class DriverServiceImplTest {
         setupMocks();
         Driver d = new Driver();
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
         driverService.setDriverStatusToResting(1);
         
         Mockito.verify(driverDaoMock, times(1)).update(d);
@@ -623,9 +580,6 @@ public class DriverServiceImplTest {
         setupMocks();
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(null);
         
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
-        
         driverService.setDriverStatusToDriving(1);
     }
     
@@ -639,8 +593,6 @@ public class DriverServiceImplTest {
         setupMocks();
         Driver d = new Driver();
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
         driverService.setDriverStatusToDriving(1);
         
         Mockito.verify(driverDaoMock, times(1)).update(d);
@@ -653,8 +605,6 @@ public class DriverServiceImplTest {
     @Test(expected = ServiceValidationException.class)
     public void testEditDriverAndAccountNameWhenDriverIdMissing() throws LogiwebServiceException,
             DaoException {
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
         DriverModel dm = new DriverModel();
         
         driverService.editDriverAndAccountName(dm, null);
@@ -673,9 +623,6 @@ public class DriverServiceImplTest {
         driverModel.setEmployeeId(1);
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(new Driver());
         
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, null);
-
         driverService.editDriverAndAccountName(driverModel, "irrelevant");
     }
     
@@ -699,9 +646,6 @@ public class DriverServiceImplTest {
         
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(sameDriver);
         when(driverDaoMock.find(1)).thenReturn(sameDriver);
-        
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
         driverService.editDriverAndAccountName(driverModel, "irrelevant");
         
@@ -723,9 +667,6 @@ public class DriverServiceImplTest {
         
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(null);
         when(driverDaoMock.find(1)).thenReturn(null);
-        
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
         driverService.editDriverAndAccountName(driverModel, "irrelevant");
     }
@@ -748,9 +689,6 @@ public class DriverServiceImplTest {
         
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(null);
         when(driverDaoMock.find(1)).thenReturn(sameDriver);
-        
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
         driverService.editDriverAndAccountName(driverModel, "irrelevant");
         
@@ -766,10 +704,8 @@ public class DriverServiceImplTest {
             throws LogiwebServiceException, DaoException {
         setupMocks();
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(null);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
-        driverService.startShiftForDriver(1);
+        driverService.startShiftForDriverAndSetRestingEnRouteStatus(1);
     }
     
     /**
@@ -786,10 +722,8 @@ public class DriverServiceImplTest {
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
         when(shiftDaoMock.findUnfinishedShiftForDriver(d)).thenReturn(
                 new DriverShiftJournal());
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
-        driverService.startShiftForDriver(1);
+        driverService.startShiftForDriverAndSetRestingEnRouteStatus(1);
     }
     
     /**
@@ -802,15 +736,31 @@ public class DriverServiceImplTest {
         setupMocks();
         
         Driver d = new Driver();
+        d.setStatus(DriverStatus.FREE);
         
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
-        driverService.startShiftForDriver(1);
+        driverService.startShiftForDriverAndSetRestingEnRouteStatus(1);
         
         Mockito.verify(shiftDaoMock, times(1)).create(
                 any(DriverShiftJournal.class));
+    }
+    
+    /**
+     * Test: startShiftForDriver 
+     * Case: Driver not free
+     */
+    @Test(expected = ServiceValidationException.class)  
+    public void testStartShiftForDriverWhenDriverNotFree()
+            throws LogiwebServiceException, DaoException {
+        setupMocks();
+        
+        Driver d = new Driver();
+        d.setStatus(DriverStatus.RESTING_EN_ROUT);
+        
+        when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
+
+        driverService.startShiftForDriverAndSetRestingEnRouteStatus(1);
     }
     
 
@@ -823,10 +773,8 @@ public class DriverServiceImplTest {
             throws LogiwebServiceException, DaoException {
         setupMocks();
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(null);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
-        driverService.endShiftForDriver(1);
+        driverService.endShiftForDriverAndSetFreeStatus(1);
     }
     
     /**
@@ -843,10 +791,8 @@ public class DriverServiceImplTest {
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
         when(shiftDaoMock.findUnfinishedShiftForDriver(d)).thenReturn(
                 null);
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
-        driverService.endShiftForDriver(1);
+        driverService.endShiftForDriverAndSetFreeStatus(1);
     }
     
     /**
@@ -863,13 +809,32 @@ public class DriverServiceImplTest {
         when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
         when(shiftDaoMock.findUnfinishedShiftForDriver(d)).thenReturn(
                 new DriverShiftJournal());
-        DriverService driverService = new DriverServiceImpl(driverDaoMock,
-                truckDaoMock, shiftDaoMock, userServiceMock, userDaoMock);
 
-        driverService.endShiftForDriver(1);
+        driverService.endShiftForDriverAndSetFreeStatus(1);
         
         Mockito.verify(shiftDaoMock, times(1)).update(
                 any(DriverShiftJournal.class));
+    }
+    
+    /**
+     * Test: endShiftForDriver
+     * Case: test that driver status is changed to free
+     */
+    @Test
+    public void testEndShiftForDriverAndCheckStatusCorrectness()
+            throws LogiwebServiceException, DaoException {
+        setupMocks();
+        
+        Driver d = new Driver();
+        d.setStatus(DriverStatus.DRIVING);
+        
+        when(driverDaoMock.findByEmployeeId(1)).thenReturn(d);
+        when(shiftDaoMock.findUnfinishedShiftForDriver(d)).thenReturn(
+                new DriverShiftJournal());
+
+        driverService.endShiftForDriverAndSetFreeStatus(1);
+        
+        Assert.assertEquals(d.getStatus(), DriverStatus.FREE);
     }
 
 }

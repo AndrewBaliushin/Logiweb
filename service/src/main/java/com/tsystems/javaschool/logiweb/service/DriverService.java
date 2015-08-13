@@ -167,21 +167,21 @@ public interface DriverService {
             throws RecordNotFoundServiceException, LogiwebServiceException;
 
     /**
-     * Start new shift.
+     * Start new shift and change driver status to Resting en route.
      * 
      * @param driverEmloyeeId
      * @throws ServiceValidationException
      *             if unfinished shift for this driver is exist. Or if driver
-     *             does not exist.
+     *             does not exist. Or if driver status is not FREE.
      * @throws LogiwebServiceException
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    void startShiftForDriver(int driverEmloyeeId)
+    void startShiftForDriverAndSetRestingEnRouteStatus(int driverEmloyeeId)
             throws ServiceValidationException, LogiwebServiceException;
 
     /**
-     * End shift.
+     * End shift and change driver status to Free.
      * 
      * @param driverEmloyeeId
      * @throws ServiceValidationException
@@ -191,6 +191,6 @@ public interface DriverService {
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    void endShiftForDriver(int driverEmloyeeId)
+    void endShiftForDriverAndSetFreeStatus(int driverEmloyeeId)
             throws ServiceValidationException, LogiwebServiceException;
 }

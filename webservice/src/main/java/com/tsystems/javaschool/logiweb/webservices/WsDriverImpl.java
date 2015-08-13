@@ -43,7 +43,7 @@ public class WsDriverImpl implements WsDriver {
     public void shiftBegginedForDriver(int driverEmployeeId)
             throws InvalidRequestException {
         try {
-            driverService.startShiftForDriver(driverEmployeeId);
+            driverService.startShiftForDriverAndSetRestingEnRouteStatus(driverEmployeeId);
         } catch (ServiceValidationException e) {
             throw new InvalidRequestException(e);
         } catch (LogiwebServiceException e) {
@@ -57,7 +57,7 @@ public class WsDriverImpl implements WsDriver {
     public void shiftEndedForDriver(int driverEmployeeId)
             throws InvalidRequestException {
         try {
-            driverService.endShiftForDriver(driverEmployeeId);
+            driverService.endShiftForDriverAndSetFreeStatus(driverEmployeeId);
         } catch (ServiceValidationException e) {
             throw new InvalidRequestException(e);
         } catch (LogiwebServiceException e) {

@@ -461,7 +461,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
-    public void startShiftForDriver(int driverEmloyeeId)
+    public void startShiftForDriverAndSetRestingEnRouteStatus(int driverEmloyeeId)
             throws ServiceValidationException, LogiwebServiceException {
         try {
             Driver driver = driverDao.findByEmployeeId(driverEmloyeeId);
@@ -469,6 +469,10 @@ public class DriverServiceImpl implements DriverService {
                 throw new ServiceValidationException(
                         "Provide valid driver employee id.");
             }
+            if (driver.getStatus() != DriverStatus.FREE) {
+                throw new ServiceValidationException("Driver must be free to start new shift.");
+            }
+            
             DriverShiftJournal unfinishedShift = driverShiftJournalDao
                     .findUnfinishedShiftForDriver(driver);
 
@@ -482,6 +486,9 @@ public class DriverServiceImpl implements DriverService {
             newShift.setShiftBeggined(new Date()); // now
 
             driverShiftJournalDao.create(newShift);
+            
+            driver.setStatus(DriverStatus.RESTING_EN_ROUT);
+            driverDao.update(driver);
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
@@ -490,7 +497,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
-    public void endShiftForDriver(int driverEmloyeeId)
+    public void endShiftForDriverAndSetFreeStatus(int driverEmloyeeId)
             throws ServiceValidationException, LogiwebServiceException {
         try {
             Driver driver = driverDao.findByEmployeeId(driverEmloyeeId);
@@ -508,6 +515,9 @@ public class DriverServiceImpl implements DriverService {
             
             unfinishedShift.setShiftEnded(new Date());
             driverShiftJournalDao.update(unfinishedShift);   
+            
+            driver.setStatus(DriverStatus.FREE);
+            driverDao.update(driver);
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);
