@@ -19,6 +19,7 @@ import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.model.TruckModel;
+import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -49,9 +50,10 @@ public class TrucksSeviceimpl implements TrucksService {
      */
     @Override
     @Transactional
-    public Set<Truck> findAllTrucks() throws LogiwebServiceException {
+    public Set<TruckModel> findAllTrucks() throws LogiwebServiceException {
         try {
-            return truckDao.findAll();
+            return ModelToEntityConverter.convertTrucksToModels(truckDao
+                    .findAll());
         } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
@@ -64,9 +66,14 @@ public class TrucksSeviceimpl implements TrucksService {
      */
     @Override
     @Transactional
-    public Truck findTruckById(int id) throws LogiwebServiceException {
+    public TruckModel findTruckById(int id) throws LogiwebServiceException {
         try {
-            return truckDao.find(id);
+            Truck t = truckDao.find(id);
+            if (t == null) {
+                return null;
+            } else {
+                return ModelToEntityConverter.convertToModel(t);
+            }
         } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
@@ -231,9 +238,11 @@ public class TrucksSeviceimpl implements TrucksService {
      */
     @Override
     @Transactional
-    public Set<Truck> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException {
+    public Set<TruckModel> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException {
         try {
-            return truckDao.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minCargoWeightCapacity); 
+            return ModelToEntityConverter
+                    .convertTrucksToModels(truckDao
+                            .findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minCargoWeightCapacity)); 
         } catch (DaoException e) {
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);

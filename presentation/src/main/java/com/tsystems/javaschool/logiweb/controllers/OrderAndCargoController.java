@@ -25,6 +25,7 @@ import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.model.TruckModel;
 import com.tsystems.javaschool.logiweb.service.CargoService;
 import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
@@ -61,9 +62,10 @@ public class OrderAndCargoController {
         mav.setViewName(editOrderViewPath);
 
         DeliveryOrder order = orderService.findOrderById(orderId);
-        if (order == null)
+        if (order == null) {
             throw new RecordNotFoundException("Order #" + orderId
                     + " not exist.");
+        }
 
         RouteInformation routeInfo = routeService.getRouteInformationForOrder(order);
 
@@ -76,7 +78,7 @@ public class OrderAndCargoController {
         
         //suggest trucks
         if (order.getAssignedTruck() == null) {
-            Set<Truck> suggestedTrucks = truckService
+            Set<TruckModel> suggestedTrucks = truckService
                     .findFreeAndUnbrokenByCargoCapacity(routeInfo
                             .getMaxWeightOnCourse());
             mav.addObject("suggestedTrucks", suggestedTrucks);

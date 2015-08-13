@@ -89,7 +89,7 @@
             <label class="col-md-4 control-label">City</label>
             <div class="col-md-4">
                 <form:select path="currentCityId" class="form-control">
-                    <form:options items="${cities}" itemLabel="name" itemValue="id"  />
+                    <form:options items="${cities}" itemLabel="name"/>
                 </form:select>
                 <form:errors path="currentCityId" class="control-label" />
             </div>

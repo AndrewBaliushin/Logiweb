@@ -1,6 +1,8 @@
 package com.tsystems.javaschool.logiweb.model.ext;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.entities.City;
@@ -65,7 +67,7 @@ public class ModelToEntityConverter {
         return model;
     }
     
-    public static Set<DriverModel> convertToModel(Set<Driver> entities) {
+    public static Set<DriverModel> convertDriversToModels(Set<Driver> entities) {
         Set<DriverModel> models = new HashSet<DriverModel>();
         for (Driver e : entities) {
             models.add(convertToModel(e));
@@ -81,12 +83,13 @@ public class ModelToEntityConverter {
         
         truck.setId(model.getId());
         truck.setLicencePlate(model.getLicencePlate());
-        truck.setAssignedDeliveryOrder(model.getAssignedDeliveryOrder());
         truck.setCurrentCity(city);
         truck.setCrewSize(model.getCrewSize());
         truck.setCargoCapacity(model.getCargoCapacity());
-        truck.setDrivers(model.getDrivers());
         truck.setStatus(model.getStatus());
+        
+        truck.setAssignedDeliveryOrder(null);
+        truck.setDrivers(null);
         
         return truck;
     }
@@ -99,12 +102,33 @@ public class ModelToEntityConverter {
         
         model.setId(entity.getId());
         model.setLicencePlate(entity.getLicencePlate());
-        model.setAssignedDeliveryOrder(entity.getAssignedDeliveryOrder());
+
+        if (entity.getAssignedDeliveryOrder() != null) {
+            model.setAssignedDeliveryOrderId(entity.getAssignedDeliveryOrder()
+                    .getId());
+        }
+        
+        if (entity.getDrivers() != null) {
+            Map<Integer, String> driversIdsAndSurnames = new HashMap<Integer, String>();
+            for (Driver d : entity.getDrivers()) {
+                driversIdsAndSurnames.put(d.getId(), d.getSurname());
+            }
+            model.setDriversIdsAndSurnames(driversIdsAndSurnames);
+        }
+        
         model.setCargoCapacity(entity.getCargoCapacity());
         model.setCrewSize(entity.getCrewSize());
-        model.setDrivers(entity.getDrivers());
+        
         model.setStatus(entity.getStatus());
         
         return model;
+    }
+    
+    public static Set<TruckModel> convertTrucksToModels(Set<Truck> entities) {
+        Set<TruckModel> models = new HashSet<TruckModel>();
+        for (Truck e : entities) {
+            models.add(convertToModel(e));
+        }
+        return models;
     }
 }

@@ -38,25 +38,25 @@
 						<td>${truck.crewSize}</td>
 						<td>${truck.cargoCapacity}</td>
 						<td>${truck.status}</td>
-						<td>${truck.currentCity.name}</td>
+						<td>${cities[truck.currentCityId].name}</td>
 						
-						<td><c:if test="${empty truck.assignedDeliveryOrder}">Not assigned</c:if>
-	                            <a href="${pageContext.request.contextPath}/order/${truck.assignedDeliveryOrder.id}">
-	                                ${truck.assignedDeliveryOrder.id}
+						<td><c:if test="${empty truck.assignedDeliveryOrderId}">Not assigned</c:if>
+	                            <a href="${pageContext.request.contextPath}/order/${truck.assignedDeliveryOrderId}">
+	                                ${truck.assignedDeliveryOrderId}
 	                            </a>
                         </td>
 							
-						<td><c:if test="${empty truck.drivers}">Not assigned</c:if>
-                            <c:forEach items="${truck.drivers}" var="driver">
+						<td><c:if test="${empty truck.driversIdsAndSurnames}">Not assigned</c:if>
+                            <c:forEach items="${truck.driversIdsAndSurnames}" var="entry">
 							    <a href="
-		                            <c:url value="/driver/${driver.id}">
-		                            </c:url>">${driver.surname}</a><span class="comma-separator">,</span>
+		                            <c:url value="/driver/${entry.key}">
+		                            </c:url>">${entry.value}</a><span class="comma-separator">,</span>
 							</c:forEach>
                         </td>	
                             
 						<td class="text-center">
 						  <c:choose>
-						      <c:when test="${empty truck.assignedDeliveryOrder}">
+						      <c:when test="${empty truck.assignedDeliveryOrderId}">
 						          <a
                                 href="${pageContext.request.contextPath}/truck/${truck.id}/edit"><span
                                     class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>

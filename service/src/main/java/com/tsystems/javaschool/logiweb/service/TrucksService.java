@@ -18,21 +18,21 @@ public interface TrucksService {
     /**
      * Find trucks.
      * 
-     * @return empty set if nothing found
+     * @return truck models or empty set if nothing found
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
-    Set<Truck> findAllTrucks() throws LogiwebServiceException;
+    Set<TruckModel> findAllTrucks() throws LogiwebServiceException;
 
     /**
      * Find truck by id.
      * 
      * @param id
-     * @return truck or null
+     * @return truck model or null
      * @throws LogiwebServiceException
      *             if unexpected exception occurred on lower level (not user
      *             fault)
      */
-    Truck findTruckById(int id) throws LogiwebServiceException;
+    TruckModel findTruckById(int id) throws LogiwebServiceException;
 
     /**
      * Edit truck.
@@ -83,7 +83,7 @@ public interface TrucksService {
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    Set<Truck> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException;
+    Set<TruckModel> findFreeAndUnbrokenByCargoCapacity(float minCargoWeightCapacity) throws LogiwebServiceException;
     
     /**
      * Remove assignment to order and drivers for this truck.

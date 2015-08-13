@@ -70,7 +70,7 @@ public class DriverServiceImpl implements DriverService {
     @Transactional
     public Set<DriverModel> findAllDrivers() throws LogiwebServiceException {
         try {
-            return ModelToEntityConverter.convertToModel(driverDao.findAll());
+            return ModelToEntityConverter.convertDriversToModels(driverDao.findAll());
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);

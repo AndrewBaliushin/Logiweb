@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
-import com.tsystems.javaschool.logiweb.entities.City;
+import com.tsystems.javaschool.logiweb.controllers.ext.CityUtils;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
@@ -57,6 +57,8 @@ public class DriverController {
     private RouteService routeService;
     @Autowired
     private DriverFacade driverFacade;
+    @Autowired
+    private CityUtils cityUtils;
 
     @RequestMapping("driver")
     public String showDrivers(Model model) throws LogiwebServiceException {  
@@ -67,7 +69,7 @@ public class DriverController {
             driver.setWorkingHoursThisMonth(driverService
                     .calculateWorkingHoursForDriver(driver.getId()));
         }
-        addCitiesToModel(model);
+        cityUtils.addCitiesToModel(model);
         
         return driverListViewPath;
     }    
@@ -93,7 +95,7 @@ public class DriverController {
         }
         
         model.addAttribute("driver", driver);
-        addCitiesToModel(model);
+        cityUtils.addCitiesToModel(model);
         return driverInfoViewPath;
     }
     
@@ -120,7 +122,7 @@ public class DriverController {
     public String showFormForNewDriver (Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "new");
         model.addAttribute("driverModel", new DriverModel());
-        addCitiesToModel(model);
+        cityUtils.addCitiesToModel(model);
         return addOrUpdateDriverViewPath;
     }
     
@@ -131,7 +133,7 @@ public class DriverController {
         
         if (result.hasErrors()) {
             model.addAttribute("driverModel", driverModel);
-            addCitiesToModel(model);
+            cityUtils.addCitiesToModel(model);
             model.addAttribute("formAction", "new");
             return addOrUpdateDriverViewPath;
         }
@@ -143,7 +145,7 @@ public class DriverController {
             return "redirect:/driver/" + newDriverId;
         } catch (ServiceValidationException e) {
             model.addAttribute("error", e.getMessage());
-            addCitiesToModel(model);
+            cityUtils.addCitiesToModel(model);
             model.addAttribute("formAction", "new");
             return addOrUpdateDriverViewPath;
         }     
@@ -165,7 +167,7 @@ public class DriverController {
             throw new RecordNotFoundException();
         }
         model.addAttribute("driverModel", driver);
-        addCitiesToModel(model);
+        cityUtils.addCitiesToModel(model);
         model.addAttribute("driverStatuses", DriverStatus.values());
         return addOrUpdateDriverViewPath;
         
@@ -178,7 +180,7 @@ public class DriverController {
         
         if (result.hasErrors()) {
             model.addAttribute("driverModel", driverModel);
-            addCitiesToModel(model);
+            cityUtils.addCitiesToModel(model);
             model.addAttribute("formAction", "edit");
             return addOrUpdateDriverViewPath;
         }
@@ -190,19 +192,10 @@ public class DriverController {
             return "redirect:/driver/" + driverModel.getId();
         } catch (ServiceValidationException e) {
             model.addAttribute("error", e.getMessage());
-            addCitiesToModel(model);
+            cityUtils.addCitiesToModel(model);
             model.addAttribute("formAction", "edit");
             return addOrUpdateDriverViewPath;
         }     
-    }
-
-    private Model addCitiesToModel(Model model) throws LogiwebServiceException {
-        Map<Integer, City> cities = new HashMap<Integer, City>();
-        for (City c : cityService.findAllCities()) {
-            cities.put(c.getId(), c);
-        }
-        model.addAttribute("cities", cities);
-        return model;
     }
     
     /**

@@ -1,5 +1,6 @@
 package com.tsystems.javaschool.logiweb.model;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.constraints.Min;
@@ -28,8 +29,10 @@ public class TruckModel {
     @NotNull
     private Float cargoCapacity;
 
-    private DeliveryOrder assignedDeliveryOrder;
-    private Set<Driver> drivers;
+    private Integer assignedDeliveryOrderId;
+    
+    private Map<Integer, String> driversIdsAndSurnames;
+    
     private TruckStatus status;
     
     public Integer getId() {
@@ -43,12 +46,6 @@ public class TruckModel {
     }
     public void setLicencePlate(String licencePlate) {
         this.licencePlate = licencePlate;
-    }
-    public DeliveryOrder getAssignedDeliveryOrder() {
-        return assignedDeliveryOrder;
-    }
-    public void setAssignedDeliveryOrder(DeliveryOrder assignedDeliveryOrder) {
-        this.assignedDeliveryOrder = assignedDeliveryOrder;
     }
     public Float getCargoCapacity() {
         return cargoCapacity;
@@ -68,16 +65,22 @@ public class TruckModel {
     public void setCurrentCityId(int currentCityId) {
         this.currentCityId = currentCityId;
     }
-    public Set<Driver> getDrivers() {
-        return drivers;
-    }
-    public void setDrivers(Set<Driver> drivers) {
-        this.drivers = drivers;
-    }
     public TruckStatus getStatus() {
         return status;
     }
     public void setStatus(TruckStatus status) {
         this.status = status;
-    } 
+    }
+    public Integer getAssignedDeliveryOrderId() {
+        return assignedDeliveryOrderId;
+    }
+    public void setAssignedDeliveryOrderId(Integer assignedDeliveryOrderId) {
+        this.assignedDeliveryOrderId = assignedDeliveryOrderId;
+    }
+    public Map<Integer, String> getDriversIdsAndSurnames() {
+        return driversIdsAndSurnames;
+    }
+    public void setDriversIdsAndSurnames(Map<Integer, String> driversIdsAndSurnames) {
+        this.driversIdsAndSurnames = driversIdsAndSurnames;
+    }
 }
