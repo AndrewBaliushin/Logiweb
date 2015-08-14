@@ -10,10 +10,28 @@ import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationExcep
 
 public interface CargoService {
 
-    void setPickedUpStatus(int cargoId) throws RecordNotFoundServiceException,
+    /**
+     * Set 'PICKED_UP' status to cargo if it is attached to 
+     * 'READY_TO_GO' order and have status 'WAITING_FOR_PICKUP'
+     * 
+     * @param cargoId
+     * @throws IllegalStateException if order or cargo statuses do not match requirements
+     * @throws RecordNotFoundServiceException if cargo with this Id not exist
+     * @throws LogiwebServiceException if something unexpected happened 
+     */
+    void setPickedUpStatus(int cargoId) throws IllegalStateException, RecordNotFoundServiceException,
             LogiwebServiceException;
 
-    void setDeliveredStatus(int cargoId) throws RecordNotFoundServiceException,
+    /**
+     * Set 'DELIVERED' status to cargo if it is attached to 
+     * 'READY_TO_GO' order and have status 'PICKED_UP'
+     * 
+     * @param cargoId
+     * @throws IllegalStateException if order or cargo statuses do not match requirements
+     * @throws RecordNotFoundServiceException if cargo with this Id not exist
+     * @throws LogiwebServiceException if something unexpected happened 
+     */
+    void setDeliveredStatus(int cargoId) throws IllegalStateException, RecordNotFoundServiceException,
             LogiwebServiceException;
 
     Cargo findById(int cargoId) throws LogiwebServiceException;

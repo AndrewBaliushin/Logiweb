@@ -43,28 +43,61 @@ public class CargoServiceImpl implements CargoService {
         this.deliveryOrderDao = deliveryOrderDao;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
-    public void setPickedUpStatus(int cargoId) throws LogiwebServiceException {
-        changeStatus(cargoId, CargoStatus.PICKED_UP);
-    }
-
-    @Override
-    @Transactional
-    public void setDeliveredStatus(int cargoId)
-            throws RecordNotFoundServiceException, LogiwebServiceException {
-        changeStatus(cargoId, CargoStatus.DELIVERED);
-    }
-
-    private void changeStatus(int cargoId, CargoStatus newStatus)
-            throws RecordNotFoundServiceException, LogiwebServiceException {
+    public void setPickedUpStatus(int cargoId) throws IllegalStateException,
+            RecordNotFoundServiceException, LogiwebServiceException {
         try {
             Cargo c = cargoDao.find(cargoId);
             if (c == null) {
                 throw new RecordNotFoundServiceException();
             }
+            
+            if (c.getOrderForThisCargo().getStatus() != OrderStatus.READY_TO_GO) {
+                throw new IllegalStateException(
+                        "Order for cargo must be in 'Ready to go' state");
+            }
+            
+            if (c.getStatus() != CargoStatus.WAITING_FOR_PICKUP) {
+                throw new IllegalStateException(
+                        "Cargo must be in 'Waiting for pickup' state");
+            }
 
-            c.setStatus(newStatus);
+            c.setStatus(CargoStatus.PICKED_UP);
+            cargoDao.update(c);
+        } catch (DaoException e) {
+            LOG.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void setDeliveredStatus(int cargoId) throws IllegalStateException,
+            RecordNotFoundServiceException, LogiwebServiceException {
+        try {
+            Cargo c = cargoDao.find(cargoId);
+            if (c == null) {
+                throw new RecordNotFoundServiceException();
+            }
+            
+            if (c.getOrderForThisCargo().getStatus() != OrderStatus.READY_TO_GO) {
+                throw new IllegalStateException(
+                        "Order for cargo must be in 'Ready to go' state");
+            }
+            
+            if (c.getStatus() != CargoStatus.PICKED_UP) {
+                throw new IllegalStateException(
+                        "Cargo must be in 'Waiting for pickup' state");
+            }
+
+            c.setStatus(CargoStatus.DELIVERED);
             cargoDao.update(c);
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
@@ -119,7 +152,7 @@ public class CargoServiceImpl implements CargoService {
             newCargoAsEntity.setDestinationCity(destinationCity);
             newCargoAsEntity.setOrderForThisCargo(orderForCargo);
             
-            validateCargoManagedFieldsByBusinessRequirements(newCargoAsEntity);            
+            validateCargoByBusinessRequirements(newCargoAsEntity);            
             
             newCargoAsEntity.setStatus(CargoStatus.WAITING_FOR_PICKUP);
             
@@ -151,7 +184,7 @@ public class CargoServiceImpl implements CargoService {
     }
     
     /**
-     * Validate cargo (fields must be managed)
+     * Validate cargo entity by business requirements
      * 
      * Req.:
      * Both destination an origin cities must exist, and must not be the same city.
@@ -160,7 +193,7 @@ public class CargoServiceImpl implements CargoService {
      * @param c cargo where all fields are managed entities.
      * @throws ServiceValidationException if requirements are not met. 
      */
-     private void validateCargoManagedFieldsByBusinessRequirements(Cargo c) throws ServiceValidationException {
+     private void validateCargoByBusinessRequirements(Cargo c) throws ServiceValidationException {
          if (c.getOriginCity() == null) {
              throw new ServiceValidationException("Origin city does not exist.");
          } else if (c.getDestinationCity() == null) {

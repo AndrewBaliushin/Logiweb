@@ -39,11 +39,15 @@ public class WsDriverImpl implements WsDriver {
     @Autowired
     private TrucksService truckService;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void shiftBegginedForDriver(int driverEmployeeId)
             throws InvalidRequestException {
         try {
-            driverService.startShiftForDriverAndSetRestingEnRouteStatus(driverEmployeeId);
+            driverService
+                    .startShiftForDriverAndSetRestingEnRouteStatus(driverEmployeeId);
         } catch (ServiceValidationException e) {
             throw new InvalidRequestException(e);
         } catch (LogiwebServiceException e) {
@@ -53,6 +57,9 @@ public class WsDriverImpl implements WsDriver {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void shiftEndedForDriver(int driverEmployeeId)
             throws InvalidRequestException {
@@ -91,7 +98,8 @@ public class WsDriverImpl implements WsDriver {
     }
 
     @Override
-    public void setStatusPickedUpForCargo(int cargoId) {
+    public void setStatusPickedUpForCargo(int cargoId)
+            throws NotFoundException, IllegalStateException {
         try {
             cargoService.setPickedUpStatus(cargoId);
         } catch (RecordNotFoundServiceException e) {
@@ -106,7 +114,8 @@ public class WsDriverImpl implements WsDriver {
      * {@inheritDoc}
      */
     @Override
-    public void setStatusDeliveredForCargoAndFinilizeOrderIfPossible(int cargoId) {
+    public void setStatusDeliveredForCargoAndFinilizeOrderIfPossible(int cargoId)
+            throws NotFoundException, IllegalStateException {
         try {
             cargoService.setDeliveredStatus(cargoId);
 
@@ -148,15 +157,18 @@ public class WsDriverImpl implements WsDriver {
             info.setSurname(driver.getSurname());
             info.setWorkingHoursInThisMonth(driverService
                     .calculateWorkingHoursForDriver(driver.getId()));
-
+            
             if (driver.getCurrentTruck() != null
                     && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
                 RouteInformation routeInfo = routeService
                         .getRouteInformationForOrder(driver.getCurrentTruck()
                                 .getAssignedDeliveryOrder().getId());
                 info.setRouteInformation(routeInfo);
-            }
 
+                info.setAssignedOrderStatus(driver.getCurrentTruck()
+                        .getAssignedDeliveryOrder().getStatus());
+            }
+            
             return info;
         } catch (LogiwebServiceException e) {
             LOG.warn("Something unexpected happen", e);

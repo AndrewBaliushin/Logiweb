@@ -1,6 +1,7 @@
 package com.tsystems.javaschool.logiweb.webservices;
 
 import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
+import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 
 public class DriverInfo {
@@ -8,12 +9,16 @@ public class DriverInfo {
     private int employeeId;
 
     private String name;
+    
     private String surname;
+    
     private float workingHoursInThisMonth;
     
     private DriverStatus cutrrentStatus;
     
     private RouteInformation routeInformation;
+    
+    private OrderStatus assignedOrderStatus;
 
     public String getName() {
         return name;
@@ -61,6 +66,14 @@ public class DriverInfo {
 
     public void setEmployeeId(int employeeId) {
         this.employeeId = employeeId;
+    }
+
+    public OrderStatus getAssignedOrderStatus() {
+        return assignedOrderStatus;
+    }
+
+    public void setAssignedOrderStatus(OrderStatus assignedOrderStatus) {
+        this.assignedOrderStatus = assignedOrderStatus;
     }
     
     
