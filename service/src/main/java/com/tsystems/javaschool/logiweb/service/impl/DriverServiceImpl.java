@@ -167,6 +167,7 @@ public class DriverServiceImpl implements DriverService {
         driverToPopulate.setEmployeeId(source.getEmployeeId());
         driverToPopulate.setSurname(source.getSurname());
         driverToPopulate.setName(source.getName());
+        driverToPopulate.setStatus(source.getStatus());
         
         return driverToPopulate;
     }
@@ -180,7 +181,6 @@ public class DriverServiceImpl implements DriverService {
      * @throws ServiceValidationException if driver don't have all required fields or have not unique employee ID
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
-    @Transactional
     private int addDriverAndLinkHimToAccount(DriverModel newDriverAsModel, LogiwebUser accountForDriver) throws ServiceValidationException,
             LogiwebServiceException {
         newDriverAsModel.setStatus(DriverStatus.FREE); //default status

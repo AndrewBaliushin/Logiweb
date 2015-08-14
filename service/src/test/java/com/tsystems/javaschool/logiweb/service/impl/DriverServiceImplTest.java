@@ -1,8 +1,5 @@
 package com.tsystems.javaschool.logiweb.service.impl;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -10,13 +7,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,7 +73,8 @@ public class DriverServiceImplTest {
      * Sets up test data that will be returned by driverDaoMock and
      * shiftDaoMock. Drivers for
      * driverDaoMock.findByCityWhereNotAssignedToTruck(...) will be created with
-     * names: test0..test4 Journals for
+     * names: test0..test4 and IDs 0..4
+     *  Journals for
      * shiftDaoMock.findThisMonthJournalsForDrivers(...) will be created with
      * working hours: 
      * test0 -- 15 working hours in two shifts 
@@ -97,6 +95,11 @@ public class DriverServiceImplTest {
         Driver d2 = new Driver(); // have 0 hours
         Driver d3 = new Driver(); // 5 this month, 10 in previous (one shift)
         Driver d4 = new Driver(); // unknown number of hours in unfinished shift
+        d0.setId(0);
+        d1.setId(1);
+        d2.setId(2);
+        d3.setId(3);
+        d4.setId(4);
         d0.setName("test0");
         d1.setName("test1");
         d2.setName("test2");
@@ -173,124 +176,154 @@ public class DriverServiceImplTest {
         return freeDriversAsList;
     }
 
-//    /**
-//     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
-//     * Case: Driver shift started in last month, ended in this.
-//     */
-//    @Test
-//    public void testFindByWorkHoursWhenShiftStartedInLastMonth()
-//            throws DaoException, LogiwebServiceException {
-//        List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-//
-//        Set<Driver> result = driverService
-//                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0, 10);
-//        assertThat(result, hasItem(freeDrivers.get(3)));
-//    }
-//
-//    /**
-//     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
-//     * Case: Driver doesn't have any shifts yet.
-//     */
-//    @Test
-//    public void testFindByWorkHoursWhenThereIsNoShifts() throws DaoException,
-//            LogiwebServiceException {
-//        setupMocks();
-//        List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-//
-//        Set<Driver> result = driverService
-//                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0, 10);
-//        assertThat(result, hasItem(freeDrivers.get(2)));
-//    }
-//
-//    /**
-//     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
-//     * Case: '0' hours is argument for method
-//     */
-//    @Test
-//    public void testFindByWorkHoursWhenArgumentIsZeroHours()
-//            throws DaoException, LogiwebServiceException {
-//        setupMocks();
-//        List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-//
-//        Set<Driver> result = driverService
-//                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0, 0);
-//        assertThat(result, hasItem(freeDrivers.get(2)));
-//    }
-//    
-//    /**
-//     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
-//     * Case: negative number is argument for method
-//     */
-//    @Test
-//    public void testFindByWorkHoursWhenArgumentIsNegativeHours()
-//            throws DaoException, LogiwebServiceException {
-//        setupMocks();
-//        setupDriverAndJournalsTestData();
-//
-//        Set<Driver> result = driverService
-//                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0, -1);
-//        Assert.assertTrue(result.isEmpty());
-//    }
-//    
-//    /**
-//     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
-//     * Case: expect more than one result
-//     */
-//    @Test
-//    public void testFindByWorkHoursExpectMultipleResuts()
-//            throws DaoException, LogiwebServiceException {
-//        setupMocks();
-//        List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-//
-//        //Expected: drv.test1 (12h), drv.test2 (0 hours) and
-//        // drv.test3(5 hours)
-//        Set<Driver> result = driverService
-//                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0,
-//                        13);
-//        assertThat(
-//                result,
-//                hasItems(freeDrivers.get(1), freeDrivers.get(2),
-//                        freeDrivers.get(3)));
-//    }
-//    
-//    /**
-//     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
-//     * Case: driver have more working hours than was requested
-//     */
-//    @Test
-//    public void testFindByWorkHoursWhenDriverHaveMoreHoursThanArgument()
-//            throws DaoException, LogiwebServiceException {
-//        setupMocks();
-//        List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-//
-//        //Expected: drv.test1 (12h), drv.test2 (0 hours) and
-//        // drv.test3(5 hours), and not drv.test0 (15 hours)
-//        Set<Driver> result = driverService
-//                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0,
-//                        13);
-//        assertThat(
-//                result,
-//                CoreMatchers.not((hasItem(freeDrivers.get(0)))));
-//    }
-//    
-//    /**
-//     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
-//     * Case: driver have unfinished shift
-//     */
-//    @Test
-//    public void testFindByWorkHoursWhenDriverHasUnfinishedShift()
-//            throws DaoException, LogiwebServiceException {
-//        setupMocks();
-//        List<Driver> freeDrivers = setupDriverAndJournalsTestData();
-//
-//        //Expected: drv.test1 (12h), drv.test2 (0 hours) and
-//        // drv.test3(5 hours), and not drv.test0 (15 hours)
-//        Set<Driver> result = driverService
-//                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0,
-//                        744); //744 - max hours in month
-//        assertThat(
-//                result, hasItem(freeDrivers.get(4)));
-//    }
+    /**
+     * Examine Driver Models and return true if they contain all drivers with ids specified in 
+     * driverIdsToLookFor.
+     * @param driverIdsToLookFor
+     * @param driverModels
+     * @return
+     */
+    private boolean isDriverModelsCollectionContainAllDriverIds(List<Integer> driverIdsToLookFor, Collection<DriverModel> driverModels) {
+        List<Integer> driverIds = new ArrayList<Integer>();
+        for (DriverModel dm : driverModels) {
+            driverIds.add(dm.getId());
+        }
+        
+        driverIdsToLookFor.removeAll(driverIds);
+        return driverIdsToLookFor.isEmpty();
+    }
+
+    /**
+     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
+     * Case: Driver shift started in last month, ended in this.
+     */
+    @Test
+    public void testFindByWorkHoursWhenShiftStartedInLastMonth()
+            throws DaoException, LogiwebServiceException {
+        setupDriverAndJournalsTestData();
+
+        Set<DriverModel> result = driverService
+                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0, 10);
+        
+        List<Integer> expectedDriverIds = new ArrayList<Integer>();
+        expectedDriverIds.add(3);
+        Assert.assertTrue(isDriverModelsCollectionContainAllDriverIds(
+                expectedDriverIds, result));
+    }
+    
+    /**
+     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
+     * Case: Driver doesn't have any shifts yet.
+     */
+    @Test
+    public void testFindByWorkHoursWhenThereIsNoShifts() throws DaoException,
+            LogiwebServiceException {
+        setupDriverAndJournalsTestData();
+
+        Set<DriverModel> result = driverService
+                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0, 10);
+        
+        List<Integer> expectedDriverIds = new ArrayList<Integer>();
+        expectedDriverIds.add(2);
+        Assert.assertTrue(isDriverModelsCollectionContainAllDriverIds(
+                expectedDriverIds, result));
+    }
+
+    /**
+     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
+     * Case: '0' hours is argument for method
+     */
+    @Test
+    public void testFindByWorkHoursWhenArgumentIsZeroHours()
+            throws DaoException, LogiwebServiceException {
+        setupDriverAndJournalsTestData();
+
+        Set<DriverModel> result = driverService
+                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0, 0);
+        
+        List<Integer> expectedDriverIds = new ArrayList<Integer>();
+        expectedDriverIds.add(2);
+        Assert.assertTrue(isDriverModelsCollectionContainAllDriverIds(
+                expectedDriverIds, result));
+    }
+    
+    /**
+     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
+     * Case: negative number is argument for method
+     */
+    @Test
+    public void testFindByWorkHoursWhenArgumentIsNegativeHours()
+            throws DaoException, LogiwebServiceException {
+        setupDriverAndJournalsTestData();
+
+        Set<DriverModel> result = driverService
+                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0, -1);
+        Assert.assertTrue(result.isEmpty());
+    }
+    
+    /**
+     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
+     * Case: expect more than one result
+     */
+    @Test
+    public void testFindByWorkHoursExpectMultipleResuts()
+            throws DaoException, LogiwebServiceException {setupDriverAndJournalsTestData();
+
+        //Expected: drv.test1 (12h), drv.test2 (0 hours) and
+        // drv.test3(5 hours)
+        Set<DriverModel> result = driverService
+                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0,
+                        13);
+        
+        List<Integer> expectedDriverIds = new ArrayList<Integer>();
+        expectedDriverIds.add(1);
+        expectedDriverIds.add(2);
+        expectedDriverIds.add(3);
+        Assert.assertTrue(isDriverModelsCollectionContainAllDriverIds(
+                expectedDriverIds, result));
+    }
+    
+    /**
+     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
+     * Case: driver have more working hours than was requested
+     */
+    @Test
+    public void testFindByWorkHoursWhenDriverHaveMoreHoursThanArgument()
+            throws DaoException, LogiwebServiceException {
+        setupDriverAndJournalsTestData();
+
+        //Expected: drv.test1 (12h), drv.test2 (0 hours) and
+        // drv.test3(5 hours), and not drv.test0 (15 hours)
+        Set<DriverModel> result = driverService
+                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0,
+                        13);
+        
+        List<Integer> expectedDriverIds = new ArrayList<Integer>();
+        expectedDriverIds.add(0);
+        Assert.assertFalse(isDriverModelsCollectionContainAllDriverIds(
+                expectedDriverIds, result));
+    }
+    
+    /**
+     * Test: findUnassignedToTrucksDriversByMaxWorkingHoursAndCity 
+     * Case: driver have unfinished shift
+     */
+    @Test
+    public void testFindByWorkHoursWhenDriverHasUnfinishedShift()
+            throws DaoException, LogiwebServiceException {
+        setupDriverAndJournalsTestData();
+
+        //Expected: drv.test1 (12h), drv.test2 (0 hours) and
+        // drv.test3(5 hours), and not drv.test0 (15 hours)
+        Set<DriverModel> result = driverService
+                .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(0,
+                        744); //744 - max hours in month
+        
+        List<Integer> expectedDriverIds = new ArrayList<Integer>();
+        expectedDriverIds.add(4);
+        Assert.assertTrue(isDriverModelsCollectionContainAllDriverIds(
+                expectedDriverIds, result));
+    }
     
     /**
      * Test: assignDriverToTruck

@@ -4,6 +4,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import org.hibernate.annotations.Any;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -16,6 +18,7 @@ import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.model.CargoModel;
 import com.tsystems.javaschool.logiweb.service.CargoService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -25,29 +28,32 @@ public class CargoServiceImplTest {
     private CargoDao cargoDaoMock;
     private CityDao cityDaoMock;
     private DeliveryOrderDao deliveryOrderDaoMock;
+    
+    private CargoService cargoService;
 
-    private void setupMocks() {
+    @Before
+    public void setupMocks() {
         cargoDaoMock = mock(CargoDao.class);
         cityDaoMock = mock(CityDao.class);
-        deliveryOrderDaoMock = mock(DeliveryOrderDao.class);        
+        deliveryOrderDaoMock = mock(DeliveryOrderDao.class);    
+        
+        cargoService = new CargoServiceImpl(cargoDaoMock,
+                cityDaoMock, deliveryOrderDaoMock);
     }
     
-    private Cargo createValidTestCargo() {
-        Cargo newCargo = new Cargo();
+    private CargoModel createValidTestCargo() {
+        CargoModel newCargo = new CargoModel();
         
         City city1 = new City();
         city1.setId(1);
         City city2 = new City();
         city2.setId(2);
         
-        DeliveryOrder order = new DeliveryOrder();
-        order.setStatus(OrderStatus.NOT_READY);
-        
         newCargo.setTitle("test");
         newCargo.setWeight(1f);
-        newCargo.setOriginCity(city1);
-        newCargo.setDestinationCity(city2);
-        newCargo.setOrderForThisCargo(order);
+        newCargo.setOriginCityId(1);
+        newCargo.setDestinationCityId(2);
+        newCargo.setOrderIdForThisCargo(1);
         
         return newCargo;
     }
@@ -58,15 +64,25 @@ public class CargoServiceImplTest {
      * We return same objects for dao calls so validation 
      * could be successful.
      */
-    private void setMocksToPassInnerValidationInAddCargo(Cargo sourceCargo)
+    private void setMocksToPassInnerValidationInAddCargo(CargoModel sourceCargo)
             throws DaoException {
+        City originCity = new City();
+        originCity.setId(sourceCargo.getOriginCityId());
+        
+        City destCity = new City();
+        destCity.setId(sourceCargo.getDestinationCityId());
+        
+        DeliveryOrder order = new DeliveryOrder();
+        order.setId(sourceCargo.getOrderIdForThisCargo());
+        order.setStatus(OrderStatus.NOT_READY);
+        
       //needed for inner irrelevant validations
-        when(cityDaoMock.find(sourceCargo.getOriginCity().getId()))
-            .thenReturn(sourceCargo.getOriginCity());
-        when(cityDaoMock.find(sourceCargo.getDestinationCity().getId()))
-            .thenReturn(sourceCargo.getDestinationCity());
-        when(deliveryOrderDaoMock.find(sourceCargo.getOrderForThisCargo().getId()))
-            .thenReturn(sourceCargo.getOrderForThisCargo());
+        when(cityDaoMock.find(sourceCargo.getOriginCityId()))
+            .thenReturn(originCity);
+        when(cityDaoMock.find(sourceCargo.getDestinationCityId()))
+            .thenReturn(destCity);
+        when(deliveryOrderDaoMock.find(sourceCargo.getOrderIdForThisCargo()))
+            .thenReturn(order);
     }
     
     @Test
@@ -75,13 +91,13 @@ public class CargoServiceImplTest {
         setupMocks();
         CargoService cargoService = new CargoServiceImpl(cargoDaoMock,
                 cityDaoMock, deliveryOrderDaoMock);
-        Cargo newCargo = createValidTestCargo();
+        CargoModel newCargo = createValidTestCargo();
         
         setMocksToPassInnerValidationInAddCargo(newCargo);
         
         cargoService.addCargo(newCargo);
         
-        Mockito.verify(cargoDaoMock, times(1)).create(newCargo);
+        Mockito.verify(cargoDaoMock, times(1)).create(Mockito.any(Cargo.class));
     }
     
     @Test(expected = ServiceValidationException.class)
@@ -91,40 +107,10 @@ public class CargoServiceImplTest {
         setupMocks();
         CargoService cargoService = new CargoServiceImpl(cargoDaoMock,
                 cityDaoMock, deliveryOrderDaoMock);
-        Cargo newCargo = createValidTestCargo();
+        CargoModel newCargo = createValidTestCargo();
         setMocksToPassInnerValidationInAddCargo(newCargo);
         
         newCargo.setTitle(null);
-        
-        cargoService.addCargo(newCargo);
-    }
-    
-    @Test(expected = ServiceValidationException.class)
-    public void testAddCargoWhenOriginCityMissing() 
-            throws ServiceValidationException, LogiwebServiceException,
-            DaoException {
-        setupMocks();
-        CargoService cargoService = new CargoServiceImpl(cargoDaoMock,
-                cityDaoMock, deliveryOrderDaoMock);
-        Cargo newCargo = createValidTestCargo();
-        setMocksToPassInnerValidationInAddCargo(newCargo);
-        
-        newCargo.setOriginCity(null);
-        
-        cargoService.addCargo(newCargo);
-    }
-    
-    @Test(expected = ServiceValidationException.class)
-    public void testAddCargoWhenDestinationSityMissing()
-            throws ServiceValidationException, LogiwebServiceException,
-            DaoException {
-        setupMocks();
-        CargoService cargoService = new CargoServiceImpl(cargoDaoMock,
-                cityDaoMock, deliveryOrderDaoMock);
-        Cargo newCargo = createValidTestCargo();
-        setMocksToPassInnerValidationInAddCargo(newCargo);
-        
-        newCargo.setDestinationCity(null);
         
         cargoService.addCargo(newCargo);
     }
@@ -136,10 +122,15 @@ public class CargoServiceImplTest {
         setupMocks();
         CargoService cargoService = new CargoServiceImpl(cargoDaoMock,
                 cityDaoMock, deliveryOrderDaoMock);
-        Cargo newCargo = createValidTestCargo();
-        setMocksToPassInnerValidationInAddCargo(newCargo);
+        CargoModel newCargo = createValidTestCargo();
+        setMocksToPassInnerValidationInAddCargo(newCargo);        
         
-        newCargo.setDestinationCity(newCargo.getOriginCity());
+        newCargo.setDestinationCityId(newCargo.getOriginCityId());
+        City sameCity = new City();
+        when(cityDaoMock.find(newCargo.getOriginCityId())).thenReturn(
+                sameCity);
+        when(cityDaoMock.find(newCargo.getDestinationCityId())).thenReturn(
+                sameCity);
         
         cargoService.addCargo(newCargo);
     }
@@ -151,10 +142,14 @@ public class CargoServiceImplTest {
         setupMocks();
         CargoService cargoService = new CargoServiceImpl(cargoDaoMock,
                 cityDaoMock, deliveryOrderDaoMock);
-        Cargo newCargo = createValidTestCargo();
+        CargoModel newCargo = createValidTestCargo();
         setMocksToPassInnerValidationInAddCargo(newCargo);
         
-        newCargo.getOrderForThisCargo().setStatus(OrderStatus.READY_TO_GO);
+        DeliveryOrder wrongStatusOrder = new DeliveryOrder();
+        wrongStatusOrder.setStatus(OrderStatus.READY_TO_GO);
+        
+        when(deliveryOrderDaoMock.find(newCargo.getOrderIdForThisCargo()))
+            .thenReturn(wrongStatusOrder);
         
         cargoService.addCargo(newCargo);
     }
@@ -166,10 +161,15 @@ public class CargoServiceImplTest {
         setupMocks();
         CargoService cargoService = new CargoServiceImpl(cargoDaoMock,
                 cityDaoMock, deliveryOrderDaoMock);
-        Cargo newCargo = createValidTestCargo();
+        CargoModel newCargo = createValidTestCargo();
         setMocksToPassInnerValidationInAddCargo(newCargo);
         
-        newCargo.getOrderForThisCargo().setAssignedTruck(new Truck());
+        DeliveryOrder wrongStatusOrder = new DeliveryOrder();
+        wrongStatusOrder.setStatus(OrderStatus.NOT_READY);
+        wrongStatusOrder.setAssignedTruck(new Truck());
+        
+        when(deliveryOrderDaoMock.find(newCargo.getOrderIdForThisCargo()))
+            .thenReturn(wrongStatusOrder);
         
         cargoService.addCargo(newCargo);
     }
