@@ -5,10 +5,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.tsystems.javaschool.logiweb.entities.Cargo;
 import com.tsystems.javaschool.logiweb.entities.City;
+import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.model.CargoModel;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
+import com.tsystems.javaschool.logiweb.model.OrderModel;
 import com.tsystems.javaschool.logiweb.model.TruckModel;
 
 public class ModelToEntityConverter {
@@ -127,6 +131,77 @@ public class ModelToEntityConverter {
     public static Set<TruckModel> convertTrucksToModels(Set<Truck> entities) {
         Set<TruckModel> models = new HashSet<TruckModel>();
         for (Truck e : entities) {
+            models.add(convertToModel(e));
+        }
+        return models;
+    }
+    
+    public static OrderModel convertToModel(DeliveryOrder entity) {
+        OrderModel model = new OrderModel();
+        
+        model.setId(entity.getId());
+        model.setStatus(entity.getStatus());
+        if (entity.getAssignedCargoes() != null) {
+            model.setAssignedCargoes(convertCargoesToModels(entity.getAssignedCargoes()));
+        }
+        if (entity.getAssignedTruck() != null) {
+            model.setAssignedTruck(convertToModel(entity.getAssignedTruck()));
+        }
+        return model;
+    }
+
+    public static Set<OrderModel> convertOrdersToModels(
+            Set<DeliveryOrder> entities) {
+        Set<OrderModel> models = new HashSet<OrderModel>();
+        for (DeliveryOrder e : entities) {
+            models.add(convertToModel(e));
+        }
+        return models;
+    }
+    
+    public static CargoModel convertToModel(Cargo entity) {
+        CargoModel model = new CargoModel();
+        
+        model.setId(entity.getId());
+        model.setDestinationCityId(entity.getDestinationCity().getId());
+        model.setOrderIdForThisCargo(entity.getOrderForThisCargo().getId());
+        model.setOriginCityId(entity.getOriginCity().getId());
+        model.setStatus(entity.getStatus());
+        model.setTitle(entity.getTitle());
+        model.setWeight(entity.getWeight());
+        
+        return model;
+    }
+    
+    public static Cargo convertToEntity(CargoModel model) {
+        Cargo entity = new Cargo();
+        
+        City originCity = new City();
+        originCity.setId(model.getOriginCityId());
+        
+        City destCity = new City();
+        destCity.setId(model.getDestinationCityId());
+        
+        DeliveryOrder orderForCargo = new DeliveryOrder();
+        orderForCargo.setId(model.getOrderIdForThisCargo());
+
+        if (model.getId() != null) {
+            entity.setId(model.getId());
+        }
+
+        entity.setOrderForThisCargo(orderForCargo);
+        entity.setOriginCity(originCity);
+        entity.setDestinationCity(destCity);
+        entity.setStatus(model.getStatus());
+        entity.setTitle(model.getTitle());
+        entity.setWeight(model.getWeight());
+        
+        return entity;
+    }
+    
+    public static Set<CargoModel> convertCargoesToModels(Set<Cargo> entities) {
+        Set<CargoModel> models = new HashSet<CargoModel>();
+        for (Cargo e : entities) {
             models.add(convertToModel(e));
         }
         return models;

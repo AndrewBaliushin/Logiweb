@@ -17,6 +17,8 @@ import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
 import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
+import com.tsystems.javaschool.logiweb.model.OrderModel;
+import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.OrderService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
@@ -46,9 +48,10 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
-    public Set<DeliveryOrder> findAllOrders() throws LogiwebServiceException {
+    public Set<OrderModel> findAllOrders() throws LogiwebServiceException {
         try {
-            return deliveryOrderDao.findAll();
+            return ModelToEntityConverter
+                    .convertOrdersToModels(deliveryOrderDao.findAll());
         } catch (DaoException e) {
             LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
@@ -60,12 +63,14 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional
-    public DeliveryOrder addNewOrder(DeliveryOrder newOrder)
+    public int createNewEmptyOrder()
             throws LogiwebServiceException {
         try {
+            DeliveryOrder newOrder = new DeliveryOrder();
+            newOrder.setStatus(OrderStatus.NOT_READY);
             deliveryOrderDao.create(newOrder);
             LOG.info("Order created. ID#" + newOrder.getId());
-            return newOrder;
+            return newOrder.getId();
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
@@ -76,9 +81,14 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
-    public DeliveryOrder findOrderById(int id) throws LogiwebServiceException {
+    public OrderModel findOrderById(int id) throws LogiwebServiceException {
         try {
-            return deliveryOrderDao.find(id);
+            DeliveryOrder o = deliveryOrderDao.find(id);
+            if (o == null) {
+                return null;
+            } else {
+                return ModelToEntityConverter.convertToModel(o);
+            }
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);

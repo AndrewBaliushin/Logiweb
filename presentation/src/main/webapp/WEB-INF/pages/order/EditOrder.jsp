@@ -47,13 +47,13 @@
 			 
 			 <h4>Assigned drivers 
 			     <c:if test="${!empty order.assignedTruck}">
-			         (${fn:length(order.assignedTruck.drivers)} / ${order.assignedTruck.crewSize})
+			         (${fn:length(order.assignedTruck.driversIdsAndSurnames)} / ${order.assignedTruck.crewSize})
                  </c:if>:
                  
                  <c:choose>
-                     <c:when test="${!empty order.assignedTruck && !empty order.assignedTruck.drivers}">
-                        <c:forEach items="${order.assignedTruck.drivers}" var="driver">
-                            <a href="${pageContext.request.contextPath}/driver/${driver.id}">${driver.name} ${driver.surname}</a><span class="comma-separator">,</span>
+                     <c:when test="${!empty order.assignedTruck && !empty order.assignedTruck.driversIdsAndSurnames}">
+                        <c:forEach items="${order.assignedTruck.driversIdsAndSurnames}" var="entry">
+                            <a href="${pageContext.request.contextPath}/driver/${entry.key}">${entry.value}</a><span class="comma-separator">,</span>
                         </c:forEach>
                      </c:when>
                      <c:otherwise><span class="label label-danger">Not assigned</span></c:otherwise>
@@ -97,7 +97,7 @@
 					</button>
 
 					<!-- Assign driver to tuck -->
-					<button type="button" class="btn btn-default btn-lg <c:if test="${empty order.assignedTruck || (!empty order.assignedTruck.drivers && fn:length(order.assignedTruck.drivers) >= order.assignedTruck.crewSize)}">disabled</c:if>"
+					<button type="button" class="btn btn-default btn-lg <c:if test="${empty order.assignedTruck || (!empty order.assignedTruck.driversIdsAndSurnames && fn:length(order.assignedTruck.driversIdsAndSurnames) >= order.assignedTruck.crewSize)}">disabled</c:if>"
 					data-toggle="modal" data-target="#assign-driver">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-user" aria-hidden="true"></span>
@@ -107,7 +107,7 @@
 					<!-- Status change -->
 					<button type="button" class="btn btn-default btn-lg 
 					    <c:choose>
-	                       <c:when test="${order.status == 'NOT_READY' && !empty order.assignedTruck && (!empty order.assignedTruck.drivers && fn:length(order.assignedTruck.drivers) >= order.assignedTruck.crewSize)}"></c:when>
+	                       <c:when test="${order.status == 'NOT_READY' && !empty order.assignedTruck && (!empty order.assignedTruck.driversIdsAndSurnames && fn:length(order.assignedTruck.driversIdsAndSurnames) >= order.assignedTruck.crewSize)}"></c:when>
 	                       
 	                       <c:otherwise>disabled</c:otherwise>
                         </c:choose>"
@@ -116,9 +116,6 @@
 							class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
 						Ready!
 					</button>
-					
-					
-
 
 				</div>
 
@@ -155,8 +152,8 @@
 								<td>${cargo.title}</td>
 								<td>${cargo.weight}</td>
 								<td>${cargo.status}</td>
-								<td>${cargo.originCity.name}</td>
-								<td>${cargo.destinationCity.name}</td>
+								<td>${citites[cargo.originCityid].name}</td>
+								<td>${citites[cargo.destinationCityId].name}</td>
 							</tr>
 						</c:forEach>
 
@@ -175,211 +172,16 @@
 
 </div>
 
-
-
 <!-- Modal: Add cargo -->
-<div class="modal fade modal-wide" id="add-cargo" tabindex="-1"
-	role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-				<h4 class="modal-title" id="myModalLabel">
-					Add cargo to order #
-					<c:out value="${order.id}"></c:out>
-				</h4>
-			</div>
-			<div class="modal-body">
-
-				<form class="form-horizontal" id="addCargoForm" method="POST" action="addCargo">
-				<input type="hidden" name="orderId" value="${order.id}">
-				
-					<fieldset>
-					
-						<!-- Title: Text input-->
-						<div class="form-group">
-							<label class="col-md-4 control-label" for="cargoTitle">Cargo
-								Title</label>
-							<div class="col-md-4">
-								<input id="cargoTitle" name="cargoTitle" type="text"
-									placeholder="Title" class="form-control input-md" required="">
-
-							</div>
-						</div>
-						
-						<!-- Weight: Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="cargoWeight">Cargo
-                                Weight <small>x1000kg</small></label>
-                            <div class="col-md-4">
-                                <input id="cargoWeight" name="cargoWeight" type="text"
-                                    placeholder="Wieght" class="form-control input-md" required="">
-
-                            </div>
-                        </div>
-						
-
-						<!-- Origin: Select Basic -->
-						<div class="form-group">
-							<label class="col-md-4 control-label" for="originCity">Origin
-								City</label>
-							<div class="col-md-4">
-								<select id="originCity" name="originCity" class="form-control">
-									<c:forEach items="${cities}" var="cityOption">
-										<option value="${cityOption.id}">${cityOption.name}</option>
-									</c:forEach>
-								</select>
-							</div>
-						</div>
-
-						<!-- Origin: Select Basic -->
-						<div class="form-group">
-							<label class="col-md-4 control-label" for="destinationCity">Destination
-								City</label>
-							<div class="col-md-4">
-								<select id="destinationCity" name="destinationCity"
-									class="form-control">
-									<c:forEach items="${cities}" var="cityOption">
-                                        <option value="${cityOption.id}">${cityOption.name}</option>
-                                    </c:forEach>
-								</select>
-							</div>
-						</div>
-
-					</fieldset>
-				</form>
-
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-success" 
-					onclick="postFormByAjax('#addCargoForm')">Save</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- /Modal -->
+<jsp:include page="ext/AddCargoModal.jsp"/>
+<!-- /Modal Add cargo -->
 
 <!-- Modal: Assign truck -->
-<div class="modal fade modal-wide" id="assign-truck" tabindex="-1"
-    role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel">
-                    Assign truck to order #
-                    <c:out value="${order.id}"></c:out>
-                </h4>
-            </div>
-            <div class="modal-body">
-
-                <form class="form-horizontal" id="assignTruckForm" method="POST" action="assignTruck">
-                <input type="hidden" name="orderId" value="${order.id}">
-                
-                    <fieldset>
-                    
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="truck">Suggested trucks</label>
-                            <div class="col-md-9">
-                                <select id="truck" name="truckId" class="form-control">
-                                    <c:forEach items="${suggestedTrucks}" var="truck">
-                                        <option value="${truck.id}">
-                                            Plate: ${truck.licencePlate} |
-                                            Max weight: ${truck.cargoCapacity} |
-                                            Currnet city: ${truck.currentCity.name} |
-                                            Crew size: ${truck.crewSize}
-                                        </option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                        </div>
-                        
-                    </fieldset>
-                </form>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" 
-                    onclick="postFormByAjax('#assignTruckForm')">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+<jsp:include page="ext/AssignTruckModal.jsp"/>
 <!-- /Modal Assign truck -->
 
-
 <!-- Modal: Assign driver -->
-<div class="modal fade modal-wide" id="assign-driver" tabindex="-1"
-    role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel">
-                    Assign drivers to order #
-                    <c:out value="${order.id}"></c:out>
-                    who had less than <fmt:formatNumber value="${maxWorkingHoursLimit - routeInfo.estimatedTime}" pattern="0.0"/>
-                    working hours in this month
-                </h4>
-            </div>
-            <div class="modal-body">
-
-                <form class="form-horizontal" id="assignDriverForm" method="POST" action="addDriverToTruck">
-                <input type="hidden" name="truckId" value='<c:if test="${!empty order.assignedTruck }">${order.assignedTruck.id}</c:if>'>
-                
-                <c:if test="${!empty order.assignedTruck && empty order.assignedTruck.drivers}">
-                    <input type="hidden" name="maxDriversToAssign" value='${order.assignedTruck.crewSize}'>
-                </c:if>
-                <c:if test="${!empty order.assignedTruck && !empty order.assignedTruck.drivers}">
-                    <input type="hidden" name="maxDriversToAssign" value='${order.assignedTruck.crewSize - fn:length(order.assignedTruck.drivers)}'>
-                </c:if>
-                
-                    <fieldset>
-                    
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="driverId">Suggested drivers</label>
-                            <div class="col-md-9">
-
-								<c:forEach items="${suggestedDrivers}" var="driver">
-									<div>
-										<label for="driver-checkbox-${driver.id}"> <input
-											type="checkbox" name="driversIds"
-											id="driver-checkbox-${driver.id}" value="${driver.id}">
-											${driver.name} ${driver.surname} | Currnet city:
-											${driver.currentCity.name} | This month working hours: <fmt:formatNumber
-												type="number" value="${workingHoursForDrivers[driver]}"
-												pattern=".#" />
-										</label>
-									</div>
-								</c:forEach>
-
-
-							</div>
-                        </div>
-                        
-                    </fieldset>
-                </form>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" 
-                    onclick="postFormByAjax('#assignDriverForm')">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+<jsp:include page="ext/AssignDriversModal.jsp"/>
 <!-- /Modal Assign driver -->
  
 <jsp:include page="../GlobalFooter.jsp" />

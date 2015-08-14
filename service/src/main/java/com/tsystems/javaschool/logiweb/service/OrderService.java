@@ -3,6 +3,7 @@ package com.tsystems.javaschool.logiweb.service;
 import java.util.Set;
 
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
+import com.tsystems.javaschool.logiweb.model.OrderModel;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 
@@ -20,30 +21,30 @@ public interface OrderService {
      * @throws LogiwebServiceException
      *             if something unexpected happens
      */
-    Set<DeliveryOrder> findAllOrders() throws LogiwebServiceException;
+    Set<OrderModel> findAllOrders() throws LogiwebServiceException;
 
     
 
     /**
-     * Add new order.
+     * Create new empty delivery order with Not Ready status.
      * 
      * @param newOrder
-     * @return same order
+     * @return id of created order
      * @throws LogiwebServiceException
      *             if something unexpected happens
      */
-    DeliveryOrder addNewOrder(DeliveryOrder newOrder)
+    int createNewEmptyOrder()
             throws LogiwebServiceException;
 
     /**
-     * Find ofrder by id.
+     * Find order by id.
      * 
      * @param id
-     * @return order or null if not found
+     * @return order model or null if not found
      * @throws LogiwebServiceException
      *             if something unexpected happens
      */
-    DeliveryOrder findOrderById(int id) throws LogiwebServiceException;
+    OrderModel findOrderById(int id) throws LogiwebServiceException;
 
     /**
      * Assign truck to order. Truck must by managed entity.

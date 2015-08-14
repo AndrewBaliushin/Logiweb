@@ -13,9 +13,9 @@ import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.tsystems.javaschool.logiweb.dao.CityDao;
 import com.tsystems.javaschool.logiweb.dao.DriverDao;
 import com.tsystems.javaschool.logiweb.dao.DriverShiftJournaDao;
 import com.tsystems.javaschool.logiweb.dao.TruckDao;
@@ -52,15 +52,17 @@ public class DriverServiceImpl implements DriverService {
     private DriverShiftJournaDao driverShiftJournalDao;
     private UserService userService;
     private UserDao userDao;
+    private CityDao cityDao;
       
     @Autowired
     public DriverServiceImpl(DriverDao driverDao, TruckDao truckDao,
-            DriverShiftJournaDao shiftDao, UserService userService, UserDao userDao) {
+            DriverShiftJournaDao shiftDao, UserService userService, UserDao userDao, CityDao cityDao) {
         this.driverDao = driverDao;
         this.truckDao = truckDao;
         this.driverShiftJournalDao = shiftDao;
 	this.userService = userService;
 	this.userDao = userDao;
+	this.cityDao = cityDao;
     }
     
     /**
@@ -260,9 +262,14 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
-            City city, float workingHoursMaxLimit) throws LogiwebServiceException {
+    public Set<DriverModel> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
+            int cityId, float workingHoursMaxLimit) throws LogiwebServiceException {
         try {
+            City city = cityDao.find(cityId);
+            if (city == null) {
+                throw new RecordNotFoundServiceException();
+            }
+            
             Set<Driver> freeDriversInCity = driverDao
                     .findByCityWhereNotAssignedToTruck(city);
             Set<DriverShiftJournal> journals = driverShiftJournalDao
@@ -275,7 +282,7 @@ public class DriverServiceImpl implements DriverService {
             
             filterDriversByMaxWorkingHours(workingHoursData, workingHoursMaxLimit);
             
-            return workingHoursData.keySet();
+            return ModelToEntityConverter.convertDriversToModels(workingHoursData.keySet());
         } catch (DaoException e) {
             LOG.warn(e);
             throw new LogiwebServiceException(e);

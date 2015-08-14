@@ -18,6 +18,8 @@ import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.model.CargoModel;
+import com.tsystems.javaschool.logiweb.model.ext.ModelToEntityConverter;
 import com.tsystems.javaschool.logiweb.service.CargoService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.RecordNotFoundServiceException;
@@ -100,27 +102,29 @@ public class CargoServiceImpl implements CargoService {
      */
     @Override
     @Transactional
-    public void addCargo(Cargo newCargo) throws ServiceValidationException, LogiwebServiceException {
-        validateNewCargoForEmptyFields(newCargo); //throws e
+    public void addCargo(CargoModel newCargo) throws ServiceValidationException, LogiwebServiceException {
+        Cargo newCargoAsEntity = ModelToEntityConverter.convertToEntity(newCargo);        
+        
+        validateNewCargoForEmptyFields(newCargoAsEntity); //throws e
         
         try {
-            City originCity = cityDao.find(newCargo.getOriginCity().getId());
-            City destinationCity = cityDao.find(newCargo.getDestinationCity()
+            City originCity = cityDao.find(newCargoAsEntity.getOriginCity().getId());
+            City destinationCity = cityDao.find(newCargoAsEntity.getDestinationCity()
                     .getId());
-            DeliveryOrder orderForCargo = deliveryOrderDao.find(newCargo
+            DeliveryOrder orderForCargo = deliveryOrderDao.find(newCargoAsEntity
                     .getOrderForThisCargo().getId());
             
             //switch detached entities in cargo to managed ones
-            newCargo.setOriginCity(originCity);
-            newCargo.setDestinationCity(destinationCity);
-            newCargo.setOrderForThisCargo(orderForCargo);
+            newCargoAsEntity.setOriginCity(originCity);
+            newCargoAsEntity.setDestinationCity(destinationCity);
+            newCargoAsEntity.setOrderForThisCargo(orderForCargo);
             
-            validateCargoManagedFieldsByBusinessRequirements(newCargo);            
+            validateCargoManagedFieldsByBusinessRequirements(newCargoAsEntity);            
             
-            newCargo.setStatus(CargoStatus.WAITING_FOR_PICKUP);
+            newCargoAsEntity.setStatus(CargoStatus.WAITING_FOR_PICKUP);
             
-            cargoDao.create(newCargo);
-            LOG.info("New cargo with id #" + newCargo.getId() + "created for irder id #" + orderForCargo.getId());
+            cargoDao.create(newCargoAsEntity);
+            LOG.info("New cargo with id #" + newCargoAsEntity.getId() + "created for irder id #" + orderForCargo.getId());
         } catch (DaoException e) {         
             LOG.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);

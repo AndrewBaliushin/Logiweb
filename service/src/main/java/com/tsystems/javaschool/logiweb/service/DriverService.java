@@ -102,16 +102,17 @@ public interface DriverService {
      * take more hours in next month than allowed by business rules for driver
      * then we limit hours to what is left in this month.
      * 
-     * @param city
+     * @param cityId
      * @param deliveryTime
      *            -- time to deliver
      * @return drivers or empty set
      * @throws LogiwebServiceException
      *             if unexpected exception on lower level occurred (not user
      *             fault)
+     *         RecordNotFoundServiceException if city with that id can't be found
      */
-    Set<Driver> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
-            City city, float deliveryTime) throws LogiwebServiceException;
+    Set<DriverModel> findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
+            int cityId, float deliveryTime) throws LogiwebServiceException, RecordNotFoundServiceException;
 
     /**
      * Calculate working hours for driver for this month.

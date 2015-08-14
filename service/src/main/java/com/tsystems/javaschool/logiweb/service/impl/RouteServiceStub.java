@@ -7,12 +7,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tsystems.javaschool.logiweb.dao.DeliveryOrderDao;
+import com.tsystems.javaschool.logiweb.dao.TruckDao;
+import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.entities.Cargo;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
 import com.tsystems.javaschool.logiweb.service.RouteService;
+import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation.OperationWithCargo;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation.Waypoint;
@@ -25,7 +30,7 @@ import com.tsystems.javaschool.logiweb.service.ext.RouteInformation.Waypoint;
  */
 @Service
 public class RouteServiceStub implements RouteService {
-    
+
     /**
      * Used for generation of random delivery time.
      * Each cargo in order adds some time to total delivery time.
@@ -40,18 +45,40 @@ public class RouteServiceStub implements RouteService {
      */
     private final static float MAX_DELIVERY_TIME = 20;
 
+    private DeliveryOrderDao deliveryOrderDao;
+    private TruckDao truckDao;
+    
+    @Autowired
+    public RouteServiceStub(DeliveryOrderDao deliveryOrderDao, TruckDao truckDao) {
+        super();
+        this.deliveryOrderDao = deliveryOrderDao;
+        this.truckDao = truckDao;
+    }
+    
+    
     /**
      * Return RouteInformation object, that have random delivery hours (from 10 to 100);
      * order of delivery is sorted by origin first, then destination;
      * weight is maximum weight (all cargo combined).
+     * @throws LogiwebServiceException 
      */
     @Override
-    public RouteInformation getRouteInformationForOrder(DeliveryOrder order) {
-        RouteInformation info = new RouteInformation(
-                getPseudoRandomFloatBasedOnCargoesInOrder(order),
-                getTotalWeightOfAllCargoes(order),
-                getCitiesInOrderOriginBeforeDestination(order));
-        return info;
+    public RouteInformation getRouteInformationForOrder(int orderId) throws LogiwebServiceException {
+        try {
+            DeliveryOrder order = deliveryOrderDao.find(orderId);
+            if (order == null) {
+                return null;
+            }
+            
+            RouteInformation info = new RouteInformation(
+                    getPseudoRandomFloatBasedOnCargoesInOrder(order),
+                    getTotalWeightOfAllCargoes(order),
+                    getCitiesInOrderOriginBeforeDestination(order));
+            return info;
+        } catch (DaoException e) {
+            throw new LogiwebServiceException("Unexpected exception.");
+        }
+        
     }
 
     /**

@@ -153,7 +153,7 @@ public class WsDriverImpl implements WsDriver {
                     && driver.getCurrentTruck().getAssignedDeliveryOrder() != null) {
                 RouteInformation routeInfo = routeService
                         .getRouteInformationForOrder(driver.getCurrentTruck()
-                                .getAssignedDeliveryOrder());
+                                .getAssignedDeliveryOrder().getId());
                 info.setRouteInformation(routeInfo);
             }
 

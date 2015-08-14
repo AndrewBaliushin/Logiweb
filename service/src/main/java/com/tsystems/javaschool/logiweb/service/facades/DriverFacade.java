@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
+import com.tsystems.javaschool.logiweb.model.OrderModel;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.OrderService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
@@ -54,8 +55,8 @@ public class DriverFacade {
             return driver;
         }
         
-        DeliveryOrder order = orderService.findOrderById(driver.getOrderId());
-        RouteInformation routeInfo = routeService.getRouteInformationForOrder(order);
+        OrderModel order = orderService.findOrderById(driver.getOrderId());
+        RouteInformation routeInfo = routeService.getRouteInformationForOrder(order.getId());
         driver.setRouteInfo(routeInfo);
         
         return driver;

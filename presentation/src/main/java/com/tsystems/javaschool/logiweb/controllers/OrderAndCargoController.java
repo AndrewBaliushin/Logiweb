@@ -1,7 +1,5 @@
 package com.tsystems.javaschool.logiweb.controllers;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +9,7 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,12 +18,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tsystems.javaschool.logiweb.controllers.exceptions.FormParamaterParsingException;
 import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
-import com.tsystems.javaschool.logiweb.entities.Cargo;
-import com.tsystems.javaschool.logiweb.entities.City;
-import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
-import com.tsystems.javaschool.logiweb.entities.Driver;
-import com.tsystems.javaschool.logiweb.entities.Truck;
+import com.tsystems.javaschool.logiweb.controllers.ext.CityUtils;
 import com.tsystems.javaschool.logiweb.entities.status.OrderStatus;
+import com.tsystems.javaschool.logiweb.model.CargoModel;
+import com.tsystems.javaschool.logiweb.model.DriverModel;
+import com.tsystems.javaschool.logiweb.model.OrderModel;
 import com.tsystems.javaschool.logiweb.model.TruckModel;
 import com.tsystems.javaschool.logiweb.service.CargoService;
 import com.tsystems.javaschool.logiweb.service.CityService;
@@ -55,33 +53,31 @@ public class OrderAndCargoController {
     private @Autowired TrucksService truckService;
     private @Autowired DriverService driverService;
     private @Autowired CargoService cargoService;
+    private @Autowired CityUtils cityUtils;
 
-    @RequestMapping(value = {"order/{orderId}/edit", "order/{orderId}"}, method = RequestMethod.GET)
-    public ModelAndView editOrder(@PathVariable("orderId") int orderId) throws LogiwebServiceException {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName(editOrderViewPath);
-
-        DeliveryOrder order = orderService.findOrderById(orderId);
+    @RequestMapping(value = { "order/{orderId}/edit", "order/{orderId}" }, method = RequestMethod.GET)
+    public String editOrder(@PathVariable("orderId") int orderId, Model model)
+            throws LogiwebServiceException {
+        OrderModel order = orderService.findOrderById(orderId);
         if (order == null) {
             throw new RecordNotFoundException("Order #" + orderId
                     + " not exist.");
         }
 
-        RouteInformation routeInfo = routeService.getRouteInformationForOrder(order);
+        RouteInformation routeInfo = routeService
+                .getRouteInformationForOrder(order.getId());
 
-        mav.addObject("orderId", orderId);
-        mav.addObject("order", order);
-        mav.addObject("routeInfo", routeInfo);
-        mav.addObject("maxWorkingHoursLimit", driverMonthlyWorkingHoursLimit);
-        
-        mav.addObject("cities", cityService.findAllCities());
+        model.addAttribute("orderId", orderId);
+        model.addAttribute("order", order);
+        model.addAttribute("routeInfo", routeInfo);
+        model.addAttribute("maxWorkingHoursLimit", driverMonthlyWorkingHoursLimit);
         
         //suggest trucks
         if (order.getAssignedTruck() == null) {
             Set<TruckModel> suggestedTrucks = truckService
                     .findFreeAndUnbrokenByCargoCapacity(routeInfo
                             .getMaxWeightOnCourse());
-            mav.addObject("suggestedTrucks", suggestedTrucks);
+            model.addAttribute("suggestedTrucks", suggestedTrucks);
         }        
         
         //suggest drivers
@@ -89,23 +85,22 @@ public class OrderAndCargoController {
             float workingHoursLimit = calcMaxWorkingHoursThatDriverCanHave(routeInfo
                     .getEstimatedTime());
 
-            Set<Driver> suggestedDrivers = driverService
+            Set<DriverModel> suggestedDrivers = driverService
                     .findUnassignedToTrucksDriversByMaxWorkingHoursAndCity(
-                            order.getAssignedTruck().getCurrentCity(),
+                            order.getAssignedTruck().getCurrentCityId(),
                             workingHoursLimit);
-            mav.addObject("suggestedDrivers", suggestedDrivers);
 
-            Map<Driver, Float> workingHoursForDrivers = new HashMap<Driver, Float>();
-            for (Driver driver : suggestedDrivers) {
-                workingHoursForDrivers.put(driver, driverService
-                        .calculateWorkingHoursForDriver(driver.getId()));
+            for (DriverModel d : suggestedDrivers) {
+                d.setWorkingHoursThisMonth(driverService
+                        .calculateWorkingHoursForDriver(d.getId()));
             }
-            mav.addObject("workingHoursForDrivers", workingHoursForDrivers);
+            model.addAttribute("suggestedDrivers", suggestedDrivers);
         }
         
-        mav.addObject("statuses", OrderStatus.values());
+        model.addAttribute("statuses", OrderStatus.values());
         
-        return mav;
+        cityUtils.addCitiesToModel(model);
+        return editOrderViewPath;
     }
     
     /**
@@ -136,19 +131,17 @@ public class OrderAndCargoController {
      */
     @RequestMapping(value = "/order/{orderId}/edit/addCargo", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String addCargoToOrder(@PathVariable("orderId") int orderId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws LogiwebServiceException {
+    public String addCargoToOrder(HttpServletRequest request,
+            HttpServletResponse response) throws LogiwebServiceException {
         try {
-            Cargo newCargo = createDetachedCargoEntityFromRequestParams(request);
+            CargoModel newCargo = createDetachedCargoModelFromRequestParams(request);
             cargoService.addCargo(newCargo);
             return "Cargo added";
-        } catch (FormParamaterParsingException  | ServiceValidationException e) {
+        } catch (FormParamaterParsingException | ServiceValidationException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
         }
     }
-    
 
     /**
      * Assign truck to order.
@@ -192,8 +185,8 @@ public class OrderAndCargoController {
             @PathVariable("orderId") int orderId, HttpServletResponse response)
             throws LogiwebServiceException {
         try {
-            DeliveryOrder order = orderService.findOrderById(orderId);
-            Truck truck = order.getAssignedTruck();
+            OrderModel order = orderService.findOrderById(orderId);
+            TruckModel truck = order.getAssignedTruck();
             if(truck != null) {
                 truckService.removeAssignedOrderAndDriversFromTruck(truck.getId());  
                 return "Drivers and Truck relieved from order.";
@@ -228,18 +221,15 @@ public class OrderAndCargoController {
     
     @RequestMapping(value = {"/order/new"})
     public String addOrder() throws LogiwebServiceException {
-        DeliveryOrder newOrder = new DeliveryOrder();
-        newOrder.setStatus(OrderStatus.NOT_READY);
-        orderService.addNewOrder(newOrder);
-        return "redirect:/order/" + newOrder.getId() + "/edit";
+        int newOrderId = orderService.createNewEmptyOrder();
+        return "redirect:/order/" + newOrderId + "/edit";
     }
     
     @RequestMapping(value = { "/order" })
-    public ModelAndView showOrders() throws LogiwebServiceException {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName(orderListViewPath);
-        mav.addObject("orders", orderService.findAllOrders());
-        return mav;
+    public String showOrders(Model model) throws LogiwebServiceException {
+        model.addAttribute("orders", orderService.findAllOrders());
+        cityUtils.addCitiesToModel(model);
+        return orderListViewPath;
     }
     
     @RequestMapping(value = { "/cargo" })
@@ -250,10 +240,11 @@ public class OrderAndCargoController {
         return mav;
     }
     
-    private Cargo createDetachedCargoEntityFromRequestParams(HttpServletRequest request) throws FormParamaterParsingException {
+    private CargoModel createDetachedCargoModelFromRequestParams(
+            HttpServletRequest request) throws FormParamaterParsingException {
         int orderId;
         float cargoWeight;
-        int originCityId; 
+        int originCityId;
         int destinationCityId;
         
         try {
@@ -269,31 +260,23 @@ public class OrderAndCargoController {
         }
         
         try {
-            originCityId = Integer.parseInt(request.getParameter("originCity"));
+            originCityId = Integer.parseInt(request.getParameter("originCityId"));
         } catch (NumberFormatException | NullPointerException e) {
             throw new FormParamaterParsingException("Origin city (" + request.getParameter("originCity") + ") is in wrong format or null");
         }
         
         try {
-            destinationCityId = Integer.parseInt(request.getParameter("destinationCity"));
+            destinationCityId = Integer.parseInt(request.getParameter("destinationCityId"));
         } catch (NumberFormatException | NullPointerException e) {
             throw new FormParamaterParsingException("Destination city(" + request.getParameter("destinationCity") + ") is in wrong format or null");
         }
         
-        City originCity = new City();
-        City destinationCity = new City();
-        originCity.setId(originCityId);
-        destinationCity.setId(destinationCityId);
-        
-        DeliveryOrder orderForThisCargo = new DeliveryOrder();
-        orderForThisCargo.setId(orderId);
-        
-        Cargo newCargo = new Cargo();
-        newCargo.setOrderForThisCargo(orderForThisCargo);
+        CargoModel newCargo = new CargoModel();
         newCargo.setTitle(request.getParameter("cargoTitle"));
+        newCargo.setOriginCityId(originCityId);
+        newCargo.setDestinationCityId(destinationCityId);
         newCargo.setWeight(cargoWeight);
-        newCargo.setOriginCity(originCity);
-        newCargo.setDestinationCity(destinationCity);
+        newCargo.setOrderIdForThisCargo(orderId);
         
         return newCargo;
     }

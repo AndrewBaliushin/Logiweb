@@ -1,6 +1,5 @@
 package com.tsystems.javaschool.logiweb.model;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Min;
