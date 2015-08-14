@@ -152,8 +152,8 @@
 								<td>${cargo.title}</td>
 								<td>${cargo.weight}</td>
 								<td>${cargo.status}</td>
-								<td>${citites[cargo.originCityid].name}</td>
-								<td>${citites[cargo.destinationCityId].name}</td>
+								<td>${cities[cargo.originCityId].name}</td>
+								<td>${cities[cargo.destinationCityId].name}</td>
 							</tr>
 						</c:forEach>
 

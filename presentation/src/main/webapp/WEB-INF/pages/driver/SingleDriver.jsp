@@ -13,18 +13,17 @@
 
 <jsp:include page="ext/SingleDriverInfoSnippet.jsp"/>
 
-<c:if test="${!empty routeInfo}">
+<c:if test="${!empty driver.routeInfo}">
 	<!-- Print waypoints-->
-	<jsp:include page="../order/ext/WaypointsSnippet.jsp">
-		<jsp:param name="routeInfo" value="${routeInfo}" />
-	</jsp:include>
+	<c:set var="routeInfo" value="${driver.routeInfo}" scope="request" />
+	<jsp:include page="../order/ext/WaypointsSnippet.jsp"/>
 </c:if>
 
-<c:if test="${!empty journals}">
+<c:if test="${!empty driver.thisMonthShiftJurnals}">
 	<!-- Print shift records-->
+	<c:set var="journals" value="${driver.thisMonthShiftJurnals}" scope="request" />
 	<jsp:include page="ext/ShiftJournalsSnippet.jsp">
 		<jsp:param name="comment" value="this month" />
-		<jsp:param name="journals" value="${journals}" />
 	</jsp:include>
 </c:if>
 
