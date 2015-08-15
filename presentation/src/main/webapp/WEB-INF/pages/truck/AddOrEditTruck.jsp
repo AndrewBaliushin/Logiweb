@@ -16,6 +16,7 @@
 
 <jsp:include page="../GlobalHeader.jsp">
 	<jsp:param name="title" value="${title}" />
+	<jsp:param value="truck/PlateValidator.js" name="js"/>
 </jsp:include>
 
 <jsp:include page="../GlobalHeaderMenu.jsp">
