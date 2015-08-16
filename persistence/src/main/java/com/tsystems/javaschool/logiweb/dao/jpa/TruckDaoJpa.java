@@ -47,9 +47,7 @@ public class TruckDaoJpa extends GenericDaoJpa<Truck> implements TruckDao {
             query.setParameter("capacity", minCargoCapacity);
 
             List<Truck> resultList = query.getResultList();
-            Set<Truck> resultSet = new HashSet<Truck>(resultList);
-
-            return resultSet;
+            return new HashSet<Truck>(resultList);
         } catch (Exception e) {
             LOG.warn(e);
             throw new DaoException(e);

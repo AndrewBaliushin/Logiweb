@@ -25,8 +25,7 @@ import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
  * @author Andrey Baliushin
  */
 @Entity
-@Table(name = "drivers", uniqueConstraints = 
-       @UniqueConstraint(columnNames = "driver_employee_id_UQ"))
+@Table(name = "drivers", uniqueConstraints = @UniqueConstraint(columnNames = "driver_employee_id_UQ"))
 public class Driver {
 
     @Id
@@ -36,11 +35,11 @@ public class Driver {
 
     @Column(name = "driver_employee_id_UQ", unique = true, nullable = false)
     private int employeeId;
-    
+
     @OneToOne
     @JoinColumn(name = "driver_logiweb_account_id")
     private LogiwebUser logiwebAccount;
-    
+
     @NotNull
     @Column(name = "driver_name", nullable = false)
     private String name;
@@ -62,19 +61,19 @@ public class Driver {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driverForThisRecord")
     private Set<DriverShiftJournal> shitsJournalRecords;
-    
+
     @Column(name = "driver_deleted", nullable = false)
     private boolean deletedRecord;
 
     public Driver() {
     }
-    
+
     public int getId() {
         return id;
     }
-    
+
     public void setId(int id) {
-	this.id = id;
+        this.id = id;
     }
 
     public int getEmployeeId() {
@@ -129,7 +128,8 @@ public class Driver {
         return shitsJournalRecords;
     }
 
-    public void setShitsJournalRecords(Set<DriverShiftJournal> shitsJournalRecords) {
+    public void setShitsJournalRecords(
+            Set<DriverShiftJournal> shitsJournalRecords) {
         this.shitsJournalRecords = shitsJournalRecords;
     }
 
@@ -148,7 +148,5 @@ public class Driver {
     public void setLogiwebAccount(LogiwebUser logiwebAccount) {
         this.logiwebAccount = logiwebAccount;
     }
-    
-    
-    
+
 }

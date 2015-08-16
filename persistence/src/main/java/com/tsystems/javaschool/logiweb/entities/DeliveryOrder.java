@@ -28,16 +28,19 @@ public class DeliveryOrder {
     @GeneratedValue
     @Column(name = "order_id", unique = true, nullable = false)
     private int id;
-    
+
     @Column(name = "order_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @OneToOne(mappedBy = "assignedDeliveryOrder")
     private Truck assignedTruck;
-    
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "orderForThisCargo")
     private Set<Cargo> assignedCargoes;
+
+    public DeliveryOrder() {
+    }
 
     public OrderStatus getStatus() {
         return status;
@@ -47,15 +50,12 @@ public class DeliveryOrder {
         this.status = status;
     }
 
-    public DeliveryOrder() {
-    }
-    
     public int getId() {
         return id;
     }
-    
+
     public void setId(int id) {
-	this.id = id;
+        this.id = id;
     }
 
     public Truck getAssignedTruck() {

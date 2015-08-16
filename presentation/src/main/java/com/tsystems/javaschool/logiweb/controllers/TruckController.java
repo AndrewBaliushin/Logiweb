@@ -5,7 +5,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -16,13 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.tsystems.javaschool.logiweb.controllers.exceptions.RecordNotFoundException;
 import com.tsystems.javaschool.logiweb.controllers.ext.CityUtils;
 import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
 import com.tsystems.javaschool.logiweb.model.TruckModel;
-import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.TrucksService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
@@ -30,15 +27,13 @@ import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationExcep
 @Controller
 public class TruckController {
     
-    private final static Logger LOG = Logger.getLogger(TruckController.class);
-    
-    private @Value("${views.addOrEditTruck}") String addOrUpdateTruckViewPath;
-    private @Value("${views.truckList}") String truckListViewPath;
+    @Value("${views.addOrEditTruck}") 
+    private String addOrUpdateTruckViewPath;
+    @Value("${views.truckList}") 
+    private String truckListViewPath;
 
     @Autowired
     private TrucksService truckService ;
-    @Autowired
-    private CityService cityService;
     @Autowired
     private CityUtils cityUtils;
 
@@ -95,7 +90,7 @@ public class TruckController {
     }
     
     @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.POST)
-    public String editTruck(@PathVariable("truckId") int truckId,
+    public String editTruck(
             @ModelAttribute("truckModel") @Valid TruckModel truckModel,
             BindingResult result, Model model) throws LogiwebServiceException {
         

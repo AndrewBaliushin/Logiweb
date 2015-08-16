@@ -26,7 +26,7 @@ import com.tsystems.javaschool.logiweb.webservices.exceptions.NotFoundException;
 @WebService(endpointInterface = "com.tsystems.javaschool.logiweb.webservices.WsDriver")
 public class WsDriverImpl implements WsDriver {
 
-    private final static Logger LOG = Logger.getLogger(WsDriverImpl.class);
+    private static final Logger LOG = Logger.getLogger(WsDriverImpl.class);
 
     @Autowired
     private DriverService driverService;

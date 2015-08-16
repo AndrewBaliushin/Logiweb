@@ -31,16 +31,16 @@ import com.tsystems.javaschool.logiweb.service.validators.LicensePlateValidator;
  * @author Andrey Baliushin
  */
 @Service
-public class TrucksSeviceimpl implements TrucksService {
+public class TrucksSeviceImpl implements TrucksService {
     
-    private static final Logger LOG = Logger.getLogger(TrucksSeviceimpl.class);
+    private static final Logger LOG = Logger.getLogger(TrucksSeviceImpl.class);
     
     private TruckDao truckDao;
     
     private LicensePlateValidator licenserPlateValidator;
     
     @Autowired
-    public TrucksSeviceimpl(TruckDao truckDao, LicensePlateValidator licenserPlateValidator) {
+    public TrucksSeviceImpl(TruckDao truckDao, LicensePlateValidator licenserPlateValidator) {
 	this.truckDao = truckDao;
 	this.licenserPlateValidator = licenserPlateValidator;
     }

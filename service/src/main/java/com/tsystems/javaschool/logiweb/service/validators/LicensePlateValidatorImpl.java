@@ -18,6 +18,7 @@ public class LicensePlateValidatorImpl implements LicensePlateValidator {
      * @param plate
      * @return
      */
+    @Override
     public boolean validateLicensePlate(String plate) {
         if(!plate.matches("(?ui)^[А-ЯA-Z0-9]{7}$")) { //only letters and numbers (7 times)
             return false;

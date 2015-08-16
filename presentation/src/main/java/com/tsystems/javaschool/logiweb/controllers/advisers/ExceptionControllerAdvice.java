@@ -12,7 +12,8 @@ import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceExceptio
 @ControllerAdvice
 public class ExceptionControllerAdvice {
     
-    private @Value("${views.error}") String errorViewPath;
+    @Value("${views.error}") 
+    private String errorViewPath;
     
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(LogiwebServiceException.class)

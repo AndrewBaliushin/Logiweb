@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tsystems.javaschool.logiweb.dao.DeliveryOrderDao;
-import com.tsystems.javaschool.logiweb.dao.TruckDao;
 import com.tsystems.javaschool.logiweb.dao.exceptions.DaoException;
 import com.tsystems.javaschool.logiweb.entities.Cargo;
 import com.tsystems.javaschool.logiweb.entities.DeliveryOrder;
@@ -36,23 +35,21 @@ public class RouteServiceStub implements RouteService {
      * Each cargo in order adds some time to total delivery time.
      * This sets minimal limit for each cargo.
      */
-    private final static float MIN_DELIVERY_TIME = 10;
+    private static final float MIN_DELIVERY_TIME = 10;
     
     /**
      * Used for generation of random delivery time.
      * Each cargo in order adds some time to total delivery time.
      * This sets max limit for each cargo.
      */
-    private final static float MAX_DELIVERY_TIME = 20;
+    private static final float MAX_DELIVERY_TIME = 20;
 
     private DeliveryOrderDao deliveryOrderDao;
-    private TruckDao truckDao;
     
     @Autowired
-    public RouteServiceStub(DeliveryOrderDao deliveryOrderDao, TruckDao truckDao) {
+    public RouteServiceStub(DeliveryOrderDao deliveryOrderDao) {
         super();
         this.deliveryOrderDao = deliveryOrderDao;
-        this.truckDao = truckDao;
     }
     
     
@@ -70,11 +67,10 @@ public class RouteServiceStub implements RouteService {
                 return null;
             }
             
-            RouteInformation info = new RouteInformation(
+            return new RouteInformation(
                     getPseudoRandomFloatBasedOnCargoesInOrder(order),
                     getTotalWeightOfAllCargoes(order),
                     getCitiesInOrderOriginBeforeDestination(order));
-            return info;
         } catch (DaoException e) {
             throw new LogiwebServiceException("Unexpected exception.");
         }
@@ -94,7 +90,9 @@ public class RouteServiceStub implements RouteService {
         List<Waypoint> destinationWaypoints = new ArrayList<Waypoint>();
 
         Set<Cargo> cargoes = order.getAssignedCargoes();
-        if (cargoes == null) return new ArrayList<Waypoint>(0);
+        if (cargoes == null) {
+            return new ArrayList<Waypoint>(0);
+        }
         for (Cargo cargo : cargoes) {
             originWaypoints.add(new Waypoint(OperationWithCargo.PICKUP, cargo
                     .getOriginCity(), cargo));
@@ -122,7 +120,9 @@ public class RouteServiceStub implements RouteService {
         float totalWeight = 0;
 
         Set<Cargo> cargoes = order.getAssignedCargoes();
-        if (cargoes == null) return 0;
+        if (cargoes == null) {
+            return 0;
+        }
         for (Cargo cargo : cargoes) {
             totalWeight += cargo.getWeight();
         }
@@ -131,13 +131,17 @@ public class RouteServiceStub implements RouteService {
 
     private float getPseudoRandomFloatBasedOnCargoesInOrder(DeliveryOrder order) {
         Set<Cargo> cargoes = order.getAssignedCargoes();
-        if (cargoes == null) return 0f;
+        if (cargoes == null) {
+            return 0f;
+        }
         
         float result = 0f;
         
         Random rand = new Random();
         for (Cargo cargo : cargoes) {
-            if (cargo.getStatus() == CargoStatus.DELIVERED) continue;
+            if (cargo.getStatus() == CargoStatus.DELIVERED) {
+                continue;
+            }
             
             rand.setSeed(cargo.getDestinationCity().getName().hashCode());
             result += rand.nextFloat() * (MAX_DELIVERY_TIME - MIN_DELIVERY_TIME) + MIN_DELIVERY_TIME;

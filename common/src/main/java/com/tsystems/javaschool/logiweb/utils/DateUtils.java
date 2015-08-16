@@ -95,7 +95,7 @@ public class DateUtils {
         Date intervalPivot = new Date(start.getTime());
         
         while (intervalPivot.before(end)) {
-            long unixTimestamp = intervalPivot.getTime() / 1000l;
+            long unixTimestamp = intervalPivot.getTime() / 1000L;
             counter.put(String.valueOf(unixTimestamp), 1);
             cal.setTime(intervalPivot); 
             cal.add(Calendar.HOUR_OF_DAY, 1); 

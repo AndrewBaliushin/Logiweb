@@ -2,7 +2,6 @@ package com.tsystems.javaschool.logiweb.service;
 
 import java.util.Set;
 
-import com.tsystems.javaschool.logiweb.entities.Truck;
 import com.tsystems.javaschool.logiweb.model.TruckModel;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;

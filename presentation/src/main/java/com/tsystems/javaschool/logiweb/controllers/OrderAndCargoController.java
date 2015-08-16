@@ -5,7 +5,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -25,7 +24,6 @@ import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.model.OrderModel;
 import com.tsystems.javaschool.logiweb.model.TruckModel;
 import com.tsystems.javaschool.logiweb.service.CargoService;
-import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
 import com.tsystems.javaschool.logiweb.service.OrderService;
 import com.tsystems.javaschool.logiweb.service.RouteService;
@@ -41,19 +39,25 @@ public class OrderAndCargoController {
     @Value("${bussines.maxWorkingHours}")
     private float driverMonthlyWorkingHoursLimit;
     
-    private @Value("${views.orderList}") String orderListViewPath;
-    private @Value("${views.editOrder}") String editOrderViewPath;
-    private @Value("${views.cargoesList}") String cargoesListViewPath;
+    @Value("${views.orderList}") 
+    private String orderListViewPath;
+    @Value("${views.editOrder}") 
+    private String editOrderViewPath;
+    @Value("${views.cargoesList}") 
+    private String cargoesListViewPath;
     
-    private final static Logger LOG = Logger.getLogger(OrderAndCargoController.class);
-
-    private @Autowired CityService cityService;
-    private @Autowired OrderService orderService;
-    private @Autowired RouteService routeService;
-    private @Autowired TrucksService truckService;
-    private @Autowired DriverService driverService;
-    private @Autowired CargoService cargoService;
-    private @Autowired CityUtils cityUtils;
+    @Autowired 
+    private OrderService orderService;
+    @Autowired 
+    private RouteService routeService;
+    @Autowired 
+    private TrucksService truckService;
+    @Autowired 
+    private DriverService driverService;
+    @Autowired 
+    private CargoService cargoService;
+    @Autowired 
+    private CityUtils cityUtils;
 
     @RequestMapping(value = { "order/{orderId}/edit", "order/{orderId}" }, method = RequestMethod.GET)
     public String editOrder(@PathVariable("orderId") int orderId, Model model)

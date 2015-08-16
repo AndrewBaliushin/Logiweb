@@ -2,7 +2,6 @@ package com.tsystems.javaschool.logiweb.service;
 
 import java.util.Set;
 
-import com.tsystems.javaschool.logiweb.entities.City;
 import com.tsystems.javaschool.logiweb.entities.Driver;
 import com.tsystems.javaschool.logiweb.entities.DriverShiftJournal;
 import com.tsystems.javaschool.logiweb.model.DriverModel;

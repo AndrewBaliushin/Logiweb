@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ErrorController {
     
-    private @Value("${views.error}") String errorViewPath;
+    @Value("${views.error}") 
+    private String errorViewPath;
     
     @RequestMapping(value = "/error")
     public String errorHandeler(Model model, HttpServletResponse response,

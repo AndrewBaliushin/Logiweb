@@ -89,7 +89,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
     @Override
     public final void update(T changedObject) throws DaoException {
         if (changedObject == null) {
-            return; // TODO make sure it's right way
+            return;
         }
 
         try {
@@ -107,8 +107,7 @@ public abstract class GenericDaoJpa<T> implements GenericDao<T> {
     @Override
     public final void delete(T objectToDelete) throws DaoException {
         if (objectToDelete == null) {
-            return; // TODO make sure it's right way
-
+            return;
         }
 
         try {

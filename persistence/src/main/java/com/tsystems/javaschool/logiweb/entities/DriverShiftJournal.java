@@ -43,35 +43,35 @@ public class DriverShiftJournal {
     }
 
     public int getId() {
-	return id;
+        return id;
     }
 
     public void setId(int id) {
-	this.id = id;
+        this.id = id;
     }
 
     public Date getShiftBeggined() {
-	return shiftBeggined;
+        return shiftBeggined;
     }
 
     public void setShiftBeggined(Date shiftBeggined) {
-	this.shiftBeggined = shiftBeggined;
+        this.shiftBeggined = shiftBeggined;
     }
 
     public Date getShiftEnded() {
-	return shiftEnded;
+        return shiftEnded;
     }
 
     public void setShiftEnded(Date shiftEnded) {
-	this.shiftEnded = shiftEnded;
+        this.shiftEnded = shiftEnded;
     }
 
     public Driver getDriverForThisRecord() {
-	return driverForThisRecord;
+        return driverForThisRecord;
     }
 
     public void setDriverForThisRecord(Driver driverForThisRecord) {
-	this.driverForThisRecord = driverForThisRecord;
+        this.driverForThisRecord = driverForThisRecord;
     }
 
 }

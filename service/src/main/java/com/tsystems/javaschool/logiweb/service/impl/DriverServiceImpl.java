@@ -40,7 +40,7 @@ import com.tsystems.javaschool.logiweb.utils.DateUtils;
 /**
  * Data manipulation and business logic related to Drivers.
  * 
- * @author Andrey Baliushin
+ * @author Andrey Baliushina
  */
 @Service
 public class DriverServiceImpl implements DriverService {
@@ -221,9 +221,7 @@ public class DriverServiceImpl implements DriverService {
             throws ServiceValidationException, LogiwebServiceException {
         int newUserId = userService.createNewUser(accountName, pass, UserRole.ROLE_DRIVER);
         LogiwebUser accountForDriver = userService.findUserById(newUserId); 
-        int driverId = addDriverAndLinkHimToAccount(newDriver, accountForDriver); //all necessary validations are inside this method
-        
-        return driverId;
+        return addDriverAndLinkHimToAccount(newDriver, accountForDriver); //all necessary validations are inside this method
     }
 
     /**
@@ -277,7 +275,9 @@ public class DriverServiceImpl implements DriverService {
             
             Map<Driver, Float> workingHoursData = sumWorkingHoursForThisMonth(journals);
             for (Driver driver : freeDriversInCity) {   //add drivers that don't yet have journals
-                if(workingHoursData.get(driver) == null) workingHoursData.put(driver, 0f);
+                if(workingHoursData.get(driver) == null) {
+                    workingHoursData.put(driver, 0f);
+                }
             }
             
             filterDriversByMaxWorkingHours(workingHoursData, workingHoursMaxLimit);
@@ -326,7 +326,9 @@ public class DriverServiceImpl implements DriverService {
             Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(journals);
             
             //if driver don't have any records yet
-            if (workingHours.get(driver) == null) workingHours.put(driver, 0f);
+            if (workingHours.get(driver) == null) {
+                workingHours.put(driver, 0f);
+            }
             
             return workingHours.get(driver);
         } catch (DaoException e) {

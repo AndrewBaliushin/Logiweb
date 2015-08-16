@@ -55,6 +55,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
         }
     }
     
+    @Override
     public int createNewUser(String userName, String pass, UserRole role) throws ServiceValidationException, LogiwebServiceException {
         if (userName == null || userName.isEmpty()) {
             throw new ServiceValidationException(
@@ -105,7 +106,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
              MessageDigest md = MessageDigest.getInstance("MD5");
              md.reset();
              byte[] array = md.digest(pass.getBytes());
-             StringBuffer sb = new StringBuffer();
+             StringBuilder sb = new StringBuilder();
              for (int i = 0; i < array.length; ++i) {
                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
             }
@@ -126,6 +127,5 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
             throw new LogiwebServiceException(e);
         }
     }
-    
     
 }

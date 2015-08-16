@@ -44,7 +44,7 @@ public class TrucksSeviceimplTest {
     public void testEditTruckWhenIdNotSet() throws ServiceValidationException,
             LogiwebServiceException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         TruckModel tm = new TruckModel();
         tm.setId(null);
@@ -60,7 +60,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         //needed to not fail other checks and validations
         TruckModel tm = new TruckModel();
@@ -91,7 +91,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         //needed to not fail other checks and validations
         TruckModel tm = new TruckModel();
@@ -124,7 +124,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         TruckModel tm = new TruckModel();
         tm.setId(1);
@@ -150,7 +150,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         TruckModel tm = new TruckModel();
         tm.setId(1);
@@ -177,7 +177,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         TruckModel tm = new TruckModel();
         tm.setId(1);
@@ -206,7 +206,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         TruckModel tm = new TruckModel();
         tm.setId(1);
@@ -233,7 +233,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         TruckModel tm = new TruckModel();
         tm.setLicencePlate("test");
@@ -256,7 +256,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         //needed to not fail other checks and validations
         TruckModel tm = new TruckModel();
@@ -280,7 +280,7 @@ public class TrucksSeviceimplTest {
             throws ServiceValidationException, LogiwebServiceException,
             DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         TruckModel tm = new TruckModel();
         tm.setId(1);
@@ -305,7 +305,7 @@ public class TrucksSeviceimplTest {
     public void testRemoveTruckWhenTruckNotExist() throws ServiceValidationException,
             LogiwebServiceException, DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         when(truckDaoMock.find(1))
         .thenReturn(null);
@@ -321,7 +321,7 @@ public class TrucksSeviceimplTest {
     public void testRemoveTruckWhenTruckHaveAssignedOrder() throws ServiceValidationException,
             LogiwebServiceException, DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         Truck t = new Truck();
         t.setAssignedDeliveryOrder(new DeliveryOrder());
@@ -340,7 +340,7 @@ public class TrucksSeviceimplTest {
     public void testRemoveTruckWhenTruckHaveAssignedDrivers() throws ServiceValidationException,
             LogiwebServiceException, DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         Truck t = new Truck();
         t.setAssignedDeliveryOrder(null);
@@ -360,7 +360,7 @@ public class TrucksSeviceimplTest {
     public void testRemoveTruckWhenEverythinOk() throws ServiceValidationException,
             LogiwebServiceException, DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         Truck t = new Truck();
         t.setAssignedDeliveryOrder(null);
@@ -381,7 +381,7 @@ public class TrucksSeviceimplTest {
     public void testRemoveAssignedOrderWhenTruckNotExist() throws ServiceValidationException,
             LogiwebServiceException, DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         when(truckDaoMock.find(1))
         .thenReturn(null);
@@ -397,7 +397,7 @@ public class TrucksSeviceimplTest {
     public void testRemoveAssignedOrderAndDriversFromTruckWhenNoOrder() throws ServiceValidationException,
             LogiwebServiceException, DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         Truck t = new Truck();
         t.setAssignedDeliveryOrder(null);
@@ -416,7 +416,7 @@ public class TrucksSeviceimplTest {
     public void testRemoveAssignedOrderWhenOrderStatusWrong() throws ServiceValidationException,
             LogiwebServiceException, DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         Truck t = new Truck();
         DeliveryOrder o = new DeliveryOrder();
@@ -437,7 +437,7 @@ public class TrucksSeviceimplTest {
     public void testRemoveAssignedOrderWhenEvyrithingOk() throws ServiceValidationException,
             LogiwebServiceException, DaoException {
         mockSetup();
-        TrucksService truckService = new TrucksSeviceimpl(truckDaoMock, plateValidator);
+        TrucksService truckService = new TrucksSeviceImpl(truckDaoMock, plateValidator);
         
         Truck t = new Truck();
         t.setAssignedDeliveryOrder(new DeliveryOrder());

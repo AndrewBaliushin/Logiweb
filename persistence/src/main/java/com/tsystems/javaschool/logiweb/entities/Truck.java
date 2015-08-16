@@ -24,9 +24,7 @@ import com.tsystems.javaschool.logiweb.entities.status.TruckStatus;
  * @author Andrey Baliushin
  */
 @Entity
-@Table(name = "trucks", 
-       uniqueConstraints = 
-       @UniqueConstraint(columnNames = "truck_license_plate_UQ"))
+@Table(name = "trucks", uniqueConstraints = @UniqueConstraint(columnNames = "truck_license_plate_UQ"))
 public class Truck {
 
     @Id
@@ -54,7 +52,7 @@ public class Truck {
     @OneToOne
     @JoinColumn(name = "truck_delivery_order_FK_UQ")
     private DeliveryOrder assignedDeliveryOrder;
-    
+
     @Column(name = "truck_deleted", nullable = false)
     private boolean deletedRecord;
 
@@ -65,43 +63,43 @@ public class Truck {
     }
 
     public int getId() {
-	return id;
+        return id;
     }
-    
+
     public void setId(int id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getLicencePlate() {
-	return licencePlate;
+        return licencePlate;
     }
 
     public void setLicencePlate(String licencePlate) {
-	this.licencePlate = licencePlate;
+        this.licencePlate = licencePlate;
     }
 
     public int getCrewSize() {
-	return crewSize;
+        return crewSize;
     }
 
     public void setCrewSize(int crewSize) {
-	this.crewSize = crewSize;
+        this.crewSize = crewSize;
     }
 
     public Float getCargoCapacity() {
-	return cargoCapacity;
+        return cargoCapacity;
     }
 
     public void setCargoCapacity(Float cargoCapacity) {
-	this.cargoCapacity = cargoCapacity;
+        this.cargoCapacity = cargoCapacity;
     }
 
     public TruckStatus getStatus() {
-	return status;
+        return status;
     }
 
     public void setStatus(TruckStatus status) {
-	this.status = status;
+        this.status = status;
     }
 
     public DeliveryOrder getAssignedDeliveryOrder() {
@@ -113,27 +111,27 @@ public class Truck {
     }
 
     public City getCurrentCity() {
-	return currentCity;
+        return currentCity;
     }
 
     public void setCurrentCity(City currentCity) {
-	this.currentCity = currentCity;
+        this.currentCity = currentCity;
     }
 
     public boolean isDeletedRecord() {
-	return deletedRecord;
+        return deletedRecord;
     }
 
     public void setDeletedRecord(boolean deleted) {
-	this.deletedRecord = deleted;
+        this.deletedRecord = deleted;
     }
 
     public Set<Driver> getDrivers() {
-	return drivers;
+        return drivers;
     }
 
     public void setDrivers(Set<Driver> drivers) {
-	this.drivers = drivers;
+        this.drivers = drivers;
     }
-    
+
 }

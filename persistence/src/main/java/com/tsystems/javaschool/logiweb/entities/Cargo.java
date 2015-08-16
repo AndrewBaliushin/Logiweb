@@ -22,7 +22,7 @@ import com.tsystems.javaschool.logiweb.entities.status.CargoStatus;
 @Entity
 @Table(name = "cargoes")
 public class Cargo {
-    
+
     @Id
     @GeneratedValue
     @Column(name = "cargo_id", unique = true, nullable = false)
@@ -30,31 +30,31 @@ public class Cargo {
 
     @Column(name = "cargo_title", nullable = false)
     private String title;
-    
+
     @Column(name = "cargo_weight", nullable = false)
     private Float weight;
-    
+
     @Column(name = "cargo_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private CargoStatus status;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_origin_city_FK", nullable = false)
     private City originCity;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_destination_city_FK", nullable = false)
     private City destinationCity;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_from_order_FK", nullable = false)
     private DeliveryOrder orderForThisCargo;
-    
+
     public Cargo() {
     }
-    
+
     public void setId(int id) {
-	this.id = id;
+        this.id = id;
     }
 
     public int getId() {
@@ -109,5 +109,5 @@ public class Cargo {
     public void setDestinationCity(City destinationCity) {
         this.destinationCity = destinationCity;
     }
-    
+
 }

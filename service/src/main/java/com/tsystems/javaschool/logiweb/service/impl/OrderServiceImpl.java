@@ -190,7 +190,9 @@ public class OrderServiceImpl implements OrderService {
             
             Set<Cargo> cargoes = order.getAssignedCargoes();
             for (Cargo cargo : cargoes) {
-                if (cargo.getStatus() != CargoStatus.DELIVERED) return false;
+                if (cargo.getStatus() != CargoStatus.DELIVERED) {
+                    return false;
+                }
             }
             return true;
         } catch (DaoException e) {

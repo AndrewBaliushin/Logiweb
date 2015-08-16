@@ -11,7 +11,7 @@ import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.service.ext.RouteInformation;
 
 public class DriverModel {
-    
+
     private Integer id;
 
     @NotNull
@@ -32,15 +32,15 @@ public class DriverModel {
     private int currentCityId;
 
     private String currentTruckLicensePlate;
-    
+
     private Integer orderId;
-    
+
     private RouteInformation routeInfo;
-    
+
     private float workingHoursThisMonth;
-    
+
     private Set<DriverShiftJournal> thisMonthShiftJurnals;
-    
+
     private Set<Integer> coDriversIds;
 
     public RouteInformation getRouteInfo() {
@@ -130,7 +130,8 @@ public class DriverModel {
         return thisMonthShiftJurnals;
     }
 
-    public void setThisMonthShiftJurnals(Set<DriverShiftJournal> thisMonthShiftJurnals) {
+    public void setThisMonthShiftJurnals(
+            Set<DriverShiftJournal> thisMonthShiftJurnals) {
         this.thisMonthShiftJurnals = thisMonthShiftJurnals;
     }
 

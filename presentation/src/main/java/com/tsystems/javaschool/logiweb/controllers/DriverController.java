@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,9 +28,7 @@ import com.tsystems.javaschool.logiweb.entities.status.DriverStatus;
 import com.tsystems.javaschool.logiweb.model.DriverModel;
 import com.tsystems.javaschool.logiweb.model.DriverUserModel;
 import com.tsystems.javaschool.logiweb.model.UserModel;
-import com.tsystems.javaschool.logiweb.service.CityService;
 import com.tsystems.javaschool.logiweb.service.DriverService;
-import com.tsystems.javaschool.logiweb.service.RouteService;
 import com.tsystems.javaschool.logiweb.service.exceptions.LogiwebServiceException;
 import com.tsystems.javaschool.logiweb.service.exceptions.ServiceValidationException;
 import com.tsystems.javaschool.logiweb.service.facades.DriverFacade;
@@ -40,21 +37,20 @@ import com.tsystems.javaschool.logiweb.utils.DateUtils;
 @Controller
 public class DriverController {
     
-    private final static Logger LOG = Logger.getLogger(DriverController.class);
+    @Value("${views.addOrEditDriver}")
+    private String addOrUpdateDriverViewPath;
+    @Value("${views.driverList}") 
+    private String driverListViewPath;
+    @Value("${views.driverInfo}")
+    private String driverInfoViewPath;
     
-    private @Value("${views.addOrEditDriver}") String addOrUpdateDriverViewPath;
-    private @Value("${views.driverList}") String driverListViewPath;
-    private @Value("${views.driverInfo}") String driverInfoViewPath;
-    
-    private @Value("${bussines.defaultDriverPass}") String defaultDriverPass;
-    private @Value("${bussines.driverAccountTemplate}") String driverAccountTemplate;
+    @Value("${bussines.defaultDriverPass}") 
+    private String defaultDriverPass;
+    @Value("${bussines.driverAccountTemplate}") 
+    private String driverAccountTemplate;
 
     @Autowired
     private DriverService driverService;
-    @Autowired
-    private CityService cityService;
-    @Autowired
-    private RouteService routeService;
     @Autowired
     private DriverFacade driverFacade;
     @Autowired
@@ -104,15 +100,21 @@ public class DriverController {
                 .getAuthentication().getPrincipal();
         
         //grant full access to everyone except drivers
-        if (!(user instanceof DriverUserModel)) return;
+        if (!(user instanceof DriverUserModel)) {
+            return;
+        }
         
         int loggedinDriverId = ((DriverUserModel) user).getDriverLogiwebId();
-        if (driverId == loggedinDriverId) return;
+        if (driverId == loggedinDriverId) {
+            return;
+        }
         
         DriverModel driver = driverService.findDriverById(loggedinDriverId);
         if (driver.getCoDriversIds() != null) {
             Set<Integer> coDriversIds = driver.getCoDriversIds();
-            if (coDriversIds.contains(driverId)) return;
+            if (coDriversIds.contains(driverId)) {
+                return;
+            }
         }
     
         throw new AccessDeniedException("Only managers and co-drivers have access to info.");
@@ -153,8 +155,7 @@ public class DriverController {
     
     private String convertDriverEmpIdToAccountNameByTemplate(int driverEmployeeId) {
         String idAsString = String.valueOf(driverEmployeeId);
-        String result = driverAccountTemplate.replace("{}", idAsString);
-        return result;
+        return driverAccountTemplate.replace("{}", idAsString);
     }
     
     @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.GET)
@@ -174,7 +175,7 @@ public class DriverController {
     }
     
     @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.POST)
-    public String editDriver(@PathVariable("driverId") int driverId,
+    public String editDriver(
             @ModelAttribute("driverModel") @Valid DriverModel driverModel,
             BindingResult result, Model model) throws LogiwebServiceException {
         
@@ -228,7 +229,7 @@ public class DriverController {
     @RequestMapping(value = "order/{orderId}/edit/addDriverToTruck", method = RequestMethod.POST)
     @ResponseBody
     public String addDriverToTruck(
-            @RequestParam("driversIds") int driversIds[],
+            @RequestParam("driversIds") int[] driversIds,
             @RequestParam("truckId") int truckId, HttpServletResponse response)
             throws LogiwebServiceException {
         try {
@@ -256,7 +257,8 @@ public class DriverController {
      * @throws LogiwebServiceException
      */
     @RequestMapping(value = { "driver/{driverId}/calendarHeatMapData" }, method = RequestMethod.GET)
-    public @ResponseBody Map<String, Integer> makeCalendarHeatMapJsonData(
+    @ResponseBody 
+    public Map<String, Integer> makeCalendarHeatMapJsonData(
             @PathVariable("driverId") int driverId)
             throws LogiwebServiceException {
         Map<String, Integer> calendarHeatData = new HashMap<String, Integer>();
