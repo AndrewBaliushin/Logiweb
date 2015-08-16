@@ -89,6 +89,10 @@ public class DateUtils {
      */
     public static Map<String, Integer> convertIntervalToCalHeatmapFormat(Date start,
             Date end) {
+        if (end == null) {
+            end = new Date(); //now
+        }
+        
         Map<String, Integer> counter = new HashMap<String, Integer>();
         Calendar cal = Calendar.getInstance(); 
         
