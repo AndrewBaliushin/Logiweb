@@ -167,7 +167,6 @@ public class DriverServiceImpl implements DriverService {
         driverToPopulate.setEmployeeId(source.getEmployeeId());
         driverToPopulate.setSurname(source.getSurname());
         driverToPopulate.setName(source.getName());
-        driverToPopulate.setStatus(source.getStatus());
         
         return driverToPopulate;
     }
@@ -182,9 +181,7 @@ public class DriverServiceImpl implements DriverService {
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault)
      */
     private int addDriverAndLinkHimToAccount(DriverModel newDriverAsModel, LogiwebUser accountForDriver) throws ServiceValidationException,
-            LogiwebServiceException {
-        newDriverAsModel.setStatus(DriverStatus.FREE); //default status
-        
+            LogiwebServiceException {        
         try {
             Driver driverWithSameEmployeeId = driverDao
                     .findByEmployeeId(newDriverAsModel.getEmployeeId());
@@ -198,6 +195,8 @@ public class DriverServiceImpl implements DriverService {
             
             populateAllowedDriverFieldsFromModel(newDriverEnity, newDriverAsModel);
             newDriverEnity.setLogiwebAccount(accountForDriver);
+            
+            newDriverEnity.setStatus(DriverStatus.FREE); //default status
             
             driverDao.create(newDriverEnity);
 
