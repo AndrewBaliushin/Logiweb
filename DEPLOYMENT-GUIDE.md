@@ -44,3 +44,7 @@ Start your Wildfly server.
 Run `mvn wildfly:deploy`
 
 Visit http://localhost:8080/logiweb/ 
+
+Manger accaount: `manager@logiweb.com` pass:`12345`
+Default Driver accaunt template: `driver-{employee id}@logiweb.com` pass:`12345` 
+Can be changed in logiweb.properties.
